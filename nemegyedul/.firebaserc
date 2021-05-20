@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "nemegyedul-2831a": {
+      "hosting": {
+        "nemegyedul": [
+          "nemegyedul-2831a"
+        ]
+      }
+    }
+  }
+}
