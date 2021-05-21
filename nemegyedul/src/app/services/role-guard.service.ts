@@ -9,19 +9,19 @@ export class RoleGuardService implements CanActivate {
   currentUser: any;
   currentUserArray: any[] = [];
   constructor(public router: Router, private databaseService: DatabaseService) { 
-    this.currentUser = this.databaseService.currentUser;
-    console.log(this.currentUser.role)
+    this.currentUser = this.databaseService.loggedInUser
   }
   
   canActivate = (route: ActivatedRouteSnapshot): boolean => {
 
         const expectedRole = route.data.expectedRole;
+        console.log(this.currentUser)
         if (!this.currentUser || +this.currentUser.role < expectedRole) {
           console.log('nem elég magas a jogosultsági szint, elvárt szint:', expectedRole )
           this.router.navigate(["/main"]);
           return false
         } 
-          console.log('megfelelő jogosultság')
+          console.log('megfelelő jogosultság', +this.currentUser.role)
           return true
         
     

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { User } from 'src/app/model/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { DatabaseService } from 'src/app/services/database.service';
 
@@ -17,6 +19,8 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   regForm: FormGroup;
+
+  dbSubscription: Subscription;
 
   constructor(
     private router: Router,
@@ -39,6 +43,7 @@ export class LoginComponent implements OnInit {
       name: new FormControl('', [Validators.required],),
       age: new FormControl('', [Validators.required],),
       gender: new FormControl('', [Validators.required],),
+      city: new FormControl('', [Validators.required],),
       photo: new FormControl(''),
       role: new FormControl('', [Validators.required],),
       category: new FormGroup({
@@ -64,11 +69,29 @@ export class LoginComponent implements OnInit {
   }
 
   checkUserLoggedIn(){
-    if (window.localStorage.getItem("app_user_uid")) {
+    let uid = window.localStorage.getItem("app_user_uid");
+    if (uid) {
+      this.getUserLoggedIn(uid);
       this.router.navigate(["/main"]);
     };
   }
 
+  getUserLoggedIn(uid:string){
+    this.dbSubscription = this.db.getData("users").subscribe(
+      (doc:any)=>{
+        doc.forEach((user:User)=>{
+          if(user.userUID){
+            if(user.userUID === uid){
+              this.db.loggedInUser.next(user);
+            }
+          }
+        })
+      },
+      (err:any)=>console.error(err),
+      ()=>this.dbSubscription.unsubscribe()
+    )
+  }
+  
   registration() {
     const regData = this.regForm.value;
     
