@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseService {
 
-  dbSubsciption: Subscription | undefined;
+  // dbSubsciption: Subscription | undefined;
   currentUser: any;
   currentUserArray: any[];
   
+  loggedInUser: any = new Subject<any>();
+
   constructor(private firestore: AngularFirestore) { 
     
-    
   }
+
   currentuser() {
     this.getData('users').subscribe(
       
@@ -25,7 +27,6 @@ export class DatabaseService {
           console.log(+this.currentUser.role)
         }
     )
-
   }
 
   
@@ -49,31 +50,26 @@ export class DatabaseService {
     return this.firestore.collection(collection).doc(id).delete()
   }
 
+  //tévút... TÖRÖLHETŐ
   //get user data by auth UID:
   //(app_user_uid is stored in local storage!)
-  getUserByUID(uid:string, collection:string = "users"){
-    let loggedInUser = {};
-    this.dbSubsciption = this.getData(collection).subscribe(
-      (doc:any) => {
-        doc.forEach((user:any)=>{
-         
-          
-            if(user.userUID === uid){
-              loggedInUser = user
-              console.log(user)
-              
-          }
-        });
-      },
-      (err)=>{
-        console.error(err)
-      },
-      
-    );
-    console.log(loggedInUser)
-    return loggedInUser
-  }
-
-
+  // getUserByUID(uid:string, collection:string = "users"){
+  //   let loggedInUser = {};
+  //   this.dbSubsciption = this.getData(collection).subscribe(
+  //     (doc:any) => {
+  //       doc.forEach((user:any)=>{
+  //           if(user.userUID === uid){
+  //             loggedInUser = user
+  //             console.log(user)
+  //         }
+  //       });
+  //     },
+  //     (err)=>{
+  //       console.error(err)
+  //     },
+  //   );
+  //   console.log(loggedInUser)
+  //   return loggedInUser
+  // }
 
 }
