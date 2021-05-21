@@ -8,7 +8,27 @@ import { Subject, Subscription } from 'rxjs';
 export class DatabaseService {
   loggedInUser: any = new Subject<any>();
 
-  constructor(private firestore: AngularFirestore) { }
+  // dbSubsciption: Subscription | undefined;
+  currentUser: any;
+  currentUserArray: any[];
+  
+  //loggedInUser: any = new Subject<any>();
+
+  constructor(private firestore: AngularFirestore) { 
+    
+  }
+
+  currentuser() {
+    this.getData('users').subscribe(
+      
+        (data:any) => {
+          this.currentUserArray = data;
+          console.log(this.currentUserArray)
+          this.currentUser = this.currentUserArray.filter(data => data.userUID === window.localStorage.getItem("app_user_uid"))[0];
+          console.log(+this.currentUser.role)
+        }
+    )
+  }
 
   getData(collection:string){
     return this.firestore.collection(collection).valueChanges({idField: "id"})
