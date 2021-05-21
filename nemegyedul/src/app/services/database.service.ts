@@ -7,7 +7,7 @@ import { Subject, Subscription } from 'rxjs';
 })
 export class DatabaseService {
 
-  // dbSubsciption: Subscription | undefined;
+  dbSubsciption: Subscription | undefined; //TÖRÖLHETŐ
   currentUser: any;
   currentUserArray: any[];
   
@@ -53,23 +53,23 @@ export class DatabaseService {
   //tévút... TÖRÖLHETŐ
   //get user data by auth UID:
   //(app_user_uid is stored in local storage!)
-  // getUserByUID(uid:string, collection:string = "users"){
-  //   let loggedInUser = {};
-  //   this.dbSubsciption = this.getData(collection).subscribe(
-  //     (doc:any) => {
-  //       doc.forEach((user:any)=>{
-  //           if(user.userUID === uid){
-  //             loggedInUser = user
-  //             console.log(user)
-  //         }
-  //       });
-  //     },
-  //     (err)=>{
-  //       console.error(err)
-  //     },
-  //   );
-  //   console.log(loggedInUser)
-  //   return loggedInUser
-  // }
+  getUserByUID(uid:string, collection:string = "users"){
+    let loggedInUser = {};
+    this.dbSubsciption = this.getData(collection).subscribe(
+      (doc:any) => {
+        doc.forEach((user:any)=>{
+            if(user.userUID === uid){
+              loggedInUser = user
+              console.log(user)
+          }
+        });
+      },
+      (err)=>{
+        console.error(err)
+      },
+    );
+    console.log(loggedInUser)
+    return loggedInUser
+  }
 
 }

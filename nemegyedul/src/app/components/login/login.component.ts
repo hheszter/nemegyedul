@@ -17,6 +17,11 @@ export class LoginComponent implements OnInit {
   emailIsUsed: boolean = false;
   invalidLogin: boolean = false;
 
+  showModal: boolean = true;
+  titleInModal: string = "";
+  textInModal: string = "";
+  formInModal: boolean = false;
+
   loginForm: FormGroup;
   regForm: FormGroup;
 
@@ -37,15 +42,15 @@ export class LoginComponent implements OnInit {
     });
 
     this.regForm = new FormGroup({
-      email: new FormControl('', [Validators.required],),
-      password: new FormControl('', [Validators.required],),
-      repassword: new FormControl('', [Validators.required],),
-      name: new FormControl('', [Validators.required],),
-      age: new FormControl('', [Validators.required],),
-      gender: new FormControl('', [Validators.required],),
-      city: new FormControl('', [Validators.required],),
-      photo: new FormControl(''),
-      role: new FormControl('', [Validators.required],),
+      email: new FormControl('', [Validators.required, Validators.pattern(/^[\w\.]+@\w+\.[a-z\.]{2,5}$/)]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
+      repassword: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
+      name: new FormControl('', [Validators.required, Validators.pattern(/^[A-ZÁÉÍÓÖŐÚÜŰa-záéíóöőúüű\.\- ]{5,35}$/)]),
+      age: new FormControl('', [Validators.required, Validators.min(18), Validators.max(110)]),
+      gender: new FormControl('', [Validators.required]),
+      city: new FormControl('', [Validators.required, Validators.pattern(/^[A-ZÁÉÍÓÖŐÚÜŰa-záéíóöőúüű\- ]{2,35}$/)]),
+      photo: new FormControl('', [Validators.pattern(/^https?:\/\/.{5,250}$/)]),
+      role: new FormControl('', [Validators.required]),
       category: new FormGroup({
         sport: new FormControl(''),
         culture: new FormControl(''),
