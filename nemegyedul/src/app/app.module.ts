@@ -12,6 +12,8 @@ import { GamesComponent } from './components/games/games.component';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { ChessComponent } from './components/games/chess/chess.component';
+
 
 @NgModule({
   declarations: [
@@ -21,7 +23,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     MainComponent,
     EventFormComponent,
     MyEventsComponent,
-    GamesComponent
+    GamesComponent,
+    ChessComponent
   ],
   imports: [
     BrowserModule,
