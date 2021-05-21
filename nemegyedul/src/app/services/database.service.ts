@@ -8,9 +8,27 @@ import { Subscription } from 'rxjs';
 export class DatabaseService {
 
   dbSubsciption: Subscription | undefined;
+  currentUser: any;
+  currentUserArray: any[];
+  
+  constructor(private firestore: AngularFirestore) { 
+    
+    
+  }
+  currentuser() {
+    this.getData('users').subscribe(
+      
+        (data:any) => {
+          this.currentUserArray = data;
+          console.log(this.currentUserArray)
+          this.currentUser = this.currentUserArray.filter(data => data.userUID === window.localStorage.getItem("app_user_uid"))[0];
+          console.log(+this.currentUser.role)
+        }
+    )
 
-  constructor(private firestore: AngularFirestore) { }
+  }
 
+  
   getData(collection:string){
     return this.firestore.collection(collection).valueChanges({idField: "id"})
   }
@@ -38,20 +56,21 @@ export class DatabaseService {
     this.dbSubsciption = this.getData(collection).subscribe(
       (doc:any) => {
         doc.forEach((user:any)=>{
-          if(user.userUID){
+         
+          
             if(user.userUID === uid){
               loggedInUser = user
-            }
+              console.log(user)
+              
           }
         });
       },
       (err)=>{
         console.error(err)
       },
-      ()=>{
-        this.dbSubsciption.unsubscribe()
-      }
+      
     );
+    console.log(loggedInUser)
     return loggedInUser
   }
 

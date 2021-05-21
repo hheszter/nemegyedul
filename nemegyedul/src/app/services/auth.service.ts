@@ -8,8 +8,11 @@ import { Subject } from 'rxjs';
 export class AuthService {
 
   loginStatusChanged: any = new Subject<any>();
+  
 
-  constructor(private auth: AngularFireAuth) { }
+  constructor(private auth: AngularFireAuth) { 
+
+  }
 
   register(email:string, pw:string){
     return this.auth.createUserWithEmailAndPassword(email, pw)
