@@ -15,6 +15,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WelcomeComponent } from './components/welcome/welcome.component';
+import { LoginModalComponent } from './components/login/login-modal/login-modal.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
     EventFormComponent,
     MyEventsComponent,
     GamesComponent,
-    WelcomeComponent
+    WelcomeComponent,
+    LoginModalComponent
   ],
   imports: [
     BrowserModule,

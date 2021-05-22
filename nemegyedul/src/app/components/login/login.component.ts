@@ -14,10 +14,9 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class LoginComponent implements OnInit {
 
   haveAccount: boolean = true;
-  emailIsUsed: boolean = false;
   invalidLogin: boolean = false;
 
-  showModal: boolean = true;
+  showModal: boolean = false;
   titleInModal: string = "";
   textInModal: string = "";
   formInModal: boolean = false;
@@ -65,7 +64,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngDoCheck(){
+  ngDoCheck() {
     this.checkUserLoggedIn();
   }
 
@@ -73,7 +72,7 @@ export class LoginComponent implements OnInit {
     this.haveAccount = !this.haveAccount;
   }
 
-  checkUserLoggedIn(){
+  checkUserLoggedIn() {
     let uid = window.localStorage.getItem("app_user_uid");
     if (uid) {
       this.getUserLoggedIn(uid);
@@ -81,52 +80,59 @@ export class LoginComponent implements OnInit {
     };
   }
 
-  getUserLoggedIn(uid:string){
+  //get user data and save in db.service:
+  getUserLoggedIn(uid: string) {
     this.dbSubscription = this.db.getData("users").subscribe(
-      (doc:any)=>{
-        doc.forEach((user:User)=>{
-          if(user.userUID){
-            if(user.userUID === uid){
+      (doc: any) => {
+        doc.forEach((user: User) => {
+          if (user.userUID) {
+            if (user.userUID === uid) {
               this.db.loggedInUser.next(user);
             }
           }
         })
       },
-      (err:any)=>console.error(err),
-      ()=>this.dbSubscription.unsubscribe()
+      (err: any) => console.error(err),
+      () => this.dbSubscription.unsubscribe()
     )
   }
-  
+
+
+  // ------------------------- registration -------------------------
   registration() {
     const regData = this.regForm.value;
-    
-    if(regData.password !== regData.repassword){
-      alert("Nem egyezik a két jelszó!");
+
+    if (regData.password !== regData.repassword) {
+      this.setModal("Valami nem stimmel", "A két jelszó nem egyezik!", false);
       return
     }
 
     this.auth.register(regData.email, regData.password)
-      .then((data)=>{
+      .then((data) => {
         delete regData.password;
         delete regData.repassword;
         regData.date = new Date().toLocaleDateString();
         regData.userUID = data.user.uid;
         this.db.saveData("users", regData);
-     })
-      .then(()=>{
+      })
+      .then(() => {
         this.regForm.reset();
-        alert("A regisztráció sikeres, kérem jelentkezzen be!")
+        this.loginForm.reset();
+        this.setModal("Sikeres regisztráció", "Kérem jelentkezzen be!", false);
         this.switchForm();
       })
       .catch(err => {
-        if(err.code === "auth/email-already-in-use"){
-          this.emailIsUsed = true;
+        if (err.code === "auth/email-already-in-use") {
+          this.setModal("", "Ezzel az email címmel már regisztáltak, kérjük jelentkezzen be!", false);
+          this.switchForm();
         } else {
           console.error(err);
         }
       })
   }
 
+
+  // ------------------------- login -------------------------
   login() {
     const loginData = this.loginForm.value;
 
@@ -142,7 +148,29 @@ export class LoginComponent implements OnInit {
   }
 
   resetPassword() {
-    let userEmail = prompt("Adja meg az email címét, hogy új jelszót küldhessünk:");
-    this.auth.getNewPassword(userEmail);
+    this.setModal("Új jelszó igénylés", "Adja meg az email címét:", true);
+  }
+
+
+  // ------------------------- modal -------------------------
+  setModal(title: string, text: string, isForm: boolean) {
+    this.titleInModal = title;
+    this.textInModal = text;
+    this.formInModal = isForm;
+    this.showModal = true;
+  }
+
+  closeModal(value: any) {
+    if (value) {
+      if (value.email) {
+        this.auth.getNewPassword(value.email);
+        this.setModal("", "Ellenőrízze az emailfiókját!", false);
+        this.loginForm.reset();
+      }
+    }
+    this.titleInModal = "";
+    this.textInModal = "";
+    this.formInModal = false;
+    this.showModal = false;
   }
 }
