@@ -113,13 +113,22 @@ export class LoginComponent implements OnInit {
         delete regData.repassword;
         regData.date = new Date().toLocaleDateString();
         regData.userUID = data.user.uid;
+        if(!regData.photo){
+          regData.photo = "https://icon-library.com/images/default-user-icon/default-user-icon-4.jpg" //default avatar photo
+        }
         this.db.saveData("users", regData);
+        
+        //send email to verify email address!!!
+        // data.user.sendEmailVerification()
+        //   .then(()=>console.log("email has been sent")) //set the link to continoue
+        //   .catch(err=>console.error(err))
       })
       .then(() => {
         this.regForm.reset();
         this.loginForm.reset();
-        this.setModal("Sikeres regisztráció", "Kérem jelentkezzen be!", false);
+        this.setModal("Sikeres regisztráció", "Erősítse meg az email címét, lépjen be az emailfiókjába! \n Hitelesítés után kérem jelentkezzen be!", false);
         this.switchForm();
+
       })
       .catch(err => {
         if (err.code === "auth/email-already-in-use") {
@@ -138,8 +147,17 @@ export class LoginComponent implements OnInit {
 
     this.auth.login(loginData.logEmail, loginData.logPassword)
       .then((data) => {
+      //without email verification:
         this.auth.setLocalStorage();
         this.router.navigate(["/main"]);
+
+      //with email verification:
+        // if(data.user.emailVerified){
+        //   this.auth.setLocalStorage();
+        //   this.router.navigate(["/main"]);
+        // } else {
+        //   this.setModal("Hiányzó jóváhagyás", "Erősítse meg az email címét, lépjen be az emailfiókjába", false)
+        // }
       })
       .catch(err => {
         this.invalidLogin = true;
