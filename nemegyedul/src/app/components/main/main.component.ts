@@ -11,12 +11,14 @@ import { RoleGuardService } from 'src/app/services/role-guard.service';
 })
 export class MainComponent implements OnInit {
   
-  constructor() {
+  constructor(private dataService: DatabaseService) {
     
   }
 
   ngOnInit(): void {
-    
+    this.dataService.loggedInUser.subscribe(
+      data => console.log(data)
+    )
   }
 
 

@@ -83,6 +83,7 @@ export class LoginComponent implements OnInit {
           if(user.userUID){
             if(user.userUID === uid){
               this.db.loggedInUser.next(user);
+              console.log(user)
             }
           }
         })

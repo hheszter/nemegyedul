@@ -9,7 +9,10 @@ export class RoleGuardService implements CanActivate {
   currentUser: any;
   currentUserArray: any[] = [];
   constructor(public router: Router, private databaseService: DatabaseService) { 
-    this.currentUser = this.databaseService.loggedInUser
+    this.databaseService.loggedInUser.subscribe(
+      data => {console.log(data);this.currentUser = data },
+      error => console.error(error)
+    )
   }
   
   canActivate = (route: ActivatedRouteSnapshot): boolean => {
