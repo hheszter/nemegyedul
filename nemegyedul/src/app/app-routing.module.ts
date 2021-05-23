@@ -18,7 +18,7 @@ const routes: Routes = [
   {path: "my-events", component:MyEventsComponent, canActivate: [AuthGuardService]},
   {path: "event-form", component:EventFormComponent, canActivate: [AuthGuardService], data: {expectedRole: 2}},
   {path: "games", component:GamesComponent, canActivate: [AuthGuardService]},
-  {path: "profil", component:ProfilComponent},
+  {path: "profil", component:ProfilComponent, canActivate: [AuthGuardService]},
   {path: "**", component:LoginComponent}
 ];
 
