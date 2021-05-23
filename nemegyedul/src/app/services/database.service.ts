@@ -1,32 +1,22 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseService {
   
-  // dbSubsciption: Subscription | undefined;
+  dbSubsciption: Subscription | undefined;
   currentUser: any;
   currentUserArray: any[];
-  
+  //dbSubscription: Subscription;
   loggedInUser: any = new Subject<any>();
+  
 
   constructor(private firestore: AngularFirestore) { 
-    
-  }
-
-  currentuser() {
-    this.getData('users').subscribe(
-      
-        (data:any) => {
-          this.currentUserArray = data;
-          console.log(this.currentUserArray)
-          this.currentUser = this.currentUserArray.filter(data => data.userUID === window.localStorage.getItem("app_user_uid"))[0];
-          console.log(+this.currentUser.role)
-        }
-    )
+     
   }
 
   

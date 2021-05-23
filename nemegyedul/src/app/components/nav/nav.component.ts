@@ -11,29 +11,27 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class NavComponent implements OnInit {
   navigation = this.config.navigation;
-  currentUser: any = {name: 'Zsolt'};
+  currentUser: any;
   user: any = false;
   constructor(
     private config: ConfigService, 
     private authService: AuthService, 
     private databaseService: DatabaseService, 
-    private authGuard: AuthGuardService) { }
+    private authGuard: AuthGuardService) { 
+      this.authService.loginStatusChanged.subscribe(
+        data => {this.user = data; },
+        error => console.error(error)
+      )
+    }
 
   ngOnInit(): void {
-    // this.databaseService.getUserByUID(window.localStorage.getItem("app_user_uid"), "users").subscribe(
-    //   (data:any) => this.currentUser = data,
-    //   (error:any) => console.error(error)
-    // )
-    //this.user = window.localStorage.getItem("app_user_uid") 
-
-    this.user=this.authGuard.canActivate()
-
-    
+   
+    this.user = window.localStorage.getItem("app_user_uid") 
     
   }
-
   onLogout() {
     this.authService.logout()
+    this.user = false
   }
 
 }

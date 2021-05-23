@@ -14,8 +14,8 @@
       </ul>
 
       <ul class="my-2 my-lg-0 navbar-nav ms-auto pe-5">
-        <li *ngIf="user" class="mx-4">
-          <span> Hi {{ user }}!</span>
+        <li *ngIf="user" class="mx-4 text-light">
+          <span class="nav-link"> Hi! </span>
         </li>
         <li *ngIf="!user" class="nav-item">
           <a routerLink="/login" class="nav-link">
@@ -23,6 +23,7 @@
           </a>
         </li>
         <li *ngIf="user" class="nav-item">
+          
           <a (click)="onLogout()" class="nav-link">
             Logout
           </a>
