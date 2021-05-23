@@ -10,4 +10,5 @@ export interface User {
     photo?: string;
     date?: string;
     userUID?: string;
+    myEvents?: any[];
 }
