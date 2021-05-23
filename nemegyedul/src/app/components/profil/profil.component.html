@@ -17,13 +17,18 @@
             <div class="category my-2">
                 <p>Témák, amik érdekelnek:</p>
                 <ul>
-                    <li *ngFor="let theme of user.category">{{theme}}</li>
+                    <li *ngFor="let theme of themes">{{theme}}</li>
                 </ul>
             </div>
             <!-- <button class="btn btn-secondary d-block" (click)="editProfil()">Adatok szerkesztése</button> -->
+            
+            <button *ngIf="user" class="btn btn-secondary">
+                <a routerLink="/my-events">Események, amik érdekelnek</a>
+            </button>
         </div>
 
     </div>
+
 
     <div *ngIf="!user">Valami hiba történt, jelentkezzen be újra!</div>
 </section>

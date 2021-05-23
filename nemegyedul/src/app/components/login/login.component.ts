@@ -115,6 +115,7 @@ export class LoginComponent implements OnInit {
         delete regData.repassword;
         regData.date = new Date().toLocaleDateString();
         regData.userUID = data.user.uid;
+        regData.myEvents = [];
         if(!regData.photo){
           regData.photo = "https://icon-library.com/images/default-user-icon/default-user-icon-4.jpg" //default avatar photo
         }
