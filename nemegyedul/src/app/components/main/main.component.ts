@@ -79,7 +79,7 @@ export class MainComponent implements OnInit {
     
     //console.log(this.currentUser)
     //console.log(selectedEvent)
-    this.currentUser.myEvents = [];
+    //this.currentUser.myEvents = [];
     this.currentUser.myEvents.push(selectedEvent);
     this.dataService.updateData('users', this.currentUser.id, this.currentUser)
     
