@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { User } from 'src/app/model/user';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
@@ -11,7 +12,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class NavComponent implements OnInit {
   navigation = this.config.navigation;
-  currentUser: any;
+  currentUser: any = {};
   user: any = false;
   constructor(
     private config: ConfigService, 
@@ -26,7 +27,11 @@ export class NavComponent implements OnInit {
 
   ngOnInit(): void {
    
-    this.user = window.localStorage.getItem("app_user_uid") 
+    this.user = window.sessionStorage.getItem("app_user_uid") 
+    this.databaseService.loggedInUser.subscribe(
+      data => this.currentUser = data,
+      error => console.error(error)
+    )
     
   }
   onLogout() {

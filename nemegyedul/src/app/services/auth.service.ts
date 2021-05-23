@@ -23,7 +23,8 @@ export class AuthService {
   }
 
   logout(){
-    window.localStorage.removeItem("app_user_uid");
+    //window.localStorage.removeItem("app_user_uid");
+    window.sessionStorage.removeItem("app_user_uid");
     this.loginStatusChanged.next(false);
     return this.auth.signOut();
   }
@@ -32,7 +33,8 @@ export class AuthService {
     this.auth.currentUser
       .then(user => {
         if(user?.uid){
-          window.localStorage.setItem("app_user_uid", user?.uid);
+          //window.localStorage.setItem("app_user_uid", user?.uid);
+          window.sessionStorage.setItem("app_user_uid", user?.uid);
           this.loginStatusChanged.next(true);
         }
       })
