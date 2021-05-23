@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { User } from 'src/app/model/user';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -18,7 +19,10 @@ export class NavComponent implements OnInit {
     private config: ConfigService, 
     private authService: AuthService, 
     private databaseService: DatabaseService, 
-    private authGuard: AuthGuardService) { 
+    private authGuard: AuthGuardService,
+    private router: Router
+    ) { 
+      
       this.authService.loginStatusChanged.subscribe(
         data => {this.user = data; },
         error => console.error(error)
@@ -37,6 +41,7 @@ export class NavComponent implements OnInit {
   onLogout() {
     this.authService.logout()
     this.user = false
+    this.router.navigate(["/welcome"]);
   }
 
 }
