@@ -40,8 +40,8 @@ export class AuthService {
   }
 
   getNewPassword(email:any){
-    this.auth.sendPasswordResetEmail(email)
-      .then(()=>alert("Emailt küldtünk, ellenőrízze az email fiókját!"))
+    return this.auth.sendPasswordResetEmail(email)
+      .then(()=>console.log("email has been sent"))
       .catch(err=>console.error(err))
   }
 }

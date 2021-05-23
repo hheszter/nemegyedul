@@ -16,6 +16,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { LoginModalComponent } from './components/login/login-modal/login-modal.component';
+import { ProfilComponent } from './components/profil/profil.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { LoginModalComponent } from './components/login/login-modal/login-modal.
     MyEventsComponent,
     GamesComponent,
     WelcomeComponent,
-    LoginModalComponent
+    LoginModalComponent,
+    ProfilComponent
   ],
   imports: [
     BrowserModule,

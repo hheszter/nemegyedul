@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,8 @@ export class DatabaseService {
   currentUser: any;
   currentUserArray: any[];
   
-  loggedInUser: any = new Subject<any>();
+  // loggedInUser: any = new Subject<any>();
+  loggedInUser: any = new BehaviorSubject<any>(null);
 
   constructor(private firestore: AngularFirestore) { 
     

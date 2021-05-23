@@ -5,6 +5,7 @@ import { GamesComponent } from './components/games/games.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
 import { MyEventsComponent } from './components/my-events/my-events.component';
+import { ProfilComponent } from './components/profil/profil.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { RoleGuardService } from './services/role-guard.service';
@@ -17,6 +18,7 @@ const routes: Routes = [
   {path: "my-events", component:MyEventsComponent, canActivate: [AuthGuardService]},
   {path: "event-form", component:EventFormComponent, canActivate: [AuthGuardService, ], data: {expectedRole: 2}},
   {path: "games", component:GamesComponent, canActivate: [AuthGuardService]},
+  {path: "profil", component:ProfilComponent},
   {path: "**", component:LoginComponent}
 ];
 

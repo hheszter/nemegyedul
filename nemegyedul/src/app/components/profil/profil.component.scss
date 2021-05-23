@@ -1,0 +1,32 @@
+.profil {
+    display: flex;
+    flex-direction: column;
+
+    @media only screen and (min-width: 768px) {
+        flex-direction: row;;
+    }
+
+    .photo {
+        width: 100%;
+        max-height: 400px;
+        padding: 2rem;
+        overflow: hidden;
+
+        @media only screen and (min-width: 768px) {
+            width: 35%;
+        }
+
+        img {
+            width: 100%;
+            background-position: center;
+        }
+    }
+
+    &-datas {
+        padding: 2rem;
+
+        @media only screen and (min-width: 768px) {
+            width: 65%;
+        }
+    }
+}

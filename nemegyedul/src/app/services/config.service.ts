@@ -10,6 +10,7 @@ export class ConfigService {
     {label: 'Új esemény felvétele', href: '/event-form', role: 2},
     {label: 'Eseményeim', href: '/my-events', role: 1},
     {label: 'Játékok', href: '/games', role: 1},
+    {label: 'Saját adatok', href: '/profil', role: 1},
   ];
   constructor() { }
 }
