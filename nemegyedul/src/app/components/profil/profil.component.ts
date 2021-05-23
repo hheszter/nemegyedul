@@ -11,6 +11,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class ProfilComponent implements OnInit {
 
   user: User;
+  themes: Array<string>;
 
   constructor(
     private db: DatabaseService, 
@@ -20,9 +21,15 @@ export class ProfilComponent implements OnInit {
     this.db.loggedInUser.subscribe(
       (user:any)=>{
         this.user=user;
+        this.themes=this.setThemes(user.category);
       },
       (err:any)=>console.error(err)
     )
+  }
+
+  setThemes(categoryObj: any){
+    return Object.keys(categoryObj).filter( index => categoryObj[index])
+    
   }
 
   newPassword(email:string){
