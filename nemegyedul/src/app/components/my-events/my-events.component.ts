@@ -43,8 +43,10 @@ export class MyEventsComponent implements OnInit {
   }
 
   deleteEvent(selectedEvent) {
+
+    this.currentUser.myEvents = this.currentUser.myEvents.filter(data => data.eventName != selectedEvent.eventName)
+    this.dataService.updateData('users', this.currentUser.id, this.currentUser);
     console.log(this.currentUser)
-    console.log(selectedEvent)
   }
 
 }

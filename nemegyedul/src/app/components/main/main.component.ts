@@ -59,6 +59,9 @@ export class MainComponent implements OnInit {
   ];
   currentUser: any;
   selectedEvent: any = {};
+  currentUserEvents: any[] = [];
+  buttonDisable: boolean = false;
+
   constructor(private dataService: DatabaseService) {
     
     
@@ -66,15 +69,24 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataService.loggedInUser.subscribe(
-      data => this.currentUser = data,
+      data => {this.currentUser = data},
       error => console.error(error)
     )
   }
   
   currentEvent(selectedEvent: any) {
     this.selectedEvent = selectedEvent;
+    for (let i = 0; i < this.currentUser.myEvents.length; i++) {
+      if (this.currentUser.myEvents[i].eventName === selectedEvent.eventName) {
+        this.buttonDisable = true;
+      }
+    }
   }
   
+  close() {
+    this.buttonDisable = false;
+  }
+
   saveEvent(selectedEvent) {
     
     //console.log(this.currentUser)

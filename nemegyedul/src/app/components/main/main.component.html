@@ -14,8 +14,8 @@
         {{selectedEvent.longDescription}}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" (click)="saveEvent(selectedEvent)">Érdekel</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="close()">Close</button>
+        <button type="button" class="btn btn-primary" [disabled]="buttonDisable" (click)="saveEvent(selectedEvent)">Érdekel</button>
       </div>
     </div>
   </div>
