@@ -1,3 +1,5 @@
+@use '../../../assets/colors' as c;
+
 .profil {
     display: flex;
     flex-direction: column;
@@ -27,6 +29,21 @@
 
         @media only screen and (min-width: 768px) {
             width: 65%;
+        }
+
+        .category {
+            span {
+                display: inline-block;
+                margin: 0 3px 2px 0;
+                padding: 2px;
+                border: 1px solid c.$c-orange;
+                border-radius: 5px;
+
+                &:hover {
+                    transition: all 0.5s;
+                    background: c.$c-orange;
+                }
+            }
         }
     }
 }
