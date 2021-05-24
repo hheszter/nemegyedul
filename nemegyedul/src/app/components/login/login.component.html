@@ -92,10 +92,10 @@
                 <small *ngIf="regForm.get('role').invalid && regForm.get('role').touched">Kötelező választani!</small>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3" *ngIf="categories.length">
+                <legend>Érdeklődési kör:</legend>
                 <div id="category" class="category" formGroupName="category">
-                    <legend>Érdeklődési kör:</legend>
-                    <div class="form-check">
+                    <!-- <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="sport" id="sport"
                             formControlName="sport">
                         <label class="form-check-label" for="sport">Mozgás, sport, természetjárás</label>
@@ -139,6 +139,12 @@
                         <input class="form-check-input" type="checkbox" value="family" id="family"
                             formControlName="family">
                         <label class="form-check-label" for="family">Család, gyerekek, unokák</label>
+                    </div> -->
+
+                    <div class="form-check" *ngFor="let category of categories">
+                        <input class="form-check-input" type="checkbox" [value]="category.name" [id]="category.name"
+                            [formControlName]="category.name">
+                        <label class="form-check-label" [for]="category.name">{{category.displayName}}</label>
                     </div>
                 </div>
             </div>
