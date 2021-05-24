@@ -89,7 +89,7 @@
 
       <div class="form-row">
         <div class="form-group mb-3">
-          <label for="description">Rövid leírás:</label>
+          <label for="description">Leírás:</label>
           <textarea
             class="form-control"
             id="description"
@@ -154,12 +154,12 @@
 
       <div class="form-row">
         <div class="form-group mb-3">
-          <label for="interest">Érdeklődési kör:</label>
+          <label for="category">Érdeklődési kör:</label>
           <select
             class="form-control"
-            id="interest"
-            name="interest"
-            formControlName="interest"
+            id="category"
+            name="category"
+            formControlName="category"
           >
             <option *ngFor="let elem of this.categories" [value]="elem[0]">
               {{elem[1]}}
@@ -168,8 +168,8 @@
           </select>
           <small
             *ngIf="
-              newEventForm.get('interest').invalid &&
-              newEventForm.get('interest').touched
+              newEventForm.get('category').invalid &&
+              newEventForm.get('category').touched
             "
             >Hibás érdeklődési kör!</small
           >

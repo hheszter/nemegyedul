@@ -39,7 +39,7 @@ export class EventFormComponent implements OnInit, CanActivate {
       description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(800)]),
       location: new FormControl('', [Validators.required, Validators.pattern(/[A-ZÁÉÍÓÖŐÚÜŰa-záéíóöőúüű]./)]),
       maxPeople: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(100000)]),
-      interest: new FormControl('', [Validators.required]),
+      category: new FormControl('', [Validators.required]),
       userUID: new FormControl(this.currentUser.userUID, [Validators.required]) // Hidden Field
     });
 
