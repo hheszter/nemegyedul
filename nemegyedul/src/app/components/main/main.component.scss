@@ -1,0 +1,12 @@
+.row {
+    display: flex;
+    justify-content: center;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+}
+.card-body a {
+    align-self:baseline;
+}

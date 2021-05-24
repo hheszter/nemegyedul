@@ -12,8 +12,13 @@ import { GamesComponent } from './components/games/games.component';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { ChessComponent } from './components/games/chess/chess.component';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { ReactiveFormsModule } from '@angular/forms';
+import { WelcomeComponent } from './components/welcome/welcome.component';
+import { LoginModalComponent } from './components/login/login-modal/login-modal.component';
+import { ProfilComponent } from './components/profil/profil.component';
 
+import { ChessComponent } from './components/games/chess/chess.component';
 
 @NgModule({
   declarations: [
@@ -24,13 +29,18 @@ import { ChessComponent } from './components/games/chess/chess.component';
     EventFormComponent,
     MyEventsComponent,
     GamesComponent,
+    WelcomeComponent,
+    LoginModalComponent,
+    ProfilComponent,
     ChessComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AngularFireAuthModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

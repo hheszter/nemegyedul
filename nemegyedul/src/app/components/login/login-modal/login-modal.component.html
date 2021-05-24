@@ -1,0 +1,22 @@
+<section class="bg">
+    <div class="popup col-10 col-lg-4 mx-auto">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">{{modalTitle}}</h5>
+              <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>{{modalText}}</p>
+              <form [formGroup]="emailForm">
+                  <input *ngIf="formNeeded" type="email" id="email" class="form-control" formControlName="email">
+                  <small *ngIf="emailForm.get('email').invalid && emailForm.get('email').touched">Helytelen email formátum!</small>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn" [disabled]="this.formNeeded && emailForm.invalid" (click)="close()">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>
