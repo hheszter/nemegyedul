@@ -16,9 +16,8 @@
             <small class="d-block">Regisztráció dátuma: {{user.date}}</small>
             <div class="category my-2">
                 <p>Témák, amik érdekelnek:</p>
-                <ul>
-                    <li *ngFor="let theme of themes">{{theme}}</li>
-                </ul>
+                    <span *ngFor="let theme of themes">{{theme}}</span>
+
             </div>
             <!-- <button class="btn btn-secondary d-block" (click)="editProfil()">Adatok szerkesztése</button> -->
             

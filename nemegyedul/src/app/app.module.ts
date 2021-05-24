@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { LoginModalComponent } from './components/login/login-modal/login-modal.component';
 import { ProfilComponent } from './components/profil/profil.component';
+import { CommunityComponent } from './components/community/community.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { ProfilComponent } from './components/profil/profil.component';
     GamesComponent,
     WelcomeComponent,
     LoginModalComponent,
-    ProfilComponent
+    ProfilComponent,
+    CommunityComponent
   ],
   imports: [
     BrowserModule,
