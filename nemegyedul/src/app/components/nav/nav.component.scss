@@ -1,3 +1,13 @@
+@use '../../../assets/colors' as c;
+
+.navbar-brand {
+    color: c.$c-orange;
+}
+
 .nav-item .nav-link {
-    cursor: pointer
+    cursor: pointer;
+
+    &:hover {
+        color: c.$c-orange;
+    }
 }

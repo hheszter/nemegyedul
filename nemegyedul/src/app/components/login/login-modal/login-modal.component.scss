@@ -1,6 +1,7 @@
 @use '../../../../assets/colors' as c;
+@use '../../../../assets/mixins' as m;
 
-.bg{
+.bg {
     background: (rgba(230,230,230,0.5));
     width: 100%;
     height: 100%;
@@ -16,8 +17,7 @@
         
         .btn {
             color: whitesmoke;
-            background: c.$c-orange !important;
-            border-color: c.$c-orange !important;
+            @include m.setMyButton();
         }
 
         small {
