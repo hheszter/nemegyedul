@@ -1,1 +1,197 @@
-<p>event-form works!</p>
+<div class="container-fluid">
+  <section
+    class="container-sm col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 reg-container"
+  >
+    <form [formGroup]="newEventForm" (ngSubmit)="saveEvent()">
+      <legend>Új Esemény Felvitele:</legend>
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="name">Esemény neve:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            formControlName="name"
+            placeholder="Esemény neve"
+          />
+          <small
+            *ngIf="
+              newEventForm.get('name').invalid &&
+              newEventForm.get('name').touched
+            "
+            >Helytelen formátum!</small
+          >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="imageUrl">Borítókép:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="imageUrl"
+            name="imageUrl"
+            formControlName="imageUrl"
+            placeholder="borítókép url"
+          />
+          <small
+            *ngIf="
+              newEventForm.get('imageUrl').invalid &&
+              newEventForm.get('imageUrl').touched
+            "
+            >Helytelen borítókép elérési út!</small
+          >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="datetime">Dátum és idő:</label>
+          <input
+            type="datetime-local"
+            class="form-control"
+            id="datetime"
+            name="datetime"
+            formControlName="datetime"
+          />
+          <small
+            *ngIf="
+              newEventForm.get('datetime').invalid &&
+              newEventForm.get('datetime').touched
+            "
+            >Helytelen formátum!</small
+          >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="shortDescription">Rövid leírás:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="shortDescription"
+            name="shortDescription"
+            formControlName="shortDescription"
+            placeholder="Rövid leírás"
+          />
+          <small
+            *ngIf="
+              newEventForm.get('shortDescription').invalid &&
+              newEventForm.get('shortDescription').touched
+            "
+            >Hibás rövid leírás!</small
+          >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="description">Leírás:</label>
+          <textarea
+            class="form-control"
+            id="description"
+            name="description"
+            formControlName="description"
+            placeholder="Leírás"
+            rows="4"
+            cols="45"
+          ></textarea>
+          <small
+            *ngIf="
+              newEventForm.get('description').invalid &&
+              newEventForm.get('description').touched
+            "
+            >Hibás leírás!</small
+          >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="location">Helyszín:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="location"
+            name="location"
+            formControlName="location"
+            placeholder="Helyszín"
+          />
+          <small
+            *ngIf="
+              newEventForm.get('location').invalid &&
+              newEventForm.get('location').touched
+            "
+            >Hibás helyszín!</small
+          >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="maxPeople">Maximális létszám:</label>
+          <input
+            type="number"
+            min="1"
+            class="form-control"
+            id="maxPeople"
+            name="maxPeople"
+            formControlName="maxPeople"
+            placeholder="1"
+          />
+          <small
+            *ngIf="
+              newEventForm.get('maxPeople').invalid &&
+              newEventForm.get('maxPeople').touched
+            "
+            >Hibás maximális létszám!</small
+          >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group mb-3">
+          <label for="category">Érdeklődési kör:</label>
+          <select
+            class="form-control"
+            id="category"
+            name="category"
+            formControlName="category"
+          >
+            <option *ngFor="let elem of this.categories" [value]="elem[0]">
+              {{elem[1]}}
+            </option>
+            >
+          </select>
+          <small
+            *ngIf="
+              newEventForm.get('category').invalid &&
+              newEventForm.get('category').touched
+            "
+            >Hibás érdeklődési kör!</small
+          >
+        </div>
+      </div>
+  
+      <input
+        type="text"
+        class="form-control"
+        id="userUID"
+        name="userUID"
+        formControlName="userUID"
+        hidden = "hidden"
+      />
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="newEventForm.invalid"
+      >
+        Mentés
+      </button>
+    </form>
+  </section>
+</div>

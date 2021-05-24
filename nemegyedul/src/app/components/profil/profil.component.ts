@@ -21,16 +21,16 @@ export class ProfilComponent implements OnInit {
     this.db.loggedInUser.subscribe(
       (user:any)=>{
         this.user=user;
-        this.themes=this.setThemes(user.category);
+        // this.themes=this.setThemes(user.category);
+        this.themes=Object.keys(user.category).filter( index => user.category[index]);
       },
       (err:any)=>console.error(err)
     )
   }
 
-  setThemes(categoryObj: any){
-    return Object.keys(categoryObj).filter( index => categoryObj[index])
-    
-  }
+  // setThemes(categoryObj: any){
+  //   return Object.keys(categoryObj).filter( index => categoryObj[index])
+  // }
 
   newPassword(email:string){
     this.auth.getNewPassword(email)

@@ -31,7 +31,8 @@ export class NavComponent implements OnInit {
 
   ngOnInit(): void {
    
-    this.user = window.sessionStorage.getItem("app_user_uid") 
+    this.user = window.localStorage.getItem("app_user_uid") 
+    // this.user = window.sessionStorage.getItem("app_user_uid") 
     this.databaseService.loggedInUser.subscribe(
       data => this.currentUser = data,
       error => console.error(error)
