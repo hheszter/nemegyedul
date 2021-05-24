@@ -13,7 +13,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class NavComponent implements OnInit {
   navigation = this.config.navigation;
-  currentUser: any = {};
+  currentUser: any = {name: 'user', age: 1};
   user: any = false;
   constructor(
     private config: ConfigService, 
