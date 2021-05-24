@@ -1,0 +1,39 @@
+@use '../../../assets/colors' as c;
+@use '../../../assets/mixins' as m;
+
+.container-fluid {
+  @include m.setSection();
+
+  section {
+    padding: 2rem;
+    background: rgba(250, 250, 250, 0.8);
+
+    .form-check-input:checked {
+      background-color: c.$c-orange !important;
+      border-color: c.$c-orange !important;
+    }
+  }
+
+  button {
+    margin: 1rem auto;
+
+    &.btn-primary {
+      @include m.setMyButton();
+    }
+  }
+
+  small {
+    color: c.$c-deeporange;
+    display: block;
+    font-size: large;
+
+    #resetBtn {
+      font-weight: 600;
+
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+  }
+}
