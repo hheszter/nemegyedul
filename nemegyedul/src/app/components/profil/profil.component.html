@@ -17,7 +17,7 @@
             <small class="d-block">Regisztráció dátuma: {{user.date}}</small>
             <div class="category my-2">
                 <p>Témák, amik érdekelnek:</p>
-                    <span *ngFor="let theme of themes">{{theme}}</span>
+                    <span *ngFor="let theme of user.category">{{theme.displayName}}</span>
             </div>
         </div>
     </div>

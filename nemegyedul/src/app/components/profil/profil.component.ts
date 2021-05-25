@@ -12,7 +12,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class ProfilComponent implements OnInit {
 
   user: User;
-  themes: Array<string>;
+  // themes: Array<string>;
   showMyEvents: boolean = false;
   showMyFriends: boolean = false;
 
@@ -26,7 +26,7 @@ export class ProfilComponent implements OnInit {
     this.dbSubscription = this.db.loggedInUser.subscribe(
       (user:any)=>{
         this.user=user;
-        this.themes=Object.keys(user.category).filter( index => user.category[index]);
+        // this.themes=Object.keys(user.category).filter( index => user.category[index]);
       },
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()

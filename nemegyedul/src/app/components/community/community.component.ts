@@ -20,9 +20,9 @@ export class CommunityComponent implements OnInit {
     this.dbSubscription = this.db.getData("users").subscribe(
       (data:any)=>{
         this.allUser=data;
-        this.allUser.map( user => {
-          user.category = Object.keys(user.category).filter( index => user.category[index])
-        })
+        // this.allUser.map( user => {
+        //   user.category = Object.keys(user.category).filter( index => user.category[index])
+        // })
       },
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()
