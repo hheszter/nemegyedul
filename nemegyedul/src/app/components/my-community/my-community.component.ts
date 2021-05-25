@@ -11,22 +11,23 @@ export class MyCommunityComponent implements OnInit {
 
   @Input() me:User;
 
-  requestedFriends: Array<any>;
+  friendRequests: Array<any>;
+  friendRequestsToMe: Array<any>;
   confirmedFriends: Array<any>;
 
   constructor(private db: DatabaseService) { }
 
   ngOnInit(): void {
-    const requestedFriendsIDs = this.me.friends?.friendRequests;
-    const confirmedFriendsIDs = this.me.friends?.friendLists;
+    const friendReqID = this.me.friends?.friendRequests;
+    const friendReqToMeID = this.me.friends?.friendRequestsToMe;
+    const confirmedID = this.me.friends?.friendLists;
 
-    console.log(requestedFriendsIDs)
 
     this.db.getData('users').subscribe(
       (data)=>{
-        console.log(data);
-        this.requestedFriends = data.filter(user => requestedFriendsIDs.includes(user.id));
-        this.confirmedFriends = data.filter(user => confirmedFriendsIDs.includes(user.id));
+        this.friendRequests = data.filter(user => friendReqID.includes(user.id));
+        this.friendRequestsToMe = data.filter(user => friendReqToMeID.includes(user.id));
+        this.confirmedFriends = data.filter(user => confirmedID.includes(user.id));
       }
     )
   }

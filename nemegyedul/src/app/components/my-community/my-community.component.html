@@ -1,37 +1,58 @@
-<section class="container-md mt-5">
-  <div class="row mx-auto">
-    <p>Ismerősnek jelölések:</p>
-    <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of requestedFriends">
-      <div class="img-holder">
-        <img [src]="user.photo" class="card-img-top" alt="user profil photo">
-      </div>
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title">{{user.name}}</h5>
-        <small class="card-text">{{user.age}}</small>
-        <small class="card-text">{{user.city}}</small>
-        <p class="card-text">
-          <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="container-md mt-5">
-  <div class="row mx-auto">
-    <p>Ismerőseim:</p>
-    <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of confirmedFriends">
-      <div class="img-holder">
-        <img [src]="user.photo" class="card-img-top" alt="user profil photo">
-      </div>
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title">{{user.name}}</h5>
-        <small class="card-text">{{user.age}}</small>
-        <small class="card-text">{{user.city}}</small>
-        <p class="card-text">
-          <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
-        </p>
+<div class="my-community">
+  <section class="container-md mt-5" *ngIf="friendRequestsToMe.length">
+    <div class="row mx-auto">
+      <p>Ismerősnek jelölt engem:</p>
+      <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of friendRequestsToMe">
+        <div class="img-holder">
+          <img [src]="user.photo" class="card-img-top" alt="user profil photo">
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{user.name}}</h5>
+          <small class="card-text">{{user.age}}</small>
+          <small class="card-text">{{user.city}}</small>
+          <p class="card-text">
+            <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+  
+  <section class="container-md mt-5" *ngIf="friendRequests.length">
+    <div class="row mx-auto">
+      <p>Ismerősnek jelöltem:</p>
+      <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of friendRequests">
+        <div class="img-holder">
+          <img [src]="user.photo" class="card-img-top" alt="user profil photo">
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{user.name}}</h5>
+          <small class="card-text">{{user.age}}</small>
+          <small class="card-text">{{user.city}}</small>
+          <p class="card-text">
+            <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="container-md mt-5" *ngIf="confirmedFriends.length">
+    <div class="row mx-auto">
+      <p>Ismerőseim:</p>
+      <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of confirmedFriends">
+        <div class="img-holder">
+          <img [src]="user.photo" class="card-img-top" alt="user profil photo">
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{user.name}}</h5>
+          <small class="card-text">{{user.age}}</small>
+          <small class="card-text">{{user.city}}</small>
+          <p class="card-text">
+            <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
