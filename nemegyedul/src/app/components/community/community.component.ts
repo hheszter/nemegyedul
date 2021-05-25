@@ -20,9 +20,7 @@ export class CommunityComponent implements OnInit {
     this.dbSubscription = this.db.getData("users").subscribe(
       (data:any)=>{
         this.allUser=data;
-        // this.allUser.map( user => {
-        //   user.category = Object.keys(user.category).filter( index => user.category[index])
-        // })
+        //ki kell venni saját magam + aki már ismerős vagy annak jelölt... >>> user.service ???
       },
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()
@@ -38,10 +36,8 @@ export class CommunityComponent implements OnInit {
   }
 
   setFriend(friend:User){
-    console.log(this.me)
-    console.log(friend)
-    
-    // az objektumban a category-t vissza kell állítani, így NEM JÓÓÓÓÓ >>> category-t máshogy mentse...
+    // console.log(this.me)
+    // console.log(friend)
     
     this.me.friends = this.me.friends || {}
     this.me.friends.friendRequests = this.me.friends.friendRequests || [];

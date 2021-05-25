@@ -1,0 +1,8 @@
+@use '../../../assets/mixins' as m;
+
+.img-holder {
+    @include m.setCardImgSize();
+}
+.theme {
+    @include m.setTheme();
+}

@@ -12,7 +12,6 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class ProfilComponent implements OnInit {
 
   user: User;
-  // themes: Array<string>;
   showMyEvents: boolean = false;
   showMyFriends: boolean = false;
 

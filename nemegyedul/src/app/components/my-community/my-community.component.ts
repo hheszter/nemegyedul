@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { User } from 'src/app/model/user';
+import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
   selector: 'app-my-community',
@@ -7,9 +9,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MyCommunityComponent implements OnInit {
 
-  constructor() { }
+  @Input() me:User;
+
+  requestedFriends: Array<any>;
+  confirmedFriends: Array<any>;
+
+  constructor(private db: DatabaseService) { }
 
   ngOnInit(): void {
+    const requestedFriendsIDs = this.me.friends?.friendRequests;
+    const confirmedFriendsIDs = this.me.friends?.friendLists;
+
+    console.log(requestedFriendsIDs)
+
+    this.db.getData('users').subscribe(
+      (data)=>{
+        console.log(data);
+        this.requestedFriends = data.filter(user => requestedFriendsIDs.includes(user.id));
+        this.confirmedFriends = data.filter(user => confirmedFriendsIDs.includes(user.id));
+      }
+    )
   }
 
 }
