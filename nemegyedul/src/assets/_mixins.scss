@@ -11,6 +11,7 @@
 }
 
 @mixin setMyButton(){
+    color: #FFFFFF;
     background: c.$c-orange !important;
     border-color: c.$c-orange !important;
 }
