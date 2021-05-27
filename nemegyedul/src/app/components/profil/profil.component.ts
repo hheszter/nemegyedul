@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { User } from 'src/app/model/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -11,26 +12,25 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class ProfilComponent implements OnInit {
 
   user: User;
-  themes: Array<string>;
+  showMyEvents: boolean = false;
+  showMyFriends: boolean = false;
+
+  dbSubscription: Subscription;
 
   constructor(
     private db: DatabaseService, 
     private auth: AuthService) { }
 
   ngOnInit(): void {
-    this.db.loggedInUser.subscribe(
+    this.dbSubscription = this.db.loggedInUser.subscribe(
       (user:any)=>{
         this.user=user;
-        // this.themes=this.setThemes(user.category);
-        this.themes=Object.keys(user.category).filter( index => user.category[index]);
+        // this.themes=Object.keys(user.category).filter( index => user.category[index]);
       },
-      (err:any)=>console.error(err)
+      (err:any)=>console.error(err),
+      ()=>this.dbSubscription.unsubscribe()
     )
   }
-
-  // setThemes(categoryObj: any){
-  //   return Object.keys(categoryObj).filter( index => categoryObj[index])
-  // }
 
   newPassword(email:string){
     this.auth.getNewPassword(email)
@@ -38,6 +38,14 @@ export class ProfilComponent implements OnInit {
         alert("Nézze meg az emailfiókját!")
       })
       .catch(err=>console.log(err))
+  }
+
+  showEvents(){
+    this.showMyEvents = !this.showMyEvents;
+  }
+
+  showFriends(){
+    this.showMyFriends = !this.showMyFriends;
   }
 
   editProfil(){

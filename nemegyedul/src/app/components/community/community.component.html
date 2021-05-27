@@ -11,10 +11,10 @@
                 <p class="card-text">{{user.age}}</p>
                 <p class="card-text">
                     Ami érdekel:
-                    <span *ngFor="let theme of user.category" class="theme">{{theme}}</span>
+                    <span *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</span>
                     
                 </p>
-                <button class="btn btn-primary mt-auto" (click)="setFriend(user.userUID)">Ismerősnek jelölöm</button>
+                <button class="btn btn-primary mt-auto" (click)="setFriend(user)">Ismerősnek jelölöm</button>
 
             </div>
         </div>

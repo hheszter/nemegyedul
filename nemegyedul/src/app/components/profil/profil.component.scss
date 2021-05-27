@@ -1,8 +1,10 @@
 @use '../../../assets/colors' as c;
+@use '../../../assets/mixins' as m;
 
 .profil {
     display: flex;
     flex-direction: column;
+    margin-top: 2rem;
 
     @media only screen and (min-width: 768px) {
         flex-direction: row;;
@@ -26,9 +28,14 @@
 
     &-datas {
         padding: 2rem;
+        box-shadow: 0 0 5px grey;
 
         @media only screen and (min-width: 768px) {
             width: 65%;
+        }
+
+        h2 {
+            color: c.$c-orange;
         }
 
         .category {
@@ -51,4 +58,9 @@
 .btn a {
     text-decoration: none;
     color: #FFFFFF;
+}
+
+.toggle-btn {
+    margin: 1rem 1rem 0 0;
+    @include m.setMyButton();
 }

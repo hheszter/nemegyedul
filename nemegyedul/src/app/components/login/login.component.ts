@@ -75,8 +75,9 @@ export class LoginComponent implements OnInit {
     this.haveAccount = !this.haveAccount;
   }
 
+  //create list to set registration form:
   createCategoryList() {
-    this.db.getData("categories").subscribe(
+    this.dbSubscription = this.db.getData("categories").subscribe(
       (data) => {
         this.categories = [];
         for (let cat in data[0]) {
@@ -86,7 +87,8 @@ export class LoginComponent implements OnInit {
           }
         }
       },
-      (err) => console.error(err)
+      (err) => console.error(err),
+      ()=>this.dbSubscription.unsubscribe()
     )
   }
 
@@ -115,8 +117,9 @@ export class LoginComponent implements OnInit {
         delete regData.repassword;
         regData.date = new Date().toLocaleDateString();
         regData.userUID = data.user.uid;
+        regData.category = this.createCategoryToDB(regData.category)
         regData.myEvents = [];
-        regData.friends = [];
+        regData.friends = {friendRequests:[], friendLists:[]};
         if (!regData.photo) {
           regData.photo = "https://icon-library.com/images/default-user-icon/default-user-icon-4.jpg" //default avatar photo
         }
@@ -142,6 +145,17 @@ export class LoginComponent implements OnInit {
           console.error(err);
         }
       })
+  }
+
+  //create a category array (with name and displayName) from an object (with true-false values)
+  createCategoryToDB(obj:any){
+    const categoriesToDB = [];
+    this.categories.forEach( item => {
+      if(obj[item.name]){
+        categoriesToDB.push(item)
+      }
+    })
+    return categoriesToDB
   }
 
 

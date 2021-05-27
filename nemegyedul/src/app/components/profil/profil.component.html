@@ -7,7 +7,8 @@
         <div class="profil-datas">
             <h2 class="h3">{{user.name}}</h2>
             <p>{{user.email}}</p>
-            <button class="btn btn-secondary d-block" (click)="newPassword(user.email)">Új jelszó igénylés</button>
+            <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="newPassword(user.email)">Új jelszó igénylés</button>
+            <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="editProfil()">Adatok szerkesztése</button>
             <h4>Személyes adatok:</h4>
             <p>Kor: {{user.age}} év</p>
             <p>Nem: {{user.gender==="male" ? "férfi" : "nő"}}</p>
@@ -16,18 +17,31 @@
             <small class="d-block">Regisztráció dátuma: {{user.date}}</small>
             <div class="category my-2">
                 <p>Témák, amik érdekelnek:</p>
-                    <span *ngFor="let theme of themes">{{theme}}</span>
-
+                    <span *ngFor="let theme of user.category">{{theme.displayName}}</span>
             </div>
-            <!-- <button class="btn btn-secondary d-block" (click)="editProfil()">Adatok szerkesztése</button> -->
-            
-            <button *ngIf="user" class="btn btn-secondary">
-                <a routerLink="/my-events">Események, amik érdekelnek</a>
-            </button>
         </div>
-
     </div>
-
-
     <div *ngIf="!user">Valami hiba történt, jelentkezzen be újra!</div>
 </section>
+
+<div class="container-md">
+    <button *ngIf="user && !showMyEvents" class="btn toggle-btn" (click)="showEvents()">
+        <!-- <a routerLink="/my-events">Események, amik érdekelnek</a> -->
+        Események, amik érdekelnek
+    </button>
+    <button *ngIf="user && showMyEvents" class="btn toggle-btn" (click)="showEvents()">
+        <!-- <a routerLink="/my-events">Események, amik érdekelnek</a> -->
+        Események elrejtése
+    </button>
+    <app-my-events *ngIf="showMyEvents"></app-my-events>
+</div>
+
+<div class="container-md">
+    <button *ngIf="user && !showMyFriends" class="btn toggle-btn" (click)="showFriends()">
+        Ismerősök / jelölések
+    </button>
+    <button *ngIf="user && showMyFriends" class="btn toggle-btn" (click)="showFriends()">
+        Ismerősök elrejtése
+    </button>
+    <app-my-community *ngIf="showMyFriends" [me]=user></app-my-community>
+</div>
