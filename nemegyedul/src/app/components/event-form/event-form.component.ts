@@ -63,6 +63,6 @@ export class EventFormComponent implements OnInit, CanActivate {
 
     this.db.saveData('events', eventData);
 
-    this.router.navigate(["/my-events"]);
+    this.router.navigate(["/events"]);
   }
 }
