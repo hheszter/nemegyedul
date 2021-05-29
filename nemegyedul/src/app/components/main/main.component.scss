@@ -9,16 +9,24 @@
 }
 
 .card .img-frame {
-  height: 250px;
-
-  overflow: hidden;
+ height: 200px;
+  width: 230px;
+ overflow: hidden;
+  background-size: 90%;
+  background-repeat: no-repeat;
   }
+.img-frame :is(img) {
+
+
+  margin: 0 auto;
+}
 
 .card-body {
   display: flex;
   flex-direction: column;
   margin-top: auto;
   height: 100%;
+  background-size: contain;
 }
 
 label {
