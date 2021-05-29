@@ -14,7 +14,7 @@
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
         </div>
-        <button class="btn" (click)="confirmRequest()">Visszaigazolás</button>
+        <button class="btn" (click)="confirmRequest(user)">Visszaigazolás</button>
       </div>
     </div>
   </section>
@@ -34,7 +34,7 @@
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
         </div>
-        <button class="btn" (click)="resetRequest()">Visszavonás</button>
+        <button class="btn" (click)="resetRequest(user)">Visszavonás</button>
       </div>
     </div>
   </section>
@@ -54,7 +54,7 @@
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
         </div>
-        <button class="btn" (click)="deleteFriend()">Ismeretség törlése</button>
+        <button class="btn" (click)="deleteFriend(user)">Ismeretség törlése</button>
       </div>
     </div>
   </section>

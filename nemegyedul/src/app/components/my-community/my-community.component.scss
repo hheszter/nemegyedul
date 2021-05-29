@@ -6,3 +6,6 @@
 .theme {
     @include m.setTheme();
 }
+.btn {
+    @include m.setMyButton();
+}

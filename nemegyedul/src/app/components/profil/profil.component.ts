@@ -25,7 +25,6 @@ export class ProfilComponent implements OnInit {
     this.dbSubscription = this.db.loggedInUser.subscribe(
       (user:any)=>{
         this.user=user;
-        // this.themes=Object.keys(user.category).filter( index => user.category[index]);
       },
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()
@@ -50,6 +49,7 @@ export class ProfilComponent implements OnInit {
 
   editProfil(){
     //modal form, save to db, db.loggedInUser.next(...)  
+    alert("Ez a funkció még fejlesztés alatt áll... Köszönjük a türelmét!")
   }
 
 }
