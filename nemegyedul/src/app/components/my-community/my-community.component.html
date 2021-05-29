@@ -14,10 +14,11 @@
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
         </div>
+        <button class="btn" (click)="confirmRequest()">Visszaigazolás</button>
       </div>
     </div>
   </section>
-  
+
   <section class="container-md mt-5" *ngIf="friendRequests.length">
     <div class="row mx-auto">
       <p>Ismerősnek jelöltem:</p>
@@ -33,10 +34,11 @@
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
         </div>
+        <button class="btn" (click)="resetRequest()">Visszavonás</button>
       </div>
     </div>
   </section>
-  
+
   <section class="container-md mt-5" *ngIf="confirmedFriends.length">
     <div class="row mx-auto">
       <p>Ismerőseim:</p>
@@ -52,7 +54,9 @@
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
         </div>
+        <button class="btn" (click)="deleteFriend()">Ismeretség törlése</button>
       </div>
     </div>
   </section>
+
 </div>

@@ -1,12 +1,28 @@
 .row {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
-.card-body {
-    display: flex;
-    flex-direction: column;
-}
+
 .card-body a {
-    align-self:baseline;
+  align-self:baseline;
 }
+
+.card .img-frame {
+  height: 250px;
+
+  overflow: hidden;
+  }
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  height: 100%;
+}
+
+label {
+  white-space: nowrap;
+  align-items: center;
+}
+
