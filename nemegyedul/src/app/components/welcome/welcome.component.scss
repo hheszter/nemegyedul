@@ -1,5 +1,16 @@
 @use '../../../assets/mixins' as m;
 
+section {
+        border: 0.1px solid grey;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        background-image: url("https://images.unsplash.com/photo-1593435712887-ad77a3ca987e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80");
+        background-repeat: no-repeat;
+        background-size: cover;
+}
+
 .btn {
         @include m.setMyButton();
 }
