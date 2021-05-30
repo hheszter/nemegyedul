@@ -1,3 +1,4 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/model/user';
@@ -57,11 +58,31 @@ export class MyCommunityComponent implements OnInit {
   }
 
   resetRequest(friend:User) {
-    console.log(this.me.id, friend.id)
+    const newMe = this.me;
+    newMe.friends.friendRequests = this.me.friends.friendRequests.filter( (ids:string)=> ids !== friend.id);
+
+    this.db.updateData("users", this.me.id, newMe);
+
+    const newFriend = friend;
+    newFriend.friends.friendRequestsToMe = friend.friends.friendRequestsToMe.filter( (ids:string)=> ids !== this.me.id);
+    
+    this.db.updateData("users", friend.id, newFriend);
+
+    this.refreshFriendLists();
   }
 
   deleteFriend(friend:User) {
-    console.log(this.me.id, friend.id)
+    const newMe = this.me;
+    newMe.friends.friendLists = this.me.friends.friendLists.filter( (ids:string)=> ids !== friend.id);
+
+    this.db.updateData("users", this.me.id, newMe);
+
+    const newFriend = friend;
+    newFriend.friends.friendLists = friend.friends.friendLists.filter( (ids:string)=> ids !== this.me.id);
+    
+    this.db.updateData("users", friend.id, newFriend);
+
+    this.refreshFriendLists();
   }
 
 

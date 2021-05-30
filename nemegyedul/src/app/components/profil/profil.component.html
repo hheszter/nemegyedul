@@ -26,11 +26,9 @@
 
 <div class="container-md">
     <button *ngIf="user && !showMyEvents" class="btn toggle-btn" (click)="showEvents()">
-        <!-- <a routerLink="/my-events">Események, amik érdekelnek</a> -->
         Események, amik érdekelnek
     </button>
     <button *ngIf="user && showMyEvents" class="btn toggle-btn" (click)="showEvents()">
-        <!-- <a routerLink="/my-events">Események, amik érdekelnek</a> -->
         Események elrejtése
     </button>
     <app-my-events *ngIf="showMyEvents"></app-my-events>
