@@ -1,4 +1,3 @@
-import { ThrowStmt } from '@angular/compiler';
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/model/user';
@@ -37,19 +36,23 @@ export class MyCommunityComponent implements OnInit {
         this.confirmedFriends = data.filter(user => confirmedID.includes(user.id));
       },
       (err) => console.log(err),
-      () => this.dbSubscription.unsubscribe()
+      () => {
+        this.dbSubscription.unsubscribe();
+      }
     )
   }
 
   confirmRequest(friend:User) {
     const newMe = this.me;
     newMe.friends.friendRequestsToMe = this.me.friends.friendRequestsToMe.filter( (ids:string)=> ids !== friend.id);
+    newMe.friends.friendLists = newMe.friends.friendLists || [];
     newMe.friends.friendLists.push(friend.id);
 
     this.db.updateData("users", this.me.id, newMe);
 
     const newFriend = friend;
     newFriend.friends.friendRequests = friend.friends.friendRequests.filter( (ids:string)=> ids !== this.me.id);
+    newFriend.friends.friendLists = newFriend.friends.friendLists || [];
     newFriend.friends.friendLists.push(this.me.id);
 
     this.db.updateData("users", friend.id, newFriend);

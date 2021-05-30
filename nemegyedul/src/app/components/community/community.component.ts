@@ -28,20 +28,10 @@ export class CommunityComponent implements OnInit {
 
     this.dbSubscription = this.db.getData("users").subscribe(
       (data:any)=>{
-        this.allUser=data;
-        
-        //delete from allUser: me, requests, requestsToMe >>>
-        //NEM MEGY A FILTER ????
-        // this.filteredAllUser = (this.me.id) 
-        //   ? this.allUser.filter(user => {
-        //       user
-              // && user.id !== this.me.id 
-              // && !this.me.friends.friendRequests.includes(user.id) 
-              // && !this.me.friends.friendRequestsToMe.includes(user.id)
-          // })
-          // : this.allUser;
-
-        this.filteredAllUser = this.allUser;
+        this.allUser = data
+          .filter((user:User)=>user.id!==this.me.id)
+          .filter((user:User)=>!this.me.friends.friendRequests.includes(user.id))
+          .filter((user:User)=>!this.me.friends.friendRequestsToMe.includes(user.id));
       },
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()

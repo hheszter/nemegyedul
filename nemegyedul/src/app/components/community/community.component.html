@@ -1,7 +1,8 @@
 <div class="container-md mt-5">
     <div class="row mx-auto">
+        <p>Kiket ismerhetek:</p>
 
-        <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of filteredAllUser">
+        <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of allUser">
             <div class="img-holder">
                 <img [src]="user.photo" class="card-img-top" alt="user profil photo">
             </div>
