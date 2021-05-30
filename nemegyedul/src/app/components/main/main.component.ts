@@ -55,7 +55,7 @@ export class MainComponent implements OnInit {
     this.localeDate = new Intl.DateTimeFormat('hu-HU').format(Date.parse(selectedEvent.datetime));
     console.log(this.localeDate)
      for (let i = 0; i < this.currentUser.myEvents.length; i++) {
-        console.log(this.currentUser.myEvents[i])
+        //console.log(this.currentUser.myEvents[i])
        if (this.currentUser.myEvents[i] === selectedEvent.id) {
          this.buttonDisable = true;
        }
@@ -74,13 +74,13 @@ export class MainComponent implements OnInit {
     this.currentUser.myEvents.push(selectedEventId);
     this.dataService.updateData('users', this.currentUser.id, this.currentUser)
 
-    console.log(this.currentUser)
+    //console.log(this.currentUser)
 
   }
 
   selectCategory() {
     let selected = this.formCategory.value;
-    console.log(selected.category)
+    //console.log(selected.category)
     if (selected.category === "") {
       this.dataService.getData('categories').subscribe(
         data => {
