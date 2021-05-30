@@ -26,13 +26,12 @@
 
 <div class="container-md">
     <button *ngIf="user && !showMyEvents" class="btn toggle-btn" (click)="showEvents()">
-        <!-- <a routerLink="/my-events">Események, amik érdekelnek</a> -->
         Események, amik érdekelnek
     </button>
     <button *ngIf="user && showMyEvents" class="btn toggle-btn" (click)="showEvents()">
-        <!-- <a routerLink="/my-events">Események, amik érdekelnek</a> -->
         Események elrejtése
     </button>
+
     <app-my-events *ngIf="showMyEvents"></app-my-events>
 </div>
 
@@ -43,5 +42,6 @@
     <button *ngIf="user && showMyFriends" class="btn toggle-btn" (click)="showFriends()">
         Ismerősök elrejtése
     </button>
+
     <app-my-community *ngIf="showMyFriends" [me]=user></app-my-community>
 </div>

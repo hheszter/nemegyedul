@@ -94,7 +94,6 @@ export class LoginComponent implements OnInit {
 
   checkUserLoggedIn() {
     let uid = window.localStorage.getItem("app_user_uid");
-    // let uid = window.sessionStorage.getItem("app_user_uid");
     if (uid) {
       this.db.getUserLoggedIn(uid);
       this.router.navigate(["/main"]);
