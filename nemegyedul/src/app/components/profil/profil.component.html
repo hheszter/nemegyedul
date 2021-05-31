@@ -4,7 +4,7 @@
             <img [src]="user.photo" alt="user photo">
         </div>
 
-        <div class="profil-datas">
+        <div class="profil-datas" [ngStyle]="{'background-color': '#0006'}">
             <h2 class="h3">{{user.name}}</h2>
             <p>{{user.email}}</p>
             <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="newPassword(user.email)">Új jelszó igénylés</button>
