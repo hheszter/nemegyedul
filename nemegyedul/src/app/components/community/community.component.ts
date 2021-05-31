@@ -28,10 +28,13 @@ export class CommunityComponent implements OnInit {
 
     this.dbSubscription = this.db.getData("users").subscribe(
       (data:any)=>{
-        this.allUser = data
-          .filter((user:User)=>user.id!==this.me.id)
-          .filter((user:User)=>!this.me.friends.friendRequests.includes(user.id))
-          .filter((user:User)=>!this.me.friends.friendRequestsToMe.includes(user.id));
+        this.allUser = data.filter((user:User)=>user.id!==this.me.id);
+        if(this.me.friends.friendRequests){
+          this.allUser = this.allUser.filter((user:User)=>!this.me.friends.friendRequests.includes(user.id))
+        }
+        if(this.me.friends.friendRequestsToMe){
+          this.allUser = this.allUser.filter((user:User)=>!this.me.friends.friendRequestsToMe.includes(user.id));
+        }
       },
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()
