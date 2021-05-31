@@ -87,6 +87,4 @@ export class MyCommunityComponent implements OnInit {
 
     this.refreshFriendLists();
   }
-
-
 }

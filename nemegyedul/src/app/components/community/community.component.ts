@@ -45,7 +45,9 @@ export class CommunityComponent implements OnInit {
   setFriend(friend:User){    
     this.me.friends = this.me.friends || {}
     this.me.friends.friendRequests = this.me.friends.friendRequests || [];
+
     if(this.me.friends.friendRequests.includes(friend.id)){
+      //extra protection, unnecessary, can be deleted
       alert("Már ismerősnek jelölted");
       return
     } else {
@@ -57,7 +59,9 @@ export class CommunityComponent implements OnInit {
     
     friend.friends = friend.friends || {};
     friend.friends.friendRequestsToMe = friend.friends.friendRequestsToMe || [];
+
     if(friend.friends.friendRequestsToMe.includes(this.me.id)){
+      //extra protection, unnecessary, can be deleted
       alert("Már szóltam, hogy Őt már ismerősnek jelölted");
       return
     } else {

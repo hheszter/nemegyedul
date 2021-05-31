@@ -125,9 +125,9 @@ export class LoginComponent implements OnInit {
         this.db.saveData("users", regData);
 
         //send email to verify email address!!!
-        // data.user.sendEmailVerification()
-        //   .then(()=>console.log("email has been sent")) //set the link to continoue
-        //   .catch(err=>console.error(err))
+        data.user.sendEmailVerification()
+          .then(()=>console.log("email has been sent")) //set the link to continoue
+          .catch(err=>console.error(err))
       })
       .then(() => {
         this.regForm.reset();
@@ -165,16 +165,16 @@ export class LoginComponent implements OnInit {
     this.auth.login(loginData.logEmail, loginData.logPassword)
       .then((data) => {
         //without email verification:
-        this.auth.setLocalStorage();
-        this.router.navigate(["/main"]);
+        // this.auth.setLocalStorage();
+        // this.router.navigate(["/main"]);
 
         //with email verification:
-        // if(data.user.emailVerified){
-        //   this.auth.setLocalStorage();
-        //   this.router.navigate(["/main"]);
-        // } else {
-        //   this.setModal("Hiányzó jóváhagyás", "Erősítse meg az email címét, lépjen be az emailfiókjába", false)
-        // }
+        if(data.user.emailVerified){
+          this.auth.setLocalStorage();
+          this.router.navigate(["/main"]);
+        } else {
+          this.setModal("Hiányzó jóváhagyás", "Erősítse meg az email címét, lépjen be az emailfiókjába", false)
+        }
       })
       .catch(err => {
         this.invalidLogin = true;
