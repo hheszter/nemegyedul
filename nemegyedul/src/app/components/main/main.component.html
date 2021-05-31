@@ -24,7 +24,7 @@
 
 <div class="container-md py-5">
   <div class="row">
-    <div class="form-group col-md-8 mb-3 d-flex mx-auto" [formGroup]="formCategory">
+    <div class="form-group col-md-8 mb-3 d-flex mx-auto text-light" [formGroup]="formCategory">
       <label class="form-label me-3 mt-1" for="category"> Érdeklődési kör:</label>
       <select class="form-select p-1" id="category" formControlName="category" aria-label="Floating label select">
         <option value="">Összes kategória</option>
@@ -32,15 +32,15 @@
           {{elem[1]}}
         </option>
       </select>
-      <button class="btn btn-primary ms-2" (click)="selectCategory()" type="submit">Szűrés</button>
+      <button class="btn btn-primary ms-2 filter-button" (click)="selectCategory()" type="submit">Szűrés</button>
     </div>
   </div>
 
-    <div class="card__container row mx-auto my-5" *ngFor="let category of currentCategory">
+    <div class="card__container row mx-auto my-5 text-light" *ngFor="let category of currentCategory">
         <h3 class="text-center col-12 mb-3">{{category[1]}}</h3>
         <div class="card__frame col-md-6 col-lg-4 m-2  " *ngFor="let card of eventArray" [ngStyle]="card.category == category[0] ? {'display': 'block'} : {'display': 'none' }">
           <div class="card__content">
-            <div class="card__front" [ngStyle]="{'background': 'url('+ card.imageUrl +') #FFEE99 center center no-repeat', 'background-size': 'cover', 'background-color': '#555555'}" >
+            <div class="card__front" [ngStyle]="{'background': 'url('+ card.imageUrl +')  center center no-repeat', 'background-size': 'cover', 'background-color': '#555555'}" >
               <h4 class="card__front-title">{{card.name}}</h4>
               <p class="card__front-subtitle">{{card.datetime | date: 'fullDate'}}</p>
             </div>
@@ -48,9 +48,11 @@
               <div class="img-frame">
                 <img [src]="card.imageUrl" class="card-img-top " alt="...">
               </div>
-              <h5 class="card__back-title">{{card.name}}</h5>
-              <p class="card__back--text">{{card.shortDescription}}</p>
-              <a href="#" class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="currentEvent(card)">Bővebben</a>
+              <div class="card__back-content">
+                <h5 class="card__back-title">{{card.name}}</h5>
+                <p class="card__back--text">{{card.shortDescription}}</p>
+                <a href="#" class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="currentEvent(card)">Bővebben</a>
+              </div>
             </div>
           </div>
 </div>

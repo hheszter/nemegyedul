@@ -1,3 +1,4 @@
+@use '../../../assets/mixins' as m;
 
 .container-md {
   background-color: #0006;
@@ -14,32 +15,17 @@ label {
   align-items: center;
 }
 
-
-
-.img-frame {
-  margin: 0 auto;
- height: 200px;
-  width: 230px;
- overflow: hidden;
-  background-size: 90%;
-  background-repeat: no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.img-frame :is(img) {
-
-  width: 100%;
-  height: auto;
-
-}
 .card__frame {
   //position: relative;
   width: 18rem;
   height: 25rem;
   outline: none;
   border: none;
+  transform: scale(1);
+  transition: transform .5s linear;
+}
+.card__frame:hover {
+  transform: scale(1.05);
 }
 
 .card__content {
@@ -57,6 +43,7 @@ label {
 
 .card__frame:hover .card__content {
   transform: rotateY(.5turn);
+
 }
 
 .card__front,
@@ -79,7 +66,7 @@ label {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
+  //overflow: hidden;
   background-blend-mode:multiply
 }
 
@@ -117,13 +104,79 @@ label {
 
 .card__back {
   transform: rotateY(.5turn);
-  padding: .5rem;
+  //padding: .5rem;
   background-color: white;
-  //user-select: none;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-image: linear-gradient(35deg, #ffdc17, #222);
+  //overflow: hidden;
+}
+
+.card__back .img-frame {
+  margin: 5px auto;
+  max-height: 200px;
+  width: 90%;
+  overflow: hidden;
+  background-size: 90%;
+  background-repeat: no-repeat;
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  //background-color: #222;
+  border-radius: .3rem;
+  border: 3px solid #ffdc17;
+  position: relative;
+}
+
+
+
+.img-frame :is(img) {
+
+  width: 100%;
+  height: auto;
+
+}
+
+.card__back-content {
+  align-content: flex-end;
+  height: calc(100%-200px);
+  //background-color: #222;
+  background-image: linear-gradient(hsl(0 0% 0% / 0), hsl(0 0% 0% / 1));
+  margin-top: auto;
+  padding: 0.5rem;
+  color: whitesmoke;
+  text-align: center;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 .card__back-title {
   transform: translateZ(5rem);
+  position: relative;
+
+}
+.card__back-title::after {
+  content: '';
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  //background-image: linear-gradient(-90deg, white, #368cd8 40%);
+  background-image: linear-gradient(-90deg, #ffdc17, #DE9000);
+  bottom: -6px;
+  left: -0.5rem;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .3s ease-in 2s;
+
+
+}
+
+.card__frame:hover .card__back-title::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 .card__back--text {
@@ -134,5 +187,9 @@ label {
   align-self:baseline;
   z-index: 10;
   transform: translateZ(2rem);
+  @include m.setMyButton();
+  margin-bottom: 0.5rem;
 }
-
+.filter-button {
+  @include m.setMyButton();
+}
