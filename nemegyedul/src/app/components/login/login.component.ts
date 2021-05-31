@@ -125,9 +125,9 @@ export class LoginComponent implements OnInit {
         this.db.saveData("users", regData);
 
         //send email to verify email address!!!
-        // data.user.sendEmailVerification()
-        //   .then(()=>console.log("email has been sent")) //set the link to continoue
-        //   .catch(err=>console.error(err))
+        data.user.sendEmailVerification()
+          .then(()=>console.log("email has been sent")) //set the link to continoue
+          .catch(err=>console.error(err))
       })
       .then(() => {
         this.regForm.reset();

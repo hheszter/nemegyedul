@@ -9,11 +9,9 @@ import { User } from '../model/user';
 export class DatabaseService {
 
   dbSubscription: Subscription | undefined;
-  // currentUser: any; //TÖRÖLHETŐ
-  // currentUserArray: any[]; //TÖRÖLHETŐ
   
-  // loggedInUser: any = new Subject<any>();
   loggedInUser: any = new BehaviorSubject<any>(null);
+  newFriendReq: any = new BehaviorSubject<any>(0);
   
   constructor(private firestore: AngularFirestore) { 
   }
@@ -46,6 +44,13 @@ export class DatabaseService {
           if (user.userUID) {
             if (user.userUID === uid) {
               this.loggedInUser.next(user);
+
+              //indicate marks:
+              if(user.friends){
+                if(user.friends.friendRequestsToMe){
+                  this.newFriendReq.next(user.friends.friendRequestsToMe.length)
+                }
+              }
             }
           }
         })

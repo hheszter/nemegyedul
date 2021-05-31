@@ -24,8 +24,9 @@
     <section *ngIf="!haveAccount" class="container-sm col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 reg-container">
         <form [formGroup]="regForm" (ngSubmit)="registration()">
             <legend>Regisztráció</legend>
+            <h6 class="obligatory">(*-gal jelölt mezők kitöltése kötelező!)</h6>
             <div class="mb-3">
-                <label for="email" class="form-label">Email cím:</label>
+                <label for="email" class="form-label">Email cím:<span class="obligatory"> * </span></label>
                 <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
                     formControlName="email">
                 <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
@@ -33,33 +34,33 @@
             </div>
 
             <div class="mb-3">
-                <label for="password" class="form-label">Jelszó:</label>
+                <label for="password" class="form-label">Jelszó:<span class="obligatory"> * </span></label>
                 <input type="password" class="form-control" id="password" formControlName="password">
                 <small *ngIf="regForm.get('password').invalid && regForm.get('password').touched">Helytelen formátum:
                     min. 6 és max. 20 karakter hosszú legyen!</small>
             </div>
 
             <div class="mb-3">
-                <label for="repassword" class="form-label">Jelszó ismét:</label>
+                <label for="repassword" class="form-label">Jelszó ismét:<span class="obligatory"> * </span></label>
                 <input type="password" class="form-control" id="repassword" formControlName="repassword">
             </div>
 
             <div class="mb-3">
-                <label for="name" class="form-label">Név:</label>
+                <label for="name" class="form-label">Név:<span class="obligatory"> * </span></label>
                 <input type="text" class="form-control" id="name" formControlName="name">
                 <small *ngIf="regForm.get('name').invalid && regForm.get('name').touched">Helytelen formátum: csak
                     betűket .(pont) és -(kötőjel) karaktereket használjon!</small>
             </div>
 
             <div class="mb-3">
-                <label for="age" class="form-label">Kor:</label>
+                <label for="age" class="form-label">Kor:<span class="obligatory"> * </span></label>
                 <input type="number" class="form-control" id="age" formControlName="age" min="18" max="110">
                 <small *ngIf="regForm.get('age').invalid && regForm.get('age').touched">Minimum 18 maximum 110 év adható
                     meg!</small>
             </div>
 
             <div class="mb-3">
-                <label for="gender" class="form-label">Nem:</label>
+                <label for="gender" class="form-label">Nem:<span class="obligatory"> * </span></label>
                 <select name="gender" class="form-select" id="gender" formControlName="gender">
                     <option value="male">Férfi</option>
                     <option value="female">Nő</option>
@@ -69,7 +70,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="city" class="form-label">Település:</label>
+                <label for="city" class="form-label">Település:<span class="obligatory"> * </span></label>
                 <input type="text" class="form-control" id="city" formControlName="city">
                 <small *ngIf="regForm.get('city').invalid && regForm.get('city').touched">Helytelen formátum: csak
                     betűket és -(kötőjel) karaktereket használjon!</small>
@@ -83,7 +84,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="role" class="form-label">Jogosultság:</label>
+                <label for="role" class="form-label">Jogosultság:<span class="obligatory"> * </span></label>
                 <select name="role" class="form-select" id="role" formControlName="role">
                     <option value="1" selected>Ingyenes</option>
                     <option value="2">Előfizetői</option>

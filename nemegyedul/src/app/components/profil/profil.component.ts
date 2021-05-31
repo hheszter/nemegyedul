@@ -12,6 +12,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class ProfilComponent implements OnInit {
 
   user: User;
+  
   showMyEvents: boolean = false;
   showMyFriends: boolean = false;
 
@@ -28,7 +29,7 @@ export class ProfilComponent implements OnInit {
       },
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()
-    )
+    );
   }
 
   newPassword(email:string){
