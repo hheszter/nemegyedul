@@ -11,7 +11,7 @@ export class DatabaseService {
   dbSubscription: Subscription | undefined;
   
   loggedInUser: any = new BehaviorSubject<any>(null);
-  newFriendReq: any = new BehaviorSubject<any>(null);
+  newFriendReq: any = new BehaviorSubject<any>(0);
   
   constructor(private firestore: AngularFirestore) { 
   }
@@ -46,12 +46,11 @@ export class DatabaseService {
               this.loggedInUser.next(user);
 
               //indicate marks:
-              // if(user.friends){
-              //   if(user.friends.friendRequestsToMe){
-                  // console.log(user.friends.friendRequestsToMe)
-                  // this.newFriendReq.next(user.friends.friendRequestsToMe.length)
-                // }
-              // }
+              if(user.friends){
+                if(user.friends.friendRequestsToMe){
+                  this.newFriendReq.next(user.friends.friendRequestsToMe.length)
+                }
+              }
             }
           }
         })

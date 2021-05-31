@@ -11,3 +11,13 @@
         color: c.$c-orange;
     }
 }
+
+
+.badge {
+    position: relative;
+    top: -10px;
+    left: -10px;
+    border-radius: 50%;
+    background: c.$c-orange;
+    
+}

@@ -12,8 +12,7 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class ProfilComponent implements OnInit {
 
   user: User;
-  // newFriendRequest: any;
-
+  
   showMyEvents: boolean = false;
   showMyFriends: boolean = false;
 
@@ -31,14 +30,6 @@ export class ProfilComponent implements OnInit {
       (err:any)=>console.error(err),
       ()=>this.dbSubscription.unsubscribe()
     );
-
-    // this.dbSubscription = this.db.newFriendReq.subscribe(
-    //   (req:any)=>{
-    //     this.newFriendRequest=req;
-    //   },
-    //   (err:any)=>console.error(err),
-    //   ()=>this.dbSubscription.unsubscribe()
-    // );
   }
 
   newPassword(email:string){
