@@ -8,8 +8,9 @@
         @include m.setMyButton();
 
         &.active {
-            background: c.$c-yellow !important;
-            color: c.$c-deeporange !important;
+            background: grey !important;
+            // background: c.$c-yellow !important;
+            // color: c.$c-deeporange !important;
         }
     }
 }

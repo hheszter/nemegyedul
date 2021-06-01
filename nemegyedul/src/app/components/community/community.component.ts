@@ -31,6 +31,7 @@ export class CommunityComponent implements OnInit {
 
     this.dbSubscription = this.db.getData("users").subscribe(
       (data: any) => {
+        //show all users - without: me, friends and marked users
         this.allUser = data.filter((user: User) => user.id !== this.me.id);
         if (this.me.friends.friendRequests) {
           this.allUser = this.allUser.filter((user: User) => !this.me.friends.friendRequests.includes(user.id))
@@ -54,6 +55,7 @@ export class CommunityComponent implements OnInit {
 
   }
 
+  //mark as friend:
   setFriend(friend: User) {
     this.me.friends = this.me.friends || {}
     this.me.friends.friendRequests = this.me.friends.friendRequests || [];
@@ -84,7 +86,7 @@ export class CommunityComponent implements OnInit {
     }
   }
 
-
+ //filter users according themes:
   showAllCategory() {
     this.selectedCategories = [];
     document.querySelectorAll(".category-btn").forEach(btn => {
@@ -108,21 +110,22 @@ export class CommunityComponent implements OnInit {
 
   filterAllUser(selection: Array<any>) {
     this.filteredUser = [];
-    // this.allUser.forEach(user => {
-    //   user.category.forEach(userCat => {
-    //     if(selection.includes(userCat.name)){
-    //       // if(!this.filteredUser.includes(user)){
-    //         this.filteredUser.push(user)
-
-    //       // }
-    //     }
-    //   })
-    // })
-    this.filteredUser = this.allUser.filter( user => {
-      // user.category.filter(cat => {
-      //   selection.includes(cat.name)
-      // })
-      user.category.includes
+    this.allUser.forEach(user => {
+      let userCat = user.category.map( cat => cat.name);
+      if(userCat.some( item => selection.includes(item))){
+        this.filteredUser.push(user)
+      }
     })
   }
+
+  //order user in lists:
+  orderByName(){
+    this.filteredUser.sort( (a, b) => (a.name > b.name) ? 1 : -1);
+  }
+
+  orderByAge(){
+    this.filteredUser.sort( (a,b) => a.age - b.age)
+  }
+
+  
 }
