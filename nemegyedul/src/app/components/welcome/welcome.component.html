@@ -14,8 +14,8 @@
                 Az oldal használata regisztrációhoz kötött
             </p>
                 <div>
-                    <a routerLink="login" class="btn btn-primary">Bejelentkezés</a>
-    
+                    <a routerLink="login" class="btn btn-primary" *ngIf="isLoggedIn == 0">Bejelentkezés</a>
+
                 </div>
             </div>
         </div>

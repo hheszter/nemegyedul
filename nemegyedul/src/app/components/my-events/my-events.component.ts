@@ -53,13 +53,14 @@ export class MyEventsComponent implements OnInit {
   filterData (eventArray, currentUser, myEventArray) {
 
     for(let j = 0; j< eventArray.length; j++) {
-      let i= 0
-      for (i= 0; i< currentUser.myEvents.length; i++) {
-        if(eventArray[j].id === currentUser.myEvents[i]) {
+      //let i= 0
+      //for (i= 0; i< currentUser.myEvents.length; i++) {
+        // if(eventArray[j].id === currentUser.myEvents[i]) {
+        if(eventArray[j].userUID === currentUser.userUID) {
           myEventArray.push(eventArray[j])
           //console.log(myEventArray)
         }
-      }
+      //}
     }
 
 

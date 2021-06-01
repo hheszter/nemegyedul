@@ -53,7 +53,7 @@ export class MainComponent implements OnInit {
   currentEvent(selectedEvent: any) {
     this.selectedEvent = selectedEvent;
     this.localeDate = new Intl.DateTimeFormat('hu-HU').format(Date.parse(selectedEvent.datetime));
-    console.log(this.localeDate)
+    //console.log(this.localeDate)
      for (let i = 0; i < this.currentUser.myEvents.length; i++) {
         //console.log(this.currentUser.myEvents[i])
        if (this.currentUser.myEvents[i] === selectedEvent.id) {

@@ -41,6 +41,7 @@
         <div class="card__frame col-md-6 col-lg-4 m-2  " *ngFor="let card of eventArray" [ngStyle]="card.category == category[0] ? {'display': 'block'} : {'display': 'none' }">
           <div class="card__content">
             <div class="card__front" [ngStyle]="{'background': 'url('+ card.imageUrl +')  center center no-repeat', 'background-size': 'cover', 'background-color': '#555555'}" >
+              <!--  -->
               <h4 class="card__front-title">{{card.name}}</h4>
               <p class="card__front-subtitle">{{card.datetime | date: 'fullDate'}}</p>
             </div>
