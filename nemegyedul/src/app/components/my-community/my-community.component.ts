@@ -12,9 +12,9 @@ export class MyCommunityComponent implements OnInit {
 
   @Input() me: User;
 
-  friendRequests: Array<any>;
-  friendRequestsToMe: Array<any>;
-  confirmedFriends: Array<any>;
+  friendRequests: Array<any> = [];
+  friendRequestsToMe: Array<any> = [];
+  confirmedFriends: Array<any> = [];
 
   dbSubscription: Subscription;
 
@@ -31,9 +31,9 @@ export class MyCommunityComponent implements OnInit {
 
     this.dbSubscription = this.db.getData('users').subscribe(
       (data) => {
-        this.friendRequests = data.filter(user => friendReqID.includes(user.id));
-        this.friendRequestsToMe = data.filter(user => friendReqToMeID.includes(user.id));
-        this.confirmedFriends = data.filter(user => confirmedID.includes(user.id));
+        if(friendReqID){this.friendRequests = data.filter(user => friendReqID.includes(user.id))};
+        if(friendReqToMeID){this.friendRequestsToMe = data.filter(user => friendReqToMeID.includes(user.id))};
+        if(confirmedID){this.confirmedFriends = data.filter(user => confirmedID.includes(user.id))};
       },
       (err) => console.log(err),
       () => {
