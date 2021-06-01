@@ -1,0 +1,116 @@
+.chess {
+  &-board {
+    font-size: 0;
+    padding: 0;
+    margin: 0 auto;
+    height: 488px;
+    width: 488px;
+    border: 4px solid black;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
+}
+
+.square {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 60px;
+  min-height: 60px;
+
+  &-black {
+    background-color: rgb(96, 96, 96);
+  }
+
+  &-white {
+    background-color: rgb(192, 192, 192);
+  }
+
+  &-current,
+  &-possible,
+  &-hit {
+    border: 4px black dotted;
+    cursor: pointer;
+  }
+
+  &-current {
+    background-color: green;
+  }
+
+  &-possible {
+    background-color: blue;
+  }
+
+  &-hit {
+    background-color: red;
+  }
+}
+
+.piece {
+  margin: 0;
+  padding: 0;
+  &-wrapper {
+    position: relative;
+  }
+
+  &-disabled img {
+    background-color: chocolate;
+    cursor: not-allowed;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.players {
+  text-align: center;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  margin: 1rem auto;
+
+  width: 488px;
+  border: 4px solid black;
+}
+
+.player {
+  box-sizing: border-box;
+  border: 4px transparent solid;
+  &-image-wrapper {
+    position: relative;
+  }
+  &-avatar-image {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+  }
+
+  .black-piece,
+  .white-piece {
+    background-color: rgb(128, 128, 128);
+    border-radius: 50%;
+  }
+
+  &-active {
+    border: 4px red dotted;
+  }
+}
+
+.game {
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  &-avatar-image {
+    width: 100px;
+    height: 100px;
+  }
+}
