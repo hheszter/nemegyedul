@@ -1,7 +1,7 @@
 <div class="my-community">
-  <section class="container-md mt-5" *ngIf="friendRequestsToMe.length">
+  <section class="container-md mt-5" *ngIf="friendRequestsToMe && friendRequestsToMe.length">
+    <p>Ismerősnek jelölt engem:</p>
     <div class="row mx-auto">
-      <p>Ismerősnek jelölt engem:</p>
       <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of friendRequestsToMe">
         <div class="img-holder">
           <img [src]="user.photo" class="card-img-top" alt="user profil photo">
@@ -19,9 +19,9 @@
     </div>
   </section>
 
-  <section class="container-md mt-5" *ngIf="friendRequests.length">
+  <section class="container-md mt-5" *ngIf="friendRequests && friendRequests.length">
+    <p>Ismerősnek jelöltem:</p>
     <div class="row mx-auto">
-      <p>Ismerősnek jelöltem:</p>
       <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of friendRequests">
         <div class="img-holder">
           <img [src]="user.photo" class="card-img-top" alt="user profil photo">
@@ -39,9 +39,9 @@
     </div>
   </section>
 
-  <section class="container-md mt-5" *ngIf="confirmedFriends.length">
+  <section class="container-md mt-5" *ngIf="confirmedFriends && confirmedFriends.length">
+    <p>Ismerőseim:</p>
     <div class="row mx-auto">
-      <p>Ismerőseim:</p>
       <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of confirmedFriends">
         <div class="img-holder">
           <img [src]="user.photo" class="card-img-top" alt="user profil photo">
