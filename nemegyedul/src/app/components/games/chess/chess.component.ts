@@ -17,6 +17,11 @@ export class ChessComponent implements OnInit {
     1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h',
   };
 
+  colorPieces = {
+    black: ['BlackBishop', 'BlackKing', 'BlackKnight', 'BlackPawn', 'BlackQueen', 'BlackRook'],
+    white: ['WhiteBishop', 'WhiteKing', 'WhiteKnight', 'WhitePawn', 'WhiteQueen', 'WhiteRook']
+  }
+
   chessPieces = {
     BlackBishop: '../../../../assets/images/chess/BlackBishop.png',
     BlackKing: '../../../../assets/images/chess/BlackKing.png',
@@ -72,13 +77,18 @@ export class ChessComponent implements OnInit {
   currentGame = {
     players: [{
       name: 'Jucus',
+      id: '1',
       color: 'white'
     },
     {
       name: 'Feri',
+      id: '2',
       color: 'black'
     }],
-    next: 'white',
+    next: {
+      color: 'white',
+      possibleMoves: {}
+    },
     state: { ...this.initialGame },
     moves: []
   };
@@ -98,13 +108,20 @@ export class ChessComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.currentGame);
+    console.log('INIT CURRENT GAME: ', this.currentGame);
+
     this.chessTestService.chessBoardStateChanged.subscribe(
       state => {
         // if (state.state.moves[state.state.moves.length - 1] in this.highlightNext.moves
         //   || state.state.moves[state.state.moves.length - 1] in this.highlightNext.hits) {
-        this.currentGame = state;
+        this.currentGame = { ...state };
         // }
         this.removeHightlight();
+
+        //TODO Miután a kezdőlépésekre jól számol, újraengedélyezni itt
+        this.currentGame.next.possibleMoves = this.calculatePossibleMoves(state);
+        console.log('CURRENT GAME AFTER MOVE: ', this.currentGame);
       });
 
     this.chessTestService.chessPieceNotMoved.subscribe(
@@ -150,54 +167,13 @@ export class ChessComponent implements OnInit {
     let squares = this.squares;
     let pieces = this.pieces;
 
-    let currentGame = { ...this.currentGame };
+    let currentGame = this.currentGame;
 
     const chessTestService = this.chessTestService;
     const chessMoveStartService = this.chessMoveStartService;
 
     const chessBoard = document.getElementById('chess-board');
 
-    // chessBoard.addEventListener('drop', function (event) {
-    //   let hit = '';
-    //   let hittedPiece = null;
-    //   let squarex = event.target;
-    //   console.log(squarex);
-    //   //console.log('squarex: ', squarex.parentElement);
-
-    //   if (!squares.some(s => s === squarex)) {
-    //     squarex = squarex;
-    //   }
-
-    //   let square = squares.find(e => e === event.target) || pieces.find(e => e === event.target);
-
-
-    //   if (square.children[0]) {
-    //     hittedPiece = square.children[0].getAttribute('data-piece');
-    //     hit = 'HIT - PIECE: ' + square.children[0].getAttribute('data-piece') + ' ON: ' + square.id;
-    //   }
-
-    //   square.innerHTML = '';
-    //   square.appendChild(draggedPiece);
-    //   //console.log(fromMessage);
-    //   //console.log('MOVE - PIECE: ', draggedPiece.getAttribute('data-piece'), ' TO: ', draggedPiece.parentElement.id);
-    //   if (hit) { console.log(hit); };
-
-    //   delete currentGame.state[fromId];
-    //   currentGame.state[square.id] = draggedPiece.getAttribute('data-piece');
-
-    //   currentGame.next = currentGame.next === 'white' ? 'black' : 'white';
-    //   currentGame.moves.push({
-    //     from: fromId,
-    //     to: square.id,
-    //     piece: draggedPiece.getAttribute('data-piece'),
-    //     hit: {
-    //       piece: hittedPiece
-    //     }
-    //   })
-
-    //   chessTestService.chessBoardStateChanged.next(currentGame);
-    //   //console.log(currentGame);
-    // });
 
     this.pieces.forEach((piece: HTMLElement) => {
       piece.addEventListener('dragstart', function () {
@@ -215,9 +191,32 @@ export class ChessComponent implements OnInit {
         setTimeout(function () {
           piece.style.display = 'none';
         }, 0);
+
+        //squares.forEach(s => s.style.pointerEvents = 'none');
+        //squares.find(s => s.id === fromId).style.pointerEvents = 'all'
+        console.log('DRAGSTART SQUARE: ', squares.find(s => s.id === fromId).id);
+        const possibleMoves = currentGame.next.possibleMoves[fromId]?.moves;
+
+        if (possibleMoves) {
+          squares.forEach(s => possibleMoves.indexOf(s.id) !== -1 ? s.style.pointerEvents = 'all' : s.style.pointerEvents = 'none');
+          squares.find(s => s.id === fromId).style.pointerEvents = 'all';
+        }
+        if (!possibleMoves) {
+          squares.forEach(s => s.style.pointerEvents = 'none');
+        }
+
+
+        console.log('DRAGSTART POSSIBLE MOVES FORM HERE: ', possibleMoves ? possibleMoves : null);
       });
 
       piece.addEventListener('dragend', function () {
+        squares.forEach(s => s.style.pointerEvents = 'all');
+
+        // Ha ugyanarra  amezőre érkezünk vissza
+        if (draggedPiece.parentElement.id === piece.parentElement.id) {
+          chessTestService.chessPieceNotMoved.next(true);
+        }
+
         setTimeout(() => {
           piece.style.display = 'block';
           draggedPiece = null;
@@ -238,6 +237,11 @@ export class ChessComponent implements OnInit {
       });
 
       square.addEventListener('drop', function () {
+
+        //squares.forEach(s => s.style.pointerEvents = 'all');
+
+        //console.log('Current Game In Drop: ', currentGame);
+
         if (fromId === square.id) {
           chessTestService.chessPieceNotMoved.next(true);
           return;
@@ -258,7 +262,7 @@ export class ChessComponent implements OnInit {
         delete currentGame.state[fromId];
         currentGame.state[square.id] = draggedPiece.getAttribute('data-piece');
 
-        currentGame.next = currentGame.next === 'white' ? 'black' : 'white';
+        currentGame.next.color = currentGame.next.color === 'white' ? 'black' : 'white';
         currentGame.moves.push({
           from: fromId,
           to: square.id,
@@ -276,8 +280,8 @@ export class ChessComponent implements OnInit {
   }
 
   chessPiecePicked(state) {
-    console.log(state);
-    // if (this.currentGame.next === state.color) {
+    // console.log(state);
+    // if (this.currentGame.color === state.color) {
     //   this.highlightSquares(state);
     // }
     this.highlightSquares(state);
@@ -328,24 +332,24 @@ export class ChessComponent implements OnInit {
     this.highlightNext.current = [];
   }
 
-  left(val) {
+  left(val: string) {
     const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
     if (!val || val === 'a') { return null; }
     return x[x.indexOf(val) - 1];
   }
 
-  right(val) {
+  right(val: string) {
     const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
     if (!val || val === 'h') { return null; }
     return x[x.indexOf(val) + 1];
   }
 
-  up(val) {
+  up(val: any) {
     if (!val) { return null; }
     return +val < 8 ? (++val).toString() : null;
   }
 
-  down(val) {
+  down(val: any) {
     if (!val) { return null; }
     return +val > 1 ? (--val).toString() : null;
   }
@@ -371,13 +375,13 @@ export class ChessComponent implements OnInit {
         if (this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] + 1).toString()) === 'Black') {
           this.highlightNext.hits.push(this.left(state.from[0]) + (+state.from[1] + 1).toString());
         }
-        console.log(this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] + 1).toString()));
+        // console.log(this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] + 1).toString()));
       }
       if (this.right(state.from[0])) {
         if (this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] + 1).toString()) === 'Black') {
           this.highlightNext.hits.push(this.right(state.from[0]) + (+state.from[1] + 1).toString());
         }
-        console.log(this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] + 1).toString()));
+        // console.log(this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] + 1).toString()));
       }
     }
   }
@@ -399,13 +403,13 @@ export class ChessComponent implements OnInit {
         if (this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] - 1).toString()) === 'White') {
           this.highlightNext.hits.push(this.left(state.from[0]) + (+state.from[1] - 1).toString());
         }
-        console.log(this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] - 1).toString()));
+        // console.log(this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] - 1).toString()));
       }
       if (this.right(state.from[0])) {
         if (this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] - 1).toString()) === 'White') {
           this.highlightNext.hits.push(this.right(state.from[0]) + (+state.from[1] - 1).toString());
         }
-        console.log(this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] - 1).toString()));
+        // console.log(this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] - 1).toString()));
       }
     }
   }
@@ -542,6 +546,548 @@ export class ChessComponent implements OnInit {
   moveQueen(state, color) {
     this.moveRook(state, color);
     this.moveBishop(state, color);
+  }
+
+  calculatePossibleMoves(game) {
+    const color = game.next.color;
+    //console.log('POSSIBLE MOVES COLOR: ', color);
+
+    //const squares = Object.entries(game.state);
+    //TODO Amikor már játszunk mindig csak a következő szín lépéseit számoljuk ki
+    let squares = Object.entries(game.state).filter(e => this.colorPieces[color].includes(e[1].toString()));
+
+    let possibleMoves = squares.map(s => this.calcMove(game, s[0]));
+    const result = possibleMoves.reduce((a, c) => {
+      if (c.moves.length > 0 || c.hits.length > 0) {
+        a[c.pos] = { moves: c.moves, hits: c.hits };
+      }
+      return a;
+    }, {});
+
+    const movesToFilter = [];
+
+    possibleMoves = possibleMoves.filter(m => m.moves.length > 0);
+    console.log('RESULT: ', possibleMoves);
+    possibleMoves.forEach(m => {
+      const pos = m.pos;
+      const moves = m.moves;
+      //console.log('MOVES: ', moves);
+      moves.forEach(single => {
+
+        const testState = JSON.parse(JSON.stringify(game));
+        const piece = testState.state[pos];
+        delete testState.state[pos];
+        testState.state[single] = piece;
+
+        const king = testState.next.color === 'white' ? 'BlackKing' : 'WhiteKing';
+        //const kingPosition = Object.entries(testState.state).find(e => e[1] === king)[0];
+
+        testState.next.color = testState.next.color === 'black' || 'Black' ? 'white' : 'lack';
+
+        //console.log('KING POSITION: ', kingPosition);
+        //console.log('SINGLE: ', single, testState.next.color, testState.state);
+
+
+        const clearMoves = Object.entries(testState.state).filter(e => this.colorPieces[testState.next.color].includes(e[1].toString()));
+        //console.log('NOT SO POSSIBLE MOVES: ', clearMoves);
+        let notPossibleMoves = clearMoves.map(s => this.calcMove(testState, s[0])).filter(e => e.moves.length || e.hits.length > 0);
+
+        //console.log('NOT SO POSSIBLE MOVES: ', notPossibleMoves);
+      });
+
+    });
+
+
+    return result;
+  }
+
+  calcMove(game, pos) {
+    const moveCalcFuncs = {
+      'BlackBishop': this.getBishopMoves,
+      'BlackKing': this.getKingMoves,
+      'BlackKnight': this.getKnightMoves,
+      'BlackPawn': this.getPawnMoves,
+      'BlackQueen': this.getQueenMoves,
+      'BlackRook': this.getRookMoves,
+      'WhiteBishop': this.getBishopMoves,
+      'WhiteKing': this.getKingMoves,
+      'WhiteKnight': this.getKnightMoves,
+      'WhitePawn': this.getPawnMoves,
+      'WhiteQueen': this.getQueenMoves,
+      'WhiteRook': this.getRookMoves,
+    };
+
+    const value = moveCalcFuncs[game.state[pos]](game, pos);
+    // console.log('FROM CALC FUNCTION: ', pos, value);
+    //console.log('ACTUAL: ', ({ pos, moves: value.moves, hits: value.hits }));
+    return { pos, moves: value.moves, hits: value.hits };
+  }
+
+  getPawnMoves(game, pos) {
+    function left(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'a') { return null; }
+      return x[x.indexOf(val) - 1];
+    }
+
+    function right(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'h') { return null; }
+      return x[x.indexOf(val) + 1];
+    }
+
+    function up(val: any) {
+      if (!val) { return null; }
+      return +val < 8 ? (++val).toString() : null;
+    }
+
+    function down(val: any) {
+      if (!val) { return null; }
+      return +val > 1 ? (--val).toString() : null;
+    }
+
+    function whatIsOnPosition(pos) {
+      return game.state[pos] ? game.state[pos].slice(0, 5) : null;
+    }
+
+
+    const piece = game.state[pos];
+    const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
+
+    const moves = [];
+    const hits = [];
+
+
+    if (color === 'White') {
+      if (pos[1] === '2') {
+        if (!(pos[0] + (+pos[1] + 1).toString() in game.state)) {
+          moves.push(pos[0] + '3');
+          if (!(pos[0] + (+pos[1] + 2).toString() in game.state)) {
+            moves.push(pos[0] + '4');
+          }
+        }
+      }
+      if (pos[1] < '8') {
+        if (!(pos[0] + (+pos[1] + 1).toString() in game.state)) {
+          moves.push(pos[0] + (+pos[1] + 1).toString());
+        }
+        if (left(pos[0])) {
+          if (whatIsOnPosition(left(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
+            moves.push(left(pos[0]) + (+pos[1] + 1).toString());
+            hits.push(left(pos[0]) + (+pos[1] + 1).toString());
+          }
+        }
+        if (right(pos[0])) {
+          if (whatIsOnPosition(right(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
+            moves.push(right(pos[0]) + (+pos[1] + 1).toString());
+            hits.push(right(pos[0]) + (+pos[1] + 1).toString());
+          }
+        }
+      }
+    }
+    if (color === 'Black') {
+      if (pos[1] === '7') {
+        if (!(pos[0] + (+pos[1] - 1).toString() in game.state)) {
+          moves.push(pos[0] + '6');
+          if (!(pos[0] + (+pos[1] - 2).toString() in game.state)) {
+            moves.push(pos[0] + '5');
+          }
+        }
+      }
+      if (pos[1] > '1') {
+        if (!(pos[0] + (+pos[1] - 1).toString() in game.state)) {
+          moves.push(pos[0] + (+pos[1] - 1).toString());
+        }
+        if (left(pos[0])) {
+          if (whatIsOnPosition(left(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
+            moves.push(left(pos[0]) + (+pos[1] - 1).toString());
+            hits.push(left(pos[0]) + (+pos[1] - 1).toString());
+          }
+        }
+        if (right(pos[0])) {
+          if (whatIsOnPosition(right(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
+            moves.push(right(pos[0]) + (+pos[1] - 1).toString());
+            hits.push(right(pos[0]) + (+pos[1] - 1).toString());
+          }
+        }
+
+      }
+    }
+
+    return ({ moves: [...new Set(moves)], hits, piece });
+  }
+
+  getKnightMoves(game, pos) {
+
+    function left(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'a') { return null; }
+      return x[x.indexOf(val) - 1];
+    }
+
+    function right(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'h') { return null; }
+      return x[x.indexOf(val) + 1];
+    }
+
+    function up(val: any) {
+      if (!val) { return null; }
+      return +val < 8 ? (++val).toString() : null;
+    }
+
+    function down(val: any) {
+      if (!val) { return null; }
+      return +val > 1 ? (--val).toString() : null;
+    }
+
+    const piece = game.state[pos];
+    const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
+
+    const moves = [];
+    const hits = [];
+
+    const alpha = pos[0];
+    const number = pos[1];
+    const preMoves = [
+      [left(left(alpha)), up(number)],
+      [left(left(alpha)), down(number)],
+      [right(right(alpha)), up(number)],
+      [right(right(alpha)), down(number)],
+      [left(alpha), up(up(number))],
+      [left(alpha), down(down(number))],
+      [right(alpha), up(up(number))],
+      [right(alpha), down(down(number))]
+    ];
+
+    preMoves.forEach(m => {
+      if (m[0] && m[1]) {
+        if (!((m[0] + m[1]) in game.state)) {
+          moves.push(m[0] + m[1]);
+        } else if (game.state[m[0] + m[1]].slice(0, 5) !== color) {
+          moves.push(m[0] + m[1]);
+          hits.push(m[0] + m[1]);
+        }
+      }
+    });
+
+    return ({ moves: [...new Set(moves)], hits, piece });
+  }
+
+  getKingMoves(game, pos) {
+
+    function left(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'a') { return null; }
+      return x[x.indexOf(val) - 1];
+    }
+
+    function right(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'h') { return null; }
+      return x[x.indexOf(val) + 1];
+    }
+
+    function up(val: any) {
+      if (!val) { return null; }
+      return +val < 8 ? (++val).toString() : null;
+    }
+
+    function down(val: any) {
+      if (!val) { return null; }
+      return +val > 1 ? (--val).toString() : null;
+    }
+
+    const piece = game.state[pos];
+    const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
+
+    const moves = [];
+    const hits = [];
+
+    const alpha = pos[0];
+    const number = pos[1];
+
+    const preMoves = [
+      [alpha, up(number)],
+      [alpha, down(number)],
+      [left(alpha), number],
+      [right(alpha), number],
+      [left(alpha), up(number)],
+      [right(alpha), up(number)],
+      [left(alpha), down(number)],
+      [right(alpha), down(number)]
+    ];
+
+    preMoves.forEach(m => {
+      if (m[0] && m[1]) {
+        if (!((m[0] + m[1]) in game.state)) {
+          moves.push(m[0] + m[1]);
+        } else if (game.state[m[0] + m[1]].slice(0, 5) !== color) {
+          moves.push(m[0] + m[1]);
+          hits.push(m[0] + m[1]);
+        }
+      }
+    });
+
+    return ({ moves: [...new Set(moves)], hits, piece });
+  }
+
+  getRookMoves(game, pos) {
+
+    function left(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'a') { return null; }
+      return x[x.indexOf(val) - 1];
+    }
+
+    function right(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'h') { return null; }
+      return x[x.indexOf(val) + 1];
+    }
+
+    function up(val: any) {
+      if (!val) { return null; }
+      return +val < 8 ? (++val).toString() : null;
+    }
+
+    function down(val: any) {
+      if (!val) { return null; }
+      return +val > 1 ? (--val).toString() : null;
+    }
+
+    const piece = game.state[pos];
+    const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
+
+    const moves = [];
+    const hits = [];
+
+    let alpha = pos[0];
+    let number = pos[1];
+
+    const movesLeft = [];
+    const movesRight = [];
+    const movesUp = [];
+    const movesDown = [];
+
+    number = up(number);
+    while (number) { movesUp.push([alpha, number]); number = up(number); }
+    number = pos[1];
+    number = down(number)
+    while (number) { movesDown.push([alpha, number]); number = down(number); }
+    number = pos[1];
+    alpha = left(alpha);
+    while (alpha) { movesLeft.push([alpha, number]); alpha = left(alpha); }
+    alpha = pos[0];
+    alpha = right(alpha);
+    while (alpha) { movesRight.push([alpha, number]); alpha = right(alpha); }
+
+    [movesLeft, movesRight, movesUp, movesDown].filter(e => e.length).forEach(m => {
+      for (let i = 0; i < m.length; i++) {
+        if (m[i][0] && m[i][1]) {
+          if (!((m[i][0] + m[i][1]) in game.state)) {
+            moves.push(m[i][0] + m[i][1]);
+          } else if (game.state[m[i][0] + m[i][1]]) {
+            if (game.state[m[i][0] + m[i][1]].slice(0, 5) !== color) {
+              moves.push(m[i][0] + m[i][1]);
+              hits.push(m[i][0] + m[i][1]);
+            }
+            break;
+          }
+        }
+      }
+    });
+
+    return ({ moves: [...new Set(moves)], hits, piece });
+  }
+
+
+  getBishopMoves(game, pos) {
+
+    function left(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'a') { return null; }
+      return x[x.indexOf(val) - 1];
+    }
+
+    function right(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'h') { return null; }
+      return x[x.indexOf(val) + 1];
+    }
+
+    function up(val: any) {
+      if (!val) { return null; }
+      return +val < 8 ? (++val).toString() : null;
+    }
+
+    function down(val: any) {
+      if (!val) { return null; }
+      return +val > 1 ? (--val).toString() : null;
+    }
+
+    const piece = game.state[pos];
+    const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
+
+    const moves = [];
+    const hits = [];
+
+    let alpha = pos[0];
+    let number = pos[1];
+
+    const movesUpLeft = [];
+    const movesUpRight = [];
+    const movesDownLeft = [];
+    const movesDownRight = [];
+
+    number = up(number);
+    alpha = left(alpha);
+    while (number && alpha) { movesUpLeft.push([alpha, number]); number = up(number); alpha = left(alpha); }
+    alpha = pos[0];
+    number = pos[1];
+    number = up(number);
+    alpha = right(alpha);
+    while (number && alpha) { movesUpRight.push([alpha, number]); number = up(number); alpha = right(alpha); }
+    alpha = pos[0];
+    number = pos[1];
+    number = down(number);
+    alpha = left(alpha);
+    while (number && alpha) { movesDownLeft.push([alpha, number]); number = down(number); alpha = left(alpha); }
+    alpha = pos[0];
+    number = pos[1];
+    number = down(number);
+    alpha = right(alpha);
+    while (number && alpha) { movesDownRight.push([alpha, number]); number = down(number); alpha = right(alpha); }
+
+    [movesUpLeft, movesUpRight, movesDownLeft, movesDownRight].filter(e => e.length).forEach(m => {
+      for (let i = 0; i < m.length; i++) {
+        if (m[i][0] && m[i][1]) {
+          if (!((m[i][0] + m[i][1]) in game.state)) {
+            moves.push(m[i][0] + m[i][1]);
+          } else if (game.state[m[i][0] + m[i][1]]) {
+            if (game.state[m[i][0] + m[i][1]].slice(0, 5) !== color) {
+              moves.push(m[i][0] + m[i][1]);
+              hits.push(m[i][0] + m[i][1]);
+            }
+            break;
+          }
+        }
+      }
+    });
+
+    return ({ moves: [...new Set(moves)], hits, piece });
+  }
+
+  getQueenMoves(game, pos) {
+
+    function left(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'a') { return null; }
+      return x[x.indexOf(val) - 1];
+    }
+
+    function right(val: string) {
+      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      if (!val || val === 'h') { return null; }
+      return x[x.indexOf(val) + 1];
+    }
+
+    function up(val: any) {
+      if (!val) { return null; }
+      return +val < 8 ? (++val).toString() : null;
+    }
+
+    function down(val: any) {
+      if (!val) { return null; }
+      return +val > 1 ? (--val).toString() : null;
+    }
+
+    const piece = game.state[pos];
+    const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
+
+    const moves = [];
+    const hits = [];
+
+    let alpha = pos[0];
+    let number = pos[1];
+
+    const movesLeft = [];
+    const movesRight = [];
+    const movesUp = [];
+    const movesDown = [];
+
+    number = up(number);
+    while (number) { movesUp.push([alpha, number]); number = up(number); }
+    number = pos[1];
+    number = down(number)
+    while (number) { movesDown.push([alpha, number]); number = down(number); }
+    number = pos[1];
+    alpha = left(alpha);
+    while (alpha) { movesLeft.push([alpha, number]); alpha = left(alpha); }
+    alpha = pos[0];
+    alpha = right(alpha);
+    while (alpha) { movesRight.push([alpha, number]); alpha = right(alpha); }
+
+    [movesLeft, movesRight, movesUp, movesDown].filter(e => e.length).forEach(m => {
+      for (let i = 0; i < m.length; i++) {
+        if (m[i][0] && m[i][1]) {
+          if (!((m[i][0] + m[i][1]) in game.state)) {
+            moves.push(m[i][0] + m[i][1]);
+          } else if (game.state[m[i][0] + m[i][1]]) {
+            if (game.state[m[i][0] + m[i][1]].slice(0, 5) !== color) {
+              moves.push(m[i][0] + m[i][1]);
+              hits.push(m[i][0] + m[i][1]);
+            }
+            break;
+          }
+        }
+      }
+    });
+
+
+    const movesUpLeft = [];
+    const movesUpRight = [];
+    const movesDownLeft = [];
+    const movesDownRight = [];
+
+    alpha = pos[0];
+    number = pos[1];
+    number = up(number);
+    alpha = left(alpha);
+    while (number && alpha) { movesUpLeft.push([alpha, number]); number = up(number); alpha = left(alpha); }
+    alpha = pos[0];
+    number = pos[1];
+    number = up(number);
+    alpha = right(alpha);
+    while (number && alpha) { movesUpRight.push([alpha, number]); number = up(number); alpha = right(alpha); }
+    alpha = pos[0];
+    number = pos[1];
+    number = down(number);
+    alpha = left(alpha);
+    while (number && alpha) { movesDownLeft.push([alpha, number]); number = down(number); alpha = left(alpha); }
+    alpha = pos[0];
+    number = pos[1];
+    number = down(number);
+    alpha = right(alpha);
+    while (number && alpha) { movesDownRight.push([alpha, number]); number = down(number); alpha = right(alpha); }
+
+    [movesUpLeft, movesUpRight, movesDownLeft, movesDownRight].filter(e => e.length).forEach(m => {
+      for (let i = 0; i < m.length; i++) {
+        if (m[i][0] && m[i][1]) {
+          if (!((m[i][0] + m[i][1]) in game.state)) {
+            moves.push(m[i][0] + m[i][1]);
+          } else if (game.state[m[i][0] + m[i][1]]) {
+            if (game.state[m[i][0] + m[i][1]].slice(0, 5) !== color) {
+              moves.push(m[i][0] + m[i][1]);
+              hits.push(m[i][0] + m[i][1]);
+            }
+            break;
+          }
+        }
+      }
+    });
+
+    return ({ moves: [...new Set(moves)], hits, piece });
   }
 
 }
