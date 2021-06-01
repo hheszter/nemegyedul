@@ -29,6 +29,7 @@
     &-datas {
         padding: 2rem;
         box-shadow: 0 0 5px grey;
+        font-weight: 600;
 
         @media only screen and (min-width: 768px) {
             width: 65%;
@@ -38,6 +39,12 @@
             color: c.$c-orange;
         }
 
+        button {
+            display: inline-block;
+            margin-right: 1rem;
+            color: c.$c-yellow;
+        }
+
         .category {
             span {
                 display: inline-block;
@@ -45,10 +52,13 @@
                 padding: 2px;
                 border: 1px solid c.$c-orange;
                 border-radius: 5px;
+                background: c.$c-orange;
+                opacity: 0.8;
 
                 &:hover {
-                    transition: all 0.5s;
-                    background: c.$c-orange;
+                    cursor: pointer;
+                    transition: opacity 0.8s;
+                    opacity: 1;
                 }
             }
         }
