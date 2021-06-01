@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CommunityComponent } from './components/community/community.component';
 import { EventFormComponent } from './components/event-form/event-form.component';
 import { GamesComponent } from './components/games/games.component';
 import { LoginComponent } from './components/login/login.component';
@@ -19,6 +20,7 @@ const routes: Routes = [
   {path: "event-form", component:EventFormComponent, canActivate: [AuthGuardService, RoleGuardService], data: {expectedRole: 2}},
   {path: "games", component:GamesComponent, canActivate: [AuthGuardService]},
   {path: "profil", component:ProfilComponent, canActivate: [AuthGuardService]},
+  {path: "community", component:CommunityComponent, canActivate: [AuthGuardService]},
   {path: "**", component:LoginComponent}
 ];
 

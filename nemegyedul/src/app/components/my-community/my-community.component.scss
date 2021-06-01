@@ -1,0 +1,24 @@
+@use '../../../assets/mixins' as m;
+
+.my-community {
+    section {
+        .row {
+            display: flex;
+            justify-content: center;
+        }
+    }
+}
+
+.img-holder {
+    @include m.setCardImgSize();
+}
+.theme {
+    @include m.setTheme();
+}
+.btn {
+    @include m.setMyButton();
+}
+
+.profil-datas {
+  background-color: #000;
+}

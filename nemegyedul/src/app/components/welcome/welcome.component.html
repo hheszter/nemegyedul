@@ -1,21 +1,23 @@
-<div class="container-sm">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="text-center">Üdvzöljük oldalunkon</h1>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil dolores possimus necessitatibus asperiores quis! Est, asperiores. Accusantium quisquam esse praesentium illo officia eius, sed consequuntur sit consectetur similique. Quo, fugiat.
-            Obcaecati voluptates nemo, laudantium ea ab facere est quae beatae aspernatur ad suscipit autem dolorum numquam aut, quia hic similique dolores maiores illo molestiae? Dolore, eius. Eveniet pariatur odit sapiente?
-        </p>
-        <p>
-            Soluta officiis, facere iusto dicta reiciendis minima sapiente iste possimus architecto incidunt at, atque molestiae ipsa nemo, sunt repellat est? Cumque explicabo soluta tempore neque illo quae voluptates non. Et!
-            Adipisci rerum in dicta magnam fugiat quasi, dignissimos, incidunt dolores totam fugit facere aut corporis porro nihil. Repudiandae nulla tempora adipisci doloribus nesciunt laudantium, ipsa dolore, magni dolor minus voluptatem!
-        </p>
-        <p>
-            Az oldal használata regisztrációhoz kötött
-        </p>
-            <div>
-                <a routerLink="login" class="btn btn-primary">Bejelentkezés</a>
+<section>
+    <div class="container-sm mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center">Üdvzöljük oldalunkon</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil dolores possimus necessitatibus asperiores quis! Est, asperiores. Accusantium quisquam esse praesentium illo officia eius, sed consequuntur sit consectetur similique. Quo, fugiat.
+                Obcaecati voluptates nemo, laudantium ea ab facere est quae beatae aspernatur ad suscipit autem dolorum numquam aut, quia hic similique dolores maiores illo molestiae? Dolore, eius. Eveniet pariatur odit sapiente?
+            </p>
+            <p>
+                Soluta officiis, facere iusto dicta reiciendis minima sapiente iste possimus architecto incidunt at, atque molestiae ipsa nemo, sunt repellat est? Cumque explicabo soluta tempore neque illo quae voluptates non. Et!
+                Adipisci rerum in dicta magnam fugiat quasi, dignissimos, incidunt dolores totam fugit facere aut corporis porro nihil. Repudiandae nulla tempora adipisci doloribus nesciunt laudantium, ipsa dolore, magni dolor minus voluptatem!
+            </p>
+            <p>
+                Az oldal használata regisztrációhoz kötött
+            </p>
+                <div>
+                    <a routerLink="login" class="btn btn-primary" *ngIf="isLoggedIn == 0">Bejelentkezés</a>
 
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>

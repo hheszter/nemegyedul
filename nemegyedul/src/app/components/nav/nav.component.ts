@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { User } from 'src/app/model/user';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -13,8 +14,11 @@ import { DatabaseService } from 'src/app/services/database.service';
 })
 export class NavComponent implements OnInit {
   navigation = this.config.navigation;
-  currentUser: any = {};
+  currentUser: any = {name: 'user', age: 1};
   user: any = false;
+  dbSubscription: Subscription;
+  newReqs: number = 0;
+
   constructor(
     private config: ConfigService, 
     private authService: AuthService, 
@@ -31,17 +35,33 @@ export class NavComponent implements OnInit {
 
   ngOnInit(): void {
    
-    this.user = window.sessionStorage.getItem("app_user_uid") 
+    this.user = window.localStorage.getItem("app_user_uid") 
+    // this.user = window.sessionStorage.getItem("app_user_uid") 
     this.databaseService.loggedInUser.subscribe(
       data => this.currentUser = data,
       error => console.error(error)
     )
+
+    this.getNewRequests();
     
   }
   onLogout() {
     this.authService.logout()
     this.user = false
+    this.newReqs = 0;
     this.router.navigate(["/welcome"]);
+  }
+
+
+  //get number of new friendRequestsToMe
+  getNewRequests(){
+    this.dbSubscription = this.databaseService.newFriendReq.subscribe(
+      (req:any)=>{
+        this.newReqs=req;
+      },
+      (err:any)=>console.error(err),
+      ()=>this.dbSubscription.unsubscribe()
+    );
   }
 
 }

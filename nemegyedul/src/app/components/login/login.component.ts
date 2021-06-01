@@ -15,25 +15,28 @@ export class LoginComponent implements OnInit {
 
   haveAccount: boolean = true;
   invalidLogin: boolean = false;
+  
+  loginForm: FormGroup;
+  regForm: FormGroup;
+  categories: Array<any> = [];
+
+  dbSubscription: Subscription;
 
   showModal: boolean = false;
   titleInModal: string = "";
   textInModal: string = "";
   formInModal: boolean = false;
 
-  loginForm: FormGroup;
-  regForm: FormGroup;
-
-  dbSubscription: Subscription;
-
   constructor(
-    private router: Router,
     private auth: AuthService,
     private db: DatabaseService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
     this.checkUserLoggedIn();
+
+    if (this.categories.length === 0) { this.createCategoryList() };
 
     this.loginForm = new FormGroup({
       logEmail: new FormControl('', [Validators.required]),
@@ -72,33 +75,31 @@ export class LoginComponent implements OnInit {
     this.haveAccount = !this.haveAccount;
   }
 
-  checkUserLoggedIn() {
-    //let uid = window.localStorage.getItem("app_user_uid");
-    let uid = window.sessionStorage.getItem("app_user_uid");
-    if (uid) {
-      this.getUserLoggedIn(uid);
-      this.router.navigate(["/main"]);
-    };
-  }
-
-  //get user data and save in db.service:
-  getUserLoggedIn(uid: string) {
-    this.dbSubscription = this.db.getData("users").subscribe(
-      (doc: any) => {
-        doc.forEach((user: User) => {
-          if (user.userUID) {
-            if (user.userUID === uid) {
-              this.db.loggedInUser.next(user);
-              
-            }
+  //create list to set registration form:
+  createCategoryList() {
+    this.dbSubscription = this.db.getData("categories").subscribe(
+      (data) => {
+        this.categories = [];
+        for (let cat in data[0]) {
+          if (cat !== 'id') {
+            let item = { name: cat, displayName: data[0][cat] };
+            if (!this.categories.includes(item)) { this.categories.push(item) }
           }
-        })
+        }
       },
-      (err: any) => console.error(err),
-      () => this.dbSubscription.unsubscribe()
+      (err) => console.error(err),
+      ()=>this.dbSubscription.unsubscribe()
     )
   }
 
+  checkUserLoggedIn() {
+    let uid = window.localStorage.getItem("app_user_uid");
+    if (uid) {
+      this.db.getUserLoggedIn(uid);
+      this.router.navigate(["/main"]);
+    };
+  }
+  
 
   // ------------------------- registration -------------------------
   registration() {
@@ -115,16 +116,18 @@ export class LoginComponent implements OnInit {
         delete regData.repassword;
         regData.date = new Date().toLocaleDateString();
         regData.userUID = data.user.uid;
+        regData.category = this.createCategoryToDB(regData.category)
         regData.myEvents = [];
-        if(!regData.photo){
+        regData.friends = {friendRequests:[], friendLists:[]};
+        if (!regData.photo) {
           regData.photo = "https://icon-library.com/images/default-user-icon/default-user-icon-4.jpg" //default avatar photo
         }
         this.db.saveData("users", regData);
-        
+
         //send email to verify email address!!!
-        // data.user.sendEmailVerification()
-        //   .then(()=>console.log("email has been sent")) //set the link to continoue
-        //   .catch(err=>console.error(err))
+        data.user.sendEmailVerification()
+          .then(()=>console.log("email has been sent")) //set the link to continoue
+          .catch(err=>console.error(err))
       })
       .then(() => {
         this.regForm.reset();
@@ -143,6 +146,17 @@ export class LoginComponent implements OnInit {
       })
   }
 
+  //create a category array (with name and displayName) from an object (with true-false values)
+  createCategoryToDB(obj:any){
+    const categoriesToDB = [];
+    this.categories.forEach( item => {
+      if(obj[item.name]){
+        categoriesToDB.push(item)
+      }
+    })
+    return categoriesToDB
+  }
+
 
   // ------------------------- login -------------------------
   login() {
@@ -150,11 +164,11 @@ export class LoginComponent implements OnInit {
 
     this.auth.login(loginData.logEmail, loginData.logPassword)
       .then((data) => {
-      //without email verification:
+        //without email verification:
         this.auth.setLocalStorage();
         this.router.navigate(["/main"]);
 
-      //with email verification:
+        //with email verification:
         // if(data.user.emailVerified){
         //   this.auth.setLocalStorage();
         //   this.router.navigate(["/main"]);

@@ -17,8 +17,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { LoginModalComponent } from './components/login/login-modal/login-modal.component';
 import { ProfilComponent } from './components/profil/profil.component';
+import { CommunityComponent } from './components/community/community.component';
 
 import { ChessComponent } from './components/games/chess/chess.component';
+import { MyCommunityComponent } from './components/my-community/my-community.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { ChessComponent } from './components/games/chess/chess.component';
     WelcomeComponent,
     LoginModalComponent,
     ProfilComponent,
-    ChessComponent
+    ChessComponent,
+    CommunityComponent,
+    MyCommunityComponent
   ],
   imports: [
     BrowserModule,

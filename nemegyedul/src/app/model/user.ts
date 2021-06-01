@@ -11,4 +11,5 @@ export interface User {
     date?: string;
     userUID?: string;
     myEvents?: any[];
+    friends?: any;
 }

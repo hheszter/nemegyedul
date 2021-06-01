@@ -5,38 +5,57 @@
   <div class="modal-dialog  modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{selectedEvent.eventName}}</h5>
+        <h5 class="modal-title" id="exampleModalLabel">{{selectedEvent.name}}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body ">
-        <img style="width: 100%;" [src]="selectedEvent.eventImageUrl" alt="">
-        
-        {{selectedEvent.longDescription}}
+        <img style="width: 100%;" [src]="selectedEvent.imageUrl" alt="">
+        <h6 >Esemény időpontja: {{localeDate}} </h6>
+
+        {{selectedEvent.description}}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="close()">Close</button>
-        <button type="button" class="btn btn-primary" [disabled]="buttonDisable" (click)="saveEvent(selectedEvent)">Érdekel</button>
+        <button type="button" class="btn btn-primary" [disabled]="buttonDisable" data-bs-dismiss="modal" (click)="saveEvent(selectedEvent)">Érdekel</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="container-md mt-5">
-    <div class="row mx-auto">
-          
-            <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let card of eventArray">
-                <img [src]="card.eventImageUrl" class="card-img-top" alt="...">
-                <div class="card-body d-flex flex-column">
-                  <h5 class="card-title">{{card.eventName}}</h5>
-                  <p class="card-text">{{card.shortDescription}}</p>
-                  <a href="#" class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="currentEvent(card)">Bővebben</a>
-                  
-                </div>
-              </div>
-
-          
-        
+<div class="container-md py-5">
+  <div class="row">
+    <div class="form-group col-md-8 mb-3 d-flex mx-auto text-light" [formGroup]="formCategory">
+      <label class="form-label me-3 mt-1" for="category"> Érdeklődési kör:</label>
+      <select class="form-select p-1" id="category" formControlName="category" aria-label="Floating label select">
+        <option value="">Összes kategória</option>
+        <option *ngFor="let elem of this.categoriesList" [value]="elem[0]" (click)="clicked()">
+          {{elem[1]}}
+        </option>
+      </select>
+      <button class="btn btn-primary ms-2 filter-button" (click)="selectCategory()" type="submit">Szűrés</button>
     </div>
+  </div>
+
+    <div class="card__container row mx-auto my-5 text-light" *ngFor="let category of currentCategory">
+        <h3 class="text-center col-12 mb-3">{{category[1]}}</h3>
+        <div class="card__frame col-md-6 col-lg-4 m-2  " *ngFor="let card of eventArray" [ngStyle]="card.category == category[0] ? {'display': 'block'} : {'display': 'none' }">
+          <div class="card__content">
+            <div class="card__front" [ngStyle]="{'background': 'url('+ card.imageUrl +')  center center no-repeat', 'background-size': 'cover', 'background-color': '#555555'}" >
+              <!--  -->
+              <h4 class="card__front-title">{{card.name}}</h4>
+              <p class="card__front-subtitle">{{card.datetime | date: 'fullDate'}}</p>
+            </div>
+            <div class="card__back">
+              <div class="img-frame">
+                <img [src]="card.imageUrl" class="card-img-top " alt="...">
+              </div>
+              <div class="card__back-content">
+                <h5 class="card__back-title">{{card.name}}</h5>
+                <p class="card__back--text">{{card.shortDescription}}</p>
+                <a href="#" class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="currentEvent(card)">Bővebben</a>
+              </div>
+            </div>
+          </div>
 </div>
 
 

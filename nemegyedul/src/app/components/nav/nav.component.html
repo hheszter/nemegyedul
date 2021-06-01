@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" >NemEgyedül</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -9,23 +9,25 @@
       <ul class="navbar-nav mr-auto">
         <li *ngFor="let link of navigation" class="nav-item" routerLinkActive="active"
           [routerLinkActiveOption]="{exact: true}">
-          <a [routerLink]="link.href" class="nav-link">{{ link.label }}</a>
+          <a [routerLink]="link.href" class="nav-link">{{ link.label }}
+            <span *ngIf="user && newReqs && link.label=='Saját adatok'" class="badge badge-pill badge-secondary d-inline">{{newReqs}}</span>
+          </a>
         </li>
       </ul>
 
       <ul class="my-2 my-lg-0 navbar-nav ms-auto pe-5">
         <li *ngIf="user" class="mx-4 text-light">
-          <span class="nav-link"> Hi! </span> <!-- {{currentUser.name}} -->
+          <span class="nav-link sayhi">Üdvözlünk az oldalunkon!</span> <!-- {{currentUser.name}} -->
         </li>
         <li *ngIf="!user" class="nav-item">
           <a routerLink="/login" class="nav-link">
-            Login
+            Bejelentkezés
           </a>
         </li>
         <li *ngIf="user" class="nav-item">
-          
+
           <a (click)="onLogout()" class="nav-link">
-            Logout
+            Kijelentkezés
           </a>
         </li>
       </ul>

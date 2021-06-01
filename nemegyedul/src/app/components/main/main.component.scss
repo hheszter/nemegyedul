@@ -1,12 +1,213 @@
-.row {
-    display: flex;
-    justify-content: center;
+@use '../../../assets/mixins' as m;
+
+.container-md {
+  background-color: #0006;
 }
 
-.card-body {
-    display: flex;
-    flex-direction: column;
+.card__container,
+.row {
+  display: flex;
+  justify-content: center;
 }
-.card-body a {
-    align-self:baseline;
+
+label {
+  white-space: nowrap;
+  align-items: center;
+}
+
+.card__frame {
+  //position: relative;
+  width: 18rem;
+  height: 25rem;
+  outline: none;
+  border: none;
+  transform: scale(1);
+  transition: transform .5s linear;
+}
+.card__frame:hover {
+  transform: scale(1.05);
+}
+
+.card__content {
+
+  padding: .5rem;
+  position: relative;
+  //display: flex;
+  //flex-direction: column;
+  //margin-top: auto;
+  width: 100%;
+  height: 100%;
+  transition: transform 2s;
+  transform-style:preserve-3d;
+}
+
+.card__frame:hover .card__content {
+  transform: rotateY(.5turn);
+
+}
+
+.card__front,
+.card__back {
+  border-radius: .5rem;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  //background-color: pink;
+  backface-visibility:hidden;
+  // initial;
+  transform-style:preserve-3d;
+}
+.card__front {
+  background-image: linear-gradient(#222, #999);
+  background-size: cover;
+  padding: 1.5rem;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  //overflow: hidden;
+  background-blend-mode:multiply
+}
+
+.card__front::before {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  border: 3px solid whitesmoke;
+  border-radius: .4rem;
+  transform: translateZ(2rem);
+}
+
+.card__front-title {
+  transform:translateZ(5rem);
+  text-shadow: 0 0 15 #222;
+  text-align: center;
+  user-select: none;
+  font-weight: 800;
+  color: whitesmoke;
+  order: 2;
+  text-transform: uppercase;
+  max-width: 15rem;
+  font-size: medium;
+}
+
+.card__front-subtitle {
+  transform: translateZ(2rem);
+  color: whitesmoke;
+  order: 1;
+
+}
+
+.card__back {
+  transform: rotateY(.5turn);
+  //padding: .5rem;
+  background-color: white;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-image: linear-gradient(35deg, #ffdc17, #222);
+  //overflow: hidden;
+}
+
+.card__back .img-frame {
+  margin: 5px auto;
+  max-height: 200px;
+  width: 90%;
+  overflow: hidden;
+  background-size: 90%;
+  background-repeat: no-repeat;
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  //background-color: #222;
+  transform: translateZ(1rem);
+  position: relative;
+
+  border-radius: .3rem;
+}
+
+
+
+.img-frame :is(img) {
+
+  width: 100%;
+  height: auto;
+  transform: translateZ(2rem);
+
+}
+
+.card__back .img-frame::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: .3rem;
+  border: 3px solid #ffdc17;
+
+}
+
+.card__back-content {
+  align-content: flex-end;
+  height: calc(100%-200px);
+  //background-color: #222;
+  background-image: linear-gradient(hsl(0 0% 0% / 0), hsl(0 0% 0% / 1));
+  margin-top: auto;
+  padding: 0.5rem;
+  color: whitesmoke;
+  text-align: center;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.card__back-title {
+  transform: translateZ(5rem);
+  position: relative;
+
+}
+.card__back-title::after {
+  content: '';
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  //background-image: linear-gradient(-90deg, white, #368cd8 40%);
+  background-image: linear-gradient(-90deg, #ffdc17, #DE9000);
+  bottom: -6px;
+  left: -0.5rem;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .3s ease-in 0s;
+
+
+}
+
+.card__frame:hover .card__back-title::after {
+  transform: scaleX(1);
+  transform-origin: left;
+  transition-delay: 2s;
+}
+
+.card__back--text {
+  transform: translateZ(4rem);
+
+}
+.card__back a {
+  align-self:baseline;
+  z-index: 10;
+  transform: translateZ(2rem);
+  @include m.setMyButton();
+  margin-bottom: 0.5rem;
+}
+.filter-button {
+  @include m.setMyButton();
 }

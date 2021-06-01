@@ -11,6 +11,36 @@
 }
 
 @mixin setMyButton(){
+    color: #FFFFFF;
     background: c.$c-orange !important;
     border-color: c.$c-orange !important;
 }
+
+
+// ----------------- set user cards and profil componenet:
+@mixin setTheme(){
+    display: inline-block;
+    margin: 0 3px 2px 0;
+    padding: 2px 6px;
+    border: 1px solid c.$c-orange;
+    border-radius: 5px;
+
+    &:hover {
+        transition: all 0.5s;
+        background: c.$c-orange;
+    }
+}
+
+@mixin setCardImgSize(){
+    height: 200px;
+    overflow: hidden;
+
+    img {
+        min-height: 100%;
+    }
+}
+
+/*
+Set responsive form size:
+class="container-sm col-lg-8 offset-lg-2 col-xl-6 offset-xl-3"
+ */

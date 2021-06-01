@@ -1,0 +1,12 @@
+@use '../../../assets/mixins' as m;
+
+section {
+  //border: 0.1px solid grey;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.btn {
+        @include m.setMyButton();
+}

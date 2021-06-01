@@ -4,10 +4,11 @@
             <img [src]="user.photo" alt="user photo">
         </div>
 
-        <div class="profil-datas">
+        <div class="profil-datas" [ngStyle]="{'background-color': '#0006'}">
             <h2 class="h3">{{user.name}}</h2>
             <p>{{user.email}}</p>
-            <button class="btn btn-secondary d-block" (click)="newPassword(user.email)">Új jelszó igénylés</button>
+            <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="newPassword(user.email)">Új jelszó igénylés</button>
+            <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="editProfil()">Adatok szerkesztése</button>
             <h4>Személyes adatok:</h4>
             <p>Kor: {{user.age}} év</p>
             <p>Nem: {{user.gender==="male" ? "férfi" : "nő"}}</p>
@@ -16,19 +17,68 @@
             <small class="d-block">Regisztráció dátuma: {{user.date}}</small>
             <div class="category my-2">
                 <p>Témák, amik érdekelnek:</p>
-                <ul>
-                    <li *ngFor="let theme of themes">{{theme}}</li>
-                </ul>
+                    <span *ngFor="let theme of user.category">{{theme.displayName}}</span>
             </div>
-            <!-- <button class="btn btn-secondary d-block" (click)="editProfil()">Adatok szerkesztése</button> -->
-            
-            <button *ngIf="user" class="btn btn-secondary">
-                <a routerLink="/my-events">Események, amik érdekelnek</a>
-            </button>
         </div>
-
     </div>
-
-
     <div *ngIf="!user">Valami hiba történt, jelentkezzen be újra!</div>
 </section>
+
+<div class="container-md">
+    <button *ngIf="user && !showMyEvents" class="btn toggle-btn" (click)="showEvents()">
+        Események, amik érdekelnek
+    </button>
+    <button *ngIf="user && showMyEvents" class="btn toggle-btn" (click)="showEvents()">
+        Események elrejtése
+    </button>
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{selectedEvent.name}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body ">
+        <img style="width: 100%;" [src]="selectedEvent.imageUrl" alt="">
+
+        {{selectedEvent.description}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="deleteEvent(selectedEvent)">Törlés</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-md mt-5" *ngIf="showMyEvents">
+    <div class="row mx-auto">
+
+            <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let card of myEventArray">
+                <img [src]="card.imageUrl" class="card-img-top" alt="...">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">{{card.name}}</h5>
+                  <p class="card-text">{{card.shortDescription}}</p>
+                  <a href="#" class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="currentEvent(card)">Bővebben</a>
+
+                </div>
+              </div>
+
+
+
+    </div>
+</div>
+    <!-- <app-my-events *ngIf="showMyEvents"></app-my-events> -->
+</div>
+
+<div class="container-md">
+    <button *ngIf="user && !showMyFriends" class="btn toggle-btn" (click)="showFriends()">
+        Ismerősök / jelölések elrejtése
+    </button>
+    <button *ngIf="user && showMyFriends" class="btn toggle-btn" (click)="showFriends()">
+        Ismerősök mutatása
+    </button>
+
+    <app-my-community *ngIf="!showMyFriends" [me]=user></app-my-community>
+</div>

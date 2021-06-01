@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Subject } from 'rxjs';
+import { DatabaseService } from './database.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,7 @@ export class AuthService {
 
   loginStatusChanged: any = new Subject<any>();
   
-
-  constructor(private auth: AngularFireAuth) { 
+  constructor(private auth: AngularFireAuth, private db: DatabaseService) { 
 
   }
 
@@ -23,8 +23,8 @@ export class AuthService {
   }
 
   logout(){
-    //window.localStorage.removeItem("app_user_uid");
-    window.sessionStorage.removeItem("app_user_uid");
+    window.localStorage.removeItem("app_user_uid");
+    this.db.newFriendReq.next(0);
     this.loginStatusChanged.next(false);
     return this.auth.signOut();
   }
@@ -33,8 +33,7 @@ export class AuthService {
     this.auth.currentUser
       .then(user => {
         if(user?.uid){
-          //window.localStorage.setItem("app_user_uid", user?.uid);
-          window.sessionStorage.setItem("app_user_uid", user?.uid);
+          window.localStorage.setItem("app_user_uid", user?.uid);
           this.loginStatusChanged.next(true);
         }
       })
