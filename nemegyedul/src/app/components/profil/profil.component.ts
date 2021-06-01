@@ -21,6 +21,7 @@ export class ProfilComponent implements OnInit {
   eventArray: any[] = [];
   myEventArray: any[] = [];
   selectedEvent: any = {};
+  
   constructor(
     private db: DatabaseService,
     private auth: AuthService) { }

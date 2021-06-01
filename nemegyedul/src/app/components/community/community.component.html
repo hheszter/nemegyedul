@@ -10,9 +10,9 @@
                     class="filter-btn category-btn btn-primary btn-sm m-2" role="button" data-bs-toggle="button">{{category[1]}}</button>
         </div>
 
-        <div class="order text-center btn-group" role="group">
-            <button class="btn btn-sm border-warning" (click)="orderByName()">Rendezés ABC szerint</button>
-            <button class="btn btn-sm border-warning" (click)="orderByAge()">Rendezés életkor szerint</button>
+        <div class="order text-center my-3" role="group">
+            <button class="btn btn-sm border-warning px-4" (click)="orderByName()">Rendezés név szerint</button>
+            <button class="btn btn-sm border-warning px-4" (click)="orderByAge()">Rendezés életkor szerint</button>
         </div>
 
         <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of filteredUser">
