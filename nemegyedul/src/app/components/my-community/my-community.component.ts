@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/model/user';
 import { DatabaseService } from 'src/app/services/database.service';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-my-community',
@@ -18,7 +19,9 @@ export class MyCommunityComponent implements OnInit {
 
   dbSubscription: Subscription;
 
-  constructor(private db: DatabaseService) { }
+  constructor(
+    private db: DatabaseService,
+    private userService: UsersService) { }
 
   ngOnInit(): void {
     this.refreshFriendLists();
@@ -43,48 +46,23 @@ export class MyCommunityComponent implements OnInit {
   }
 
   confirmRequest(friend:User) {
-    const newMe = this.me;
-    newMe.friends.friendRequestsToMe = this.me.friends.friendRequestsToMe.filter( (ids:string)=> ids !== friend.id);
-    newMe.friends.friendLists = newMe.friends.friendLists || [];
-    newMe.friends.friendLists.push(friend.id);
-
-    this.db.updateData("users", this.me.id, newMe);
-
-    const newFriend = friend;
-    newFriend.friends.friendRequests = friend.friends.friendRequests.filter( (ids:string)=> ids !== this.me.id);
-    newFriend.friends.friendLists = newFriend.friends.friendLists || [];
-    newFriend.friends.friendLists.push(this.me.id);
-
-    this.db.updateData("users", friend.id, newFriend);
-    
-    this.refreshFriendLists();
+    this.userService.confirmRequest(friend)
+      .then(()=>this.refreshFriendLists())
+      .catch(err=>console.error(err))
+    // this.refreshFriendLists()
   }
 
   resetRequest(friend:User) {
-    const newMe = this.me;
-    newMe.friends.friendRequests = this.me.friends.friendRequests.filter( (ids:string)=> ids !== friend.id);
-
-    this.db.updateData("users", this.me.id, newMe);
-
-    const newFriend = friend;
-    newFriend.friends.friendRequestsToMe = friend.friends.friendRequestsToMe.filter( (ids:string)=> ids !== this.me.id);
-    
-    this.db.updateData("users", friend.id, newFriend);
-
-    this.refreshFriendLists();
+    this.userService.resetSentRequest(friend)
+      .then(()=>this.refreshFriendLists())
+      .catch(err=>console.error(err))
+    // this.refreshFriendLists();
   }
 
   deleteFriend(friend:User) {
-    const newMe = this.me;
-    newMe.friends.friendLists = this.me.friends.friendLists.filter( (ids:string)=> ids !== friend.id);
-
-    this.db.updateData("users", this.me.id, newMe);
-
-    const newFriend = friend;
-    newFriend.friends.friendLists = friend.friends.friendLists.filter( (ids:string)=> ids !== this.me.id);
-    
-    this.db.updateData("users", friend.id, newFriend);
-
-    this.refreshFriendLists();
+    this.userService.deleteFriend(friend)
+      .then(()=>this.refreshFriendLists())
+      .catch(err=>console.error(err))
+    // this.refreshFriendLists();
   }
 }
