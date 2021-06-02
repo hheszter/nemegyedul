@@ -20,7 +20,7 @@
               newEventForm.get('name').invalid &&
               newEventForm.get('name').touched
             "
-            >Helytelen formátum!</small
+            >Helytelen formátum! Karakterszám 4 és 120 között. Csak a magyar abc betűit, pontot, szóközt és gondolatjelet tartalmazhat.</small
           >
         </div>
       </div>
@@ -55,13 +55,23 @@
             id="datetime"
             name="datetime"
             formControlName="datetime"
+            [min]="minDate"
           />
           <small
             *ngIf="
               newEventForm.get('datetime').invalid &&
-              newEventForm.get('datetime').touched
+              newEventForm.get('datetime').touched &&
+              !newEventForm.controls.datetime.errors?.InvalidDateError
             "
             >Helytelen formátum!</small
+          >
+          <small
+            *ngIf="
+              newEventForm.get('datetime').invalid &&
+              newEventForm.get('datetime').touched &&
+              newEventForm.controls.datetime.errors?.InvalidDateError
+            "
+            >Legkorábbi megadható dátum holnap ugyanekkor.</small
           >
         </div>
       </div>
@@ -184,10 +194,17 @@
         formControlName="userUID"
         hidden = "hidden"
       />
+      
+      <button
+        class="btn btn-danger"
+        (click)="cancelEventSave()"
+      >
+        Mégse
+      </button>
 
       <button
         type="submit"
-        class="btn btn-primary"
+        class="btn btn-success"
         [disabled]="newEventForm.invalid"
       >
         Mentés

@@ -1,28 +1,38 @@
 @use '../../../assets/colors' as c;
 @use '../../../assets/mixins' as m;
 
-.card {
-    .img-holder {
-        // height: 200px;
-        // overflow: hidden;
 
-        // img {
-        //     min-height: 100%;
-        // }
+.filter {
+
+    &-btn {
+        @include m.setMyButton();
+
+        &.active {
+            background: grey !important;
+            // background: c.$c-yellow !important;
+            // color: c.$c-deeporange !important;
+        }
+    }
+}
+
+.order {
+
+    .btn {
+        background: rgba(250,250,250,0.4);
+    }
+}
+
+.card {
+    background: rgba(250,250,250,0.8);
+    
+
+    .img-holder {
         @include m.setCardImgSize();
+        @include m.setImgBorderAndHover();
+        
     }
 
     .theme {
-        // display: inline-block;
-        // margin: 0 3px 2px 0;
-        // padding: 2px;
-        // border: 1px solid c.$c-orange;
-        // border-radius: 5px;
-
-        // &:hover {
-        //     transition: all 0.5s;
-        //     background: c.$c-orange;
-        // }
         @include m.setTheme();
     }
 

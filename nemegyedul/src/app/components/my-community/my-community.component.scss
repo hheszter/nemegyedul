@@ -9,8 +9,13 @@
     }
 }
 
+.card {
+    background: rgba(250,250,250,0.8);
+}
+
 .img-holder {
     @include m.setCardImgSize();
+    @include m.setImgBorderAndHover();
 }
 .theme {
     @include m.setTheme();
@@ -19,6 +24,6 @@
     @include m.setMyButton();
 }
 
-.profil-datas {
-  background-color: #000;
-}
+// .profil-datas {
+//   background-color: #000;
+// }
