@@ -103,53 +103,13 @@ export class ProfilComponent implements OnInit {
     if (!confirm("Biztosan törölni akarja a profilját? Ez a lépés nem visszavonható!")) {
       return
     } else {
-      // let userId = this.user.id;
       let friendsIDs = this.user.friends.friendLists ? this.user.friends.friendLists : [];
       let friendsReqIDs = this.user.friends.friendRequests ? this.user.friends.friendRequests : [];
       let friendsReqToMeIDs = this.user.friends.friendRequestsToMe ? this.user.friends.friendRequestsToMe : [];
 
-      if (friendsIDs.length > 0) {
-        friendsIDs.forEach((id: string) => {
-          let currFriend: any;
-
-          let subsciption = this.db.getOneDataById("users", id).subscribe(
-            (user) => { currFriend = user.data() },
-            (err) => console.error(err),
-            () => {
-              this.userService.deleteFriend(currFriend)
-              subsciption.unsubscribe();
-            }
-          )
-        })
-      }
-      if (friendsReqIDs.length > 0) {
-        friendsReqIDs.forEach((id: string) => {
-          let currFriend: any;
-
-          let subsciption = this.db.getOneDataById("users", id).subscribe(
-            (user) => { currFriend = user.data() },
-            (err) => console.error(err),
-            () => {
-              this.userService.resetSentRequest(currFriend)
-              subsciption.unsubscribe();
-            }
-          )
-        })
-      }
-      if (friendsReqToMeIDs.length > 0) {
-        friendsReqToMeIDs.forEach((id: string) => {
-          let currFriend: any;
-
-          let subsciption = this.db.getOneDataById("users", id).subscribe(
-            (user) => { currFriend = user.data() },
-            (err) => console.error(err),
-            () => {
-              this.userService.resetReceivedRequest(currFriend)
-              subsciption.unsubscribe();
-            }
-          )
-        })
-      }
+      this.manageUsersById(friendsIDs, this.userService.deleteFriend);
+      this.manageUsersById(friendsReqIDs, this.userService.resetSentRequest);
+      this.manageUsersById(friendsReqToMeIDs, this.userService.resetReceivedRequest);
 
       this.auth.deleteUserAccount()
         .then(()=>{
@@ -158,6 +118,23 @@ export class ProfilComponent implements OnInit {
              .then(()=>this.router.navigate(["/welcome"]))
         })
         .catch(err=>console.error(err))
+    }
+  }
+
+  manageUsersById(idArray:Array<string>, callback:any ) {
+    if(idArray.length > 0){
+      idArray.forEach((id: string) => {
+        let currFriend: any;
+
+        let subsciption = this.db.getOneDataById("users", id).subscribe(
+          (user) => { currFriend = user.data() },
+          (err) => console.error(err),
+          () => {
+            callback(currFriend)
+            subsciption.unsubscribe();
+          }
+        )
+      })
     }
   }
 }
