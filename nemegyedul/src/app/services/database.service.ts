@@ -46,6 +46,7 @@ export class DatabaseService {
               this.loggedInUser.next(user);
 
               //indicate marks:
+              this.newFriendReq.next(0);
               if(user.friends){
                 if(user.friends.friendRequestsToMe){
                   this.newFriendReq.next(user.friends.friendRequestsToMe.length)
