@@ -75,16 +75,20 @@ export class ChessComponent implements OnInit {
   };
 
   currentGame = {
-    players: [{
-      name: 'Jucus',
-      id: '1',
-      color: 'white'
+    players: {
+      white: {
+        name: 'Ferenc',
+        id: '1',
+        color: 'white',
+        inCheck: false
+      },
+      black: {
+        name: 'Jucus',
+        id: '2',
+        color: 'black',
+        inCheck: false
+      }
     },
-    {
-      name: 'Feri',
-      id: '2',
-      color: 'black'
-    }],
     next: {
       color: 'white',
       possibleMoves: {}
@@ -99,7 +103,7 @@ export class ChessComponent implements OnInit {
   highlightNext = {
     moves: [],
     hits: [],
-    current: []
+    current: [],
   };
 
   constructor(
@@ -109,17 +113,13 @@ export class ChessComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.currentGame);
-    console.log('INIT CURRENT GAME: ', this.currentGame);
+    console.log('CURRENT GAME INIT: ', this.currentGame);
 
     this.chessTestService.chessBoardStateChanged.subscribe(
       state => {
-        // if (state.state.moves[state.state.moves.length - 1] in this.highlightNext.moves
-        //   || state.state.moves[state.state.moves.length - 1] in this.highlightNext.hits) {
         this.currentGame = { ...state };
-        // }
         this.removeHightlight();
 
-        //TODO Miután a kezdőlépésekre jól számol, újraengedélyezni itt
         this.currentGame.next.possibleMoves = this.calculatePossibleMoves(state);
         console.log('CURRENT GAME AFTER MOVE: ', this.currentGame);
       });
@@ -564,7 +564,7 @@ export class ChessComponent implements OnInit {
       return a;
     }, {});
 
-    const movesToFilter = [];
+    let movesToFilter = [];
 
     possibleMoves = possibleMoves.filter(m => m.moves.length > 0);
     console.log('RESULT: ', possibleMoves);
@@ -579,24 +579,47 @@ export class ChessComponent implements OnInit {
         delete testState.state[pos];
         testState.state[single] = piece;
 
-        const king = testState.next.color === 'white' ? 'BlackKing' : 'WhiteKing';
+        //const king = testState.next.color === 'white' ? 'BlackKing' : 'WhiteKing';
         //const kingPosition = Object.entries(testState.state).find(e => e[1] === king)[0];
 
-        testState.next.color = testState.next.color === 'black' || 'Black' ? 'white' : 'lack';
+        testState.next.color = testState.next.color === 'white' ? 'black' : 'white';
+
+        //console.log('NEXT COLOR: ', testState.next.color);
 
         //console.log('KING POSITION: ', kingPosition);
-        //console.log('SINGLE: ', single, testState.next.color, testState.state);
+        //console.log('SINGLE: ', pos, single, testState.next.color, testState.state);
 
 
         const clearMoves = Object.entries(testState.state).filter(e => this.colorPieces[testState.next.color].includes(e[1].toString()));
         //console.log('NOT SO POSSIBLE MOVES: ', clearMoves);
-        let notPossibleMoves = clearMoves.map(s => this.calcMove(testState, s[0])).filter(e => e.moves.length || e.hits.length > 0);
+        let notPossibleMoves = clearMoves.map(s => this.calcMove(testState, s[0])).filter(e => e.hits.length > 0).map(e => e.hits);
 
         //console.log('NOT SO POSSIBLE MOVES: ', notPossibleMoves);
+        movesToFilter.push(notPossibleMoves);
       });
 
     });
 
+    const king = game.next.color === 'white' ? 'WhiteKing' : 'BlackKing';
+    const kingPosition = Object.entries(game.state).find(e => e[1] === king)[0];
+
+    movesToFilter = Array.from(new Set(movesToFilter.filter(m => m.length > 0).reduce((a, c) => [...a, ...c], []).flat())).sort();
+
+    console.log('KING POSITION: ', kingPosition);
+    console.log('MOVES TO FILTER: ', movesToFilter);
+
+    if (movesToFilter.includes(kingPosition)) {
+      game.players[game.next.color].inCheck = true;
+    } else {
+      game.players[game.next.color].inCheck = false;
+    }
+
+    if (kingPosition && result[kingPosition]) {
+      console.log('RESULT KINGPOSITION: ', result[kingPosition]);
+      const positions = (result[kingPosition].moves || []).reduce((a, c) => movesToFilter.includes(c) ? a : [...a, c], []);
+      console.log('POSSIBLE KING MOVES', positions);
+      result[kingPosition].moves = positions;
+    }
 
     return result;
   }
