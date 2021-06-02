@@ -105,6 +105,7 @@ export class LoginComponent implements OnInit {
   registration() {
     const regData = this.regForm.value;
     regData.myEvents = []
+    regData.email = regData.email.trim();
     if (regData.password !== regData.repassword) {
       this.setModal("Valami nem stimmel", "A két jelszó nem egyezik!", false);
       return
