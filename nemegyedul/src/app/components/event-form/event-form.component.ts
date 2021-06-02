@@ -38,8 +38,8 @@ export class EventFormComponent implements OnInit, CanActivate {
     tomorrow.setMinutes(tomorrow.getMinutes() + difference);
     this.minDateWithTimeZoneOffset = tomorrow.toISOString().substring(0, 16);
 
-    console.log("MIN DATE:  ", this.minDate);
-    console.log("MIN DATE WITH OFFSET:  ", this.minDateWithTimeZoneOffset);
+    //console.log("MIN DATE:  ", this.minDate);
+    //console.log("MIN DATE WITH OFFSET:  ", this.minDateWithTimeZoneOffset);
   }
 
   ngOnInit(): void {
