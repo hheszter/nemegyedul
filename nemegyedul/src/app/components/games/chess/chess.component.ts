@@ -20,7 +20,7 @@ export class ChessComponent implements OnInit {
   colorPieces = {
     black: ['BlackBishop', 'BlackKing', 'BlackKnight', 'BlackPawn', 'BlackQueen', 'BlackRook'],
     white: ['WhiteBishop', 'WhiteKing', 'WhiteKnight', 'WhitePawn', 'WhiteQueen', 'WhiteRook']
-  }
+  };
 
   chessPieces = {
     BlackBishop: '../../../../assets/images/chess/BlackBishop.png',
