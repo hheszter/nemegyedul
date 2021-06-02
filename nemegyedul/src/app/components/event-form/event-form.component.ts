@@ -16,6 +16,7 @@ export class EventFormComponent implements OnInit, CanActivate {
   categories: any;
 
   minDate: string;
+  minDateWithTimeZoneOffset: string;
 
 
   constructor(
@@ -28,8 +29,17 @@ export class EventFormComponent implements OnInit, CanActivate {
   dateThingy() {
     const today = new Date();
     const tomorrow = new Date(today);
+
+    const difference = -tomorrow.getTimezoneOffset();
+
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.minDate = tomorrow.toISOString().substring(0, 16);
+
+    tomorrow.setMinutes(tomorrow.getMinutes() + difference);
+    this.minDateWithTimeZoneOffset = tomorrow.toISOString().substring(0, 16);
+
+    console.log("MIN DATE:  ", this.minDate);
+    console.log("MIN DATE WITH OFFSET:  ", this.minDateWithTimeZoneOffset);
   }
 
   ngOnInit(): void {
@@ -69,8 +79,11 @@ export class EventFormComponent implements OnInit, CanActivate {
 
   dateValidator(datetime: FormControl) {
     const dateValue = datetime.value;
+    const formDate = new Date(dateValue);
+    const difference = formDate.getTimezoneOffset();
+    formDate.setMinutes(formDate.getMinutes() + difference);
 
-    if (new Date(this.minDate).getTime() > new Date(dateValue).getTime()) {
+    if (new Date(this.minDate).getTime() > new Date(formDate).getTime()) {
       return { 'InvalidDateError': true };
     }
     return null;
