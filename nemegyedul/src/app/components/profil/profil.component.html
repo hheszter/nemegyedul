@@ -8,8 +8,8 @@
             <h2 class="h3">{{user.name}}</h2>
             <p>{{user.email}}</p>
             <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="newPassword(user.email)">Új jelszó igénylés</button>
-            <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="editProfil()">Adatok szerkesztése</button>
-            <button class="btn btn-sm btn-danger d-inline-block mr-2" (click)="deleteProfil()">Profil törlése</button>
+            <!-- <button class="btn btn-sm btn-secondary d-inline-block mr-2" (click)="editProfil()">Adatok szerkesztése</button>
+            <button class="btn btn-sm btn-danger d-inline-block mr-2" (click)="deleteProfil()">Profil törlése</button> -->
             <h4>Személyes adatok:</h4>
             <p>Kor: {{user.age}} év</p>
             <p>Nem: {{user.gender==="male" ? "férfi" : "nő"}}</p>

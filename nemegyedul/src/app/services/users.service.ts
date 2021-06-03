@@ -69,25 +69,52 @@ export class UsersService {
     return Promise.all([update1, update2])
   }
 
-  resetSentRequest(friend: User){
+  resetSentRequest(friend: User, user?: User){
     const newUser = this.user;
-    newUser.friends.friendRequests = this.user.friends.friendRequests.filter( (ids:string)=> ids !== friend.id);
-    const update1 = this.db.updateData("users", this.user.id, newUser);
+    newUser.friends.friendRequests = this.user.friends.friendRequests.filter( (id:string)=> id !== friend.id);
+    const update1 = this.db.updateData("users", this.user.id, newUser)
+      .then(()=>console.log("updated"))
+      .catch(err=>console.error(err));
 
     const newFriend = friend;
-    newFriend.friends.friendRequestsToMe = friend.friends.friendRequestsToMe.filter( (ids:string)=> ids !== this.user.id);
-    const update2 = this.db.updateData("users", friend.id, newFriend);
+    newFriend.friends.friendRequestsToMe = friend.friends.friendRequestsToMe.filter( (id:string)=> id !== this.user.id);
+    const update2 = this.db.updateData("users", friend.id, newFriend)
+      .then(()=>console.log("updated"))
+      .catch(err=>console.error(err));
 
     return Promise.all([update1, update2])
   }
 
-  resetReceivedRequest(friend: User){
-    //only used by delete account:
-    const newFriend = friend;
-    newFriend.friends.friendRequests = friend.friends.friendRequests.filter( (id:string) => id !== this.user.id);
+  rejectRequest(friend: User, user?: User){
+    const newUser = this.user;
+    newUser.friends.friendRequestsToMe = this.user.friends.friendRequestsToMe.filter( (id:string)=> id !== friend.id);
+    const update1 = this.db.updateData("users", this.user.id, newUser)
+      .then(()=>console.log("updated"))
+      .catch(err=>console.error(err));
 
-    return this.db.updateData("users", friend.id, newFriend);
+    const newFriend = friend;
+    newFriend.friends.friendRequests = friend.friends.friendRequests.filter( (id:string)=> id !== this.user.id);
+    const update2 = this.db.updateData("users", friend.id, newFriend)
+      .then(()=>console.log("updated"))
+      .catch(err=>console.error(err));
+
+    return Promise.all([update1, update2])
   }
+
+  // resetReceivedRequest(friend: User, user?: User){
+  //   //only used by account-delete method:
+  //   const loggedinuser = user || this.user;
+  //   const newFriend = friend;
+  //   // console.log(newFriend.friends.friendRequestsToMe)
+  //   newFriend.friends.friendRequestsToMe = friend.friends.friendRequestsToMe.filter( (id:string)=> id !== loggedinuser.id);
+  //   // console.log(newFriend.friends.friendRequestsToMe)
+
+  //   const update1 = this.db.updateData("users", friend.id, newFriend)
+  //     .then(()=>console.log("updated"))
+  //     .catch(err=>console.error(err));
+
+  //   return Promise.apply(update1)
+  // }
 
   deleteFriend(friend: User){
     const newUser = this.user;

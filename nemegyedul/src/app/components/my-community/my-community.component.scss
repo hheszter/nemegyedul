@@ -24,6 +24,13 @@
     @include m.setMyButton();
 }
 
-// .profil-datas {
-//   background-color: #000;
-// }
+.btn-div {
+    display: flex !important;
+    justify-content: space-between !important;
+    
+    .btn {
+        display: block !important;
+        width: 48% !important;
+    }
+}
+

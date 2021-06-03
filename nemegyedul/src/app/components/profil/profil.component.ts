@@ -42,15 +42,12 @@ export class ProfilComponent implements OnInit {
       data => {
         this.eventArray = data;
         this.filterData(this.eventArray, this.user, this.myEventArray)
-
-
       },
       error => console.error(error)
     )
   }
 
   filterData(eventArray, currentUser, myEventArray) {
-
     for (let j = 0; j < eventArray.length; j++) {
       let i = 0
       for (i = 0; i < currentUser.myEvents.length; i++) {
@@ -107,10 +104,57 @@ export class ProfilComponent implements OnInit {
       let friendsReqIDs = this.user.friends.friendRequests ? this.user.friends.friendRequests : [];
       let friendsReqToMeIDs = this.user.friends.friendRequestsToMe ? this.user.friends.friendRequestsToMe : [];
 
-      this.manageUsersById(friendsIDs, this.userService.deleteFriend);
-      this.manageUsersById(friendsReqIDs, this.userService.resetSentRequest);
-      this.manageUsersById(friendsReqToMeIDs, this.userService.resetReceivedRequest);
+      // this.manageUsersById(friendsReqToMeIDs, this.userService.rejectRequest);
+      // this.manageUsersById(friendsReqIDs, this.userService.resetSentRequest);
+      // this.manageUsersById(friendsIDs, this.userService.deleteFriend);
 
+      if(friendsReqToMeIDs.length > 0){
+        friendsReqToMeIDs.forEach((id: string) => {
+          let currFriend: any;
+  
+          this.dbSubscription = this.db.getOneDataById("users", id).subscribe(
+            (user) => { currFriend = user.data() },
+            (err) => console.error(err),
+            () => {
+              this.userService.rejectRequest(currFriend)
+              this.dbSubscription.unsubscribe();
+            }
+          )
+        })
+      }
+      if(friendsReqIDs.length > 0){
+        friendsReqIDs.forEach((id: string) => {
+          let currFriend: any;
+  
+          this.dbSubscription = this.db.getOneDataById("users", id).subscribe(
+            (user) => { currFriend = user.data() },
+            (err) => console.error(err),
+            () => {
+              this.userService.resetSentRequest(currFriend)
+              this.dbSubscription.unsubscribe();
+            }
+          )
+        })
+      }
+      if(friendsIDs.length > 0){
+        friendsIDs.forEach((id: string) => {
+          let currFriend: any;
+  
+          this.dbSubscription = this.db.getOneDataById("users", id).subscribe(
+            (user) => { currFriend = user.data() },
+            (err) => console.error(err),
+            () => {
+              this.userService.deleteFriend(currFriend)
+              this.dbSubscription.unsubscribe();
+            }
+          )
+        })
+      }
+
+      this.db.deleteData("users", this.user.id)
+        .then(()=>console.log("database deleted"))
+        .catch(err=>console.log(err))
+      
       this.auth.deleteUserAccount()
         .then(()=>{
           console.log("successfully deleted account");
@@ -126,15 +170,33 @@ export class ProfilComponent implements OnInit {
       idArray.forEach((id: string) => {
         let currFriend: any;
 
-        let subsciption = this.db.getOneDataById("users", id).subscribe(
+        this.dbSubscription = this.db.getOneDataById("users", id).subscribe(
           (user) => { currFriend = user.data() },
           (err) => console.error(err),
           () => {
             callback(currFriend)
-            subsciption.unsubscribe();
+            this.dbSubscription.unsubscribe();
           }
         )
       })
     }
+  }
+
+  //Using only by development:
+  //Delete all friends and request in all user account!!!!
+  deleteAllFriendShip(){
+    this.db.getData("users").subscribe(
+      (data)=>{
+        data.forEach((user:any) => {
+          let newUser = user;
+          newUser.friends = {friendLists: [], friendRequests:[], friendRequestsToMe: [] }
+          this.db.updateData("users", user.id, newUser)
+            .then(()=>console.log("updated"))
+            .catch(err=>console.log(err))
+          
+        })
+      },
+      (err)=>console.error(err)
+    )
   }
 }

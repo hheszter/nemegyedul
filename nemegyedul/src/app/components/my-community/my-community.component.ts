@@ -24,7 +24,8 @@ export class MyCommunityComponent implements OnInit {
     private userService: UsersService) { }
 
   ngOnInit(): void {
-    this.refreshFriendLists();
+    setTimeout(()=>this.refreshFriendLists(), 500)
+    // this.refreshFriendLists(); //this.me null az első pillanatban
   }
 
   refreshFriendLists() {
@@ -49,20 +50,23 @@ export class MyCommunityComponent implements OnInit {
     this.userService.confirmRequest(friend)
       .then(()=>this.refreshFriendLists())
       .catch(err=>console.error(err))
-    // this.refreshFriendLists()
   }
 
   resetRequest(friend:User) {
     this.userService.resetSentRequest(friend)
       .then(()=>this.refreshFriendLists())
       .catch(err=>console.error(err))
-    // this.refreshFriendLists();
+  }
+
+  rejectRequest(friend:User) {
+    this.userService.rejectRequest(friend)
+    .then(()=>this.refreshFriendLists())
+    .catch(err=>console.error(err))
   }
 
   deleteFriend(friend:User) {
     this.userService.deleteFriend(friend)
       .then(()=>this.refreshFriendLists())
       .catch(err=>console.error(err))
-    // this.refreshFriendLists();
   }
 }
