@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/model/user';
 import { DatabaseService } from 'src/app/services/database.service';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-community',
@@ -18,7 +19,9 @@ export class CommunityComponent implements OnInit {
   categories: Array<any>;
   selectedCategories: Array<any> = [];
 
-  constructor(private db: DatabaseService) { }
+  constructor(
+    private db: DatabaseService, 
+    private userService: UsersService) { }
 
   ngOnInit(): void {
     this.dbSubscription = this.db.loggedInUser.subscribe(
@@ -57,33 +60,7 @@ export class CommunityComponent implements OnInit {
 
   //mark as friend:
   setFriend(friend: User) {
-    this.me.friends = this.me.friends || {}
-    this.me.friends.friendRequests = this.me.friends.friendRequests || [];
-
-    if (this.me.friends.friendRequests.includes(friend.id)) {
-      //extra protection, unnecessary, can be deleted
-      alert("Már ismerősnek jelölted");
-      return
-    } else {
-      this.me.friends.friendRequests.push(friend.id);
-      this.db.updateData('users', this.me.id, this.me)
-        .then(() => console.log('Add friend-request'))
-        .catch(err => console.error(err))
-    }
-
-    friend.friends = friend.friends || {};
-    friend.friends.friendRequestsToMe = friend.friends.friendRequestsToMe || [];
-
-    if (friend.friends.friendRequestsToMe.includes(this.me.id)) {
-      //extra protection, unnecessary, can be deleted
-      alert("Már szóltam, hogy Őt már ismerősnek jelölted");
-      return
-    } else {
-      friend.friends.friendRequestsToMe.push(this.me.id);
-      this.db.updateData('users', friend.id, friend)
-        .then(() => console.log('Send friend-request'))
-        .catch(err => console.error(err))
-    }
+    this.userService.sendFriendRequest(friend);
   }
 
  //filter users according themes:

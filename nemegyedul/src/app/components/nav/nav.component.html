@@ -10,7 +10,7 @@
         <li *ngFor="let link of navigation" class="nav-item" routerLinkActive="active"
           [routerLinkActiveOption]="{exact: true}">
           <a [routerLink]="link.href" class="nav-link">{{ link.label }}
-            <span *ngIf="user && newReqs && link.label=='Saját adatok'" class="badge badge-pill badge-secondary d-inline">{{newReqs}}</span>
+            <span *ngIf="user && newReqs>0 && link.label=='Saját adatok'" class="badge badge-pill badge-secondary d-inline">{{newReqs}}</span>
           </a>
         </li>
       </ul>

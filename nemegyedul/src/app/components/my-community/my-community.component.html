@@ -14,7 +14,10 @@
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
         </div>
-        <button class="btn" (click)="confirmRequest(user)">Visszaigazolás</button>
+        <div class="btn-div">
+          <button class="btn" (click)="confirmRequest(user)">Visszaigazolás</button>
+          <button class="btn" (click)="rejectRequest(user)">Elutasít</button>
+        </div>
       </div>
     </div>
   </section>

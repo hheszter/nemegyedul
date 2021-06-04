@@ -45,4 +45,10 @@ export class AuthService {
       .then(()=>console.log("email has been sent"))
       .catch(err=>console.error(err))
   }
+
+  deleteUserAccount(){
+    return this.auth.currentUser
+      .then( user => user.delete())
+      .catch(err=>console.error(err))
+  }
 }

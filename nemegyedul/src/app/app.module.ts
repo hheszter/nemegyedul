@@ -21,6 +21,7 @@ import { CommunityComponent } from './components/community/community.component';
 
 import { ChessComponent } from './components/games/chess/chess.component';
 import { MyCommunityComponent } from './components/my-community/my-community.component';
+import { NoughtsAndCrossesComponent } from './components/games/noughts-and-crosses/noughts-and-crosses.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { MyCommunityComponent } from './components/my-community/my-community.com
     ProfilComponent,
     ChessComponent,
     CommunityComponent,
-    MyCommunityComponent
+    MyCommunityComponent,
+    NoughtsAndCrossesComponent
   ],
   imports: [
     BrowserModule,
