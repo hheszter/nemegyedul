@@ -4,7 +4,7 @@
 .profil {
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
+    padding-top: 2rem;
 
     @media only screen and (min-width: 768px) {
         flex-direction: row;;
@@ -28,7 +28,7 @@
 
     &-datas {
         padding: 2rem;
-        box-shadow: 0 0 5px grey;
+        //box-shadow: 0 0 5px grey;
         font-weight: 600;
 
         @media only screen and (min-width: 768px) {
@@ -73,4 +73,102 @@
 .toggle-btn {
     margin: 1rem 1rem 0 0;
     @include m.setMyButton();
+}
+
+
+.container-md {
+  background-color: #0006;
+}
+
+.modal-content {
+  background-image: linear-gradient(35deg, #ffdc17, #222);
+  background-color: #5555;
+  background-blend-mode:multiply
+}
+
+.modal-header {
+  color: whitesmoke;
+  background-image: linear-gradient(hsl(0 0% 0% / 1), hsl(0 0% 0% / 0));
+}
+.modal-body {
+  color: whitesmoke;
+}
+.modal-body img {
+
+  border: 3px solid #ffdc17;
+}
+
+.modal-contents {
+  color: whitesmoke;
+  background-image: linear-gradient(hsl(0 0% 0% / 0), hsl(0 0% 0% / 1));
+}
+.modal-footer .btn-interest {
+  @include m.setMyButton();
+  margin-bottom: 0.5rem;
+}
+
+.modal-footer .btn-closeButton {
+
+  margin-bottom: 0.5rem;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  background-image: linear-gradient(35deg, #ffdc17, #222);
+  background-color: #5555;
+  background-blend-mode:multiply;
+  padding: 0;
+  border-radius: .5rem;
+  overflow: hidden;
+}
+.card .img-frame {
+
+  max-height: 250px;
+  margin: 0.75rem;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  //position: relative;
+  border: 3px solid #ffdc17;
+  border-radius: .3rem;
+}
+.card .img-frame img {
+  width: 100%;
+  height: auto;
+
+
+
+}
+.card-body {
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.content {
+  background-image: linear-gradient(hsl(0 0% 0% / 0), hsl(0 0% 0% / 1));
+}
+.card-footer {
+  border: none;
+
+
+
+  align-content: flex-end;
+  height: calc(100%-100px);
+  //background-color: #222;
+
+  margin-top: auto;
+  //padding: 0.5rem;
+  color: whitesmoke;
+  text-align: center;
+
+}
+
+.card-footer .btn {
+  @include m.setMyButton();
+  margin-bottom: 0.5rem;
 }

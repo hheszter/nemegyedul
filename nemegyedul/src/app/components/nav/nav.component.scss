@@ -5,9 +5,23 @@
     user-select: none;
 }
 
+@media only screen and (min-width: 993px) {
+
+  .nav-item {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  .sayhi {
+    text-align: center;
+  }
+}
+
+
 .nav-item .nav-link {
+    margin-top: auto;
     --padding: 12px;
-    cursor: pointer;
+
     position: relative;
     width: max-content;
     text-align: center;
@@ -37,6 +51,7 @@
 @media only screen and (min-width: 993px) {
   .nav-item .nav-link {
     width: 100%;
+    position: relative;
   }
   .nav-item .nav-link::after {
     left: 0;
@@ -45,13 +60,20 @@
 
 }
 .badge {
-    position: relative;
-    top: -10px;
-    left: -10px;
+    position: absolute;
+    top: -5px;
+    right: -10px;
     border-radius: 50%;
     background: c.$c-orange;
 
 }
+.login, .logout {
+  cursor: pointer;
+}
+
 .sayhi {
   user-select: none;
+}
+.nav-item:hover .sayhi::after {
+  transform: scaleX(0);
 }

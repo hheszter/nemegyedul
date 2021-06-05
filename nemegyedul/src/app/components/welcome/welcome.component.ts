@@ -12,12 +12,16 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class WelcomeComponent implements OnInit {
   isLoggedIn: any;
   currentUser: User;
-  constructor(private databaseService: DatabaseService, private authGuardService: AuthGuardService) { }
+  constructor(private databaseService: DatabaseService, private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.authGuardService.isActive.subscribe(
-      data => this.isLoggedIn = data,
-      error => console.error(error)
+    // this.authGuardService.isActive.subscribe(
+    //   data => {this.isLoggedIn = data; console.log('welcome data:', data)},
+    //   error => console.error(error)
+    // )
+    !window.localStorage.getItem('app_user_uid') ? this.isLoggedIn = false : this.isLoggedIn = true;
+    this.authService.loginStatusChanged.subscribe(
+      data => this.isLoggedIn = data
     )
   }
 

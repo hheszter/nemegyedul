@@ -6,17 +6,21 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">{{selectedEvent.name}}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body ">
         <img style="width: 100%;" [src]="selectedEvent.imageUrl" alt="">
-        <h6 >Esemény időpontja: {{localeDate}} </h6>
-
-        {{selectedEvent.description}}
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="close()">Close</button>
-        <button type="button" class="btn btn-primary" [disabled]="buttonDisable" data-bs-dismiss="modal" (click)="saveEvent(selectedEvent)">Érdekel</button>
+      <div class="modal-contents">
+        <div class="p-2">
+          <h6 >Esemény időpontja: {{localeDate}} </h6>
+          {{selectedEvent.description}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-closeButton" data-bs-dismiss="modal" (click)="close()">Bezár</button>
+          <button type="button" class="btn btn-interest" [disabled]="buttonDisable" data-bs-dismiss="modal" (click)="saveEvent(selectedEvent)">Érdekel</button>
+          <span *ngIf="buttonDisable" class="text-light text-center mx-auto d-block text-decoration-underline text-bolder"><strong>Erre az eseményre már feliratkozott korábban!</strong></span>
+        </div>
       </div>
     </div>
   </div>
@@ -43,7 +47,8 @@
             <div class="card__front" [ngStyle]="{'background': 'url('+ card.imageUrl +')  center center no-repeat', 'background-size': 'cover', 'background-color': '#555555'}" >
               <!--  -->
               <h4 class="card__front-title">{{card.name}}</h4>
-              <p class="card__front-subtitle">{{card.datetime | date: 'fullDate'}}</p>
+              <p class="card__front-subtitle">{{card.datetime }}</p>
+              <!-- | date: 'fullDate' -->
             </div>
             <div class="card__back">
               <div class="img-frame">

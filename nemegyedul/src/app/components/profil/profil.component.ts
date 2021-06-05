@@ -23,6 +23,7 @@ export class ProfilComponent implements OnInit {
   eventArray: any[] = [];
   myEventArray: any[] = [];
   selectedEvent: any = {};
+  localeDate: any;
 
   constructor(
     private db: DatabaseService,
@@ -62,6 +63,7 @@ export class ProfilComponent implements OnInit {
 
   currentEvent(selectedEvent: any) {
     this.selectedEvent = selectedEvent
+    this.localeDate = new Intl.DateTimeFormat('hu-HU').format(Date.parse(selectedEvent.datetime));
   }
 
   deleteEvent(selectedEvent) {
@@ -111,7 +113,7 @@ export class ProfilComponent implements OnInit {
       if(friendsReqToMeIDs.length > 0){
         friendsReqToMeIDs.forEach((id: string) => {
           let currFriend: any;
-  
+
           this.dbSubscription = this.db.getOneDataById("users", id).subscribe(
             (user) => { currFriend = user.data() },
             (err) => console.error(err),
@@ -125,7 +127,7 @@ export class ProfilComponent implements OnInit {
       if(friendsReqIDs.length > 0){
         friendsReqIDs.forEach((id: string) => {
           let currFriend: any;
-  
+
           this.dbSubscription = this.db.getOneDataById("users", id).subscribe(
             (user) => { currFriend = user.data() },
             (err) => console.error(err),
@@ -139,7 +141,7 @@ export class ProfilComponent implements OnInit {
       if(friendsIDs.length > 0){
         friendsIDs.forEach((id: string) => {
           let currFriend: any;
-  
+
           this.dbSubscription = this.db.getOneDataById("users", id).subscribe(
             (user) => { currFriend = user.data() },
             (err) => console.error(err),
@@ -154,7 +156,7 @@ export class ProfilComponent implements OnInit {
       this.db.deleteData("users", this.user.id)
         .then(()=>console.log("database deleted"))
         .catch(err=>console.log(err))
-      
+
       this.auth.deleteUserAccount()
         .then(()=>{
           console.log("successfully deleted account");
@@ -193,7 +195,7 @@ export class ProfilComponent implements OnInit {
           this.db.updateData("users", user.id, newUser)
             .then(()=>console.log("updated"))
             .catch(err=>console.log(err))
-          
+
         })
       },
       (err)=>console.error(err)
