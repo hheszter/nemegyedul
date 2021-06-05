@@ -5,20 +5,30 @@
         .row {
             display: flex;
             justify-content: center;
+
         }
     }
 }
 
 .card {
     // background: rgba(250,250,250,0.8);
-    background-image: linear-gradient(35deg, #ffdc17, rgb(167, 164, 164));
-    // background-color: #8888;
+    background-image: linear-gradient(35deg, #ffdc17, #222);
+    background-color: #5555;
     background-blend-mode:multiply;
+    color: whitesmoke;
+    padding: 0;
 }
 
 .img-holder {
+    width: 95%;
+    margin: 0 auto;
+
     @include m.setCardImgSize();
     @include m.setImgBorderAndHover();
+}
+
+.card-body {
+  background-image: linear-gradient(hsl(0 0% 0% / 0), hsl(0 0% 0% / 1));
 }
 .theme {
     @include m.setTheme();
@@ -30,10 +40,9 @@
 .btn-div {
     display: flex !important;
     justify-content: space-between !important;
-    
+
     .btn {
         display: block !important;
         width: 48% !important;
     }
 }
-
