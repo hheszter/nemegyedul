@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ChessTestService } from '../../../services/chess-test.service';
 import { ChessMoveStartService } from '../../../services/chess-move-start.service';
+import { DatabaseService } from '../../../services/database.service';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { ActivatedRoute } from '@angular/router';
+import { User } from '../../../model/user';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chess',
@@ -75,18 +80,30 @@ export class ChessComponent implements OnInit {
   };
 
   currentGame = {
+    game: {
+      created: new Date(),
+      game: 'chess',
+      hasEnded: false,
+      imageUrl: '../../../assets/images/chess.jpg',
+      isDraw: false,
+      name: 'Sakk'
+    },
     players: {
       white: {
-        name: 'Ferenc',
-        id: '1',
+        name: '',
+        id: '',
         color: 'white',
-        inCheck: false
+        photo: '',
+        inCheck: false,
+        hasWon: false
       },
       black: {
-        name: 'Jucus',
-        id: '2',
+        name: '',
+        id: '',
         color: 'black',
-        inCheck: false
+        photo: '',
+        inCheck: false,
+        hasWon: false
       }
     },
     next: {
@@ -94,11 +111,17 @@ export class ChessComponent implements OnInit {
       possibleMoves: {}
     },
     state: { ...this.initialGame },
-    moves: []
+    moves: [],
+    users: []
   };
 
   squares: any;
   pieces: any;
+
+  user: User;
+  userId: string;
+  dbSubscription: Subscription;
+  gameId: string = ''
 
   highlightNext = {
     moves: [],
@@ -107,21 +130,96 @@ export class ChessComponent implements OnInit {
   };
 
   constructor(
+    private db: DatabaseService,
+    private db2: AngularFirestore,
     private chessTestService: ChessTestService,
-    private chessMoveStartService: ChessMoveStartService
+    private chessMoveStartService: ChessMoveStartService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.currentGame);
-    console.log('CURRENT GAME INIT: ', this.currentGame);
+    this.getSquares();
+
+    this.dbSubscription = this.db.loggedInUser.subscribe(
+      (user: any) => {
+        this.user = user;
+        this.userId = this.user.id;
+      },
+      (err: any) => console.error(err),
+      () => this.dbSubscription.unsubscribe()
+    );
+
+    this.route.paramMap.subscribe(params => {
+      this.gameId = params.get('matchId');
+    });
+
+    const gameRef: AngularFirestoreDocument = this.db2.doc(`games/${this.gameId}`);
+    gameRef.valueChanges().subscribe(game => {
+      // console.log(game);
+
+      this.currentGame.game = game.game;
+      this.currentGame.game.hasEnded = true;
+      this.currentGame.players = game.players;
+      this.currentGame.next = game.next;
+      this.currentGame.state = game.state;
+      this.currentGame.moves = game.moves;
+      this.currentGame.users = game.users;
+
+      this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.currentGame);
+      // console.log('CURRENT GAME INIT: ', this.currentGame);
+
+      if (!!this.currentGame.moves.length) {
+        const lastMove = this.currentGame.moves[this.currentGame.moves.length - 1]
+        // console.log('LAST MOVE:', lastMove);
+
+        // if (this.checkIfInitialState) {
+        //   this.squares.forEach(element => {
+        //     console.log('CLEARING THE ARRAY')
+        //     element.innerHTML = '';
+        //   });
+        //   this.setPieces();
+        //   this.addEventListeners();
+        //   this.currentGame.moves.forEach(m => this.makeOtherPlayerMoves(this.currentGame, m));
+        // } else {
+        this.checkwin(this.currentGame);
+        this.makeOtherPlayerMoves(this.currentGame, lastMove);
+
+        const message = document.getElementById('message');
+
+        if (this.currentGame.players.white.hasWon) {
+          message.innerText = 'Fehér Nyert';
+          this.disableMouse(this.squares, this.pieces);
+        } else if (this.currentGame.players.black.hasWon) {
+          message.innerText = 'Fekete Nyert';
+          this.disableMouse(this.squares, this.pieces);
+        }
+        //}
+        //this.chessTestService.chessBoardStateChanged.next(this.currentGame);
+      }
+
+      // this.squares.forEach(element => {
+      //   console.log('CLEARING THE ARRAY')
+      //   element.innerHTML = '';
+      // });
+      // this.setPieces();
+    });
 
     this.chessTestService.chessBoardStateChanged.subscribe(
       state => {
-        this.currentGame = { ...state };
+        //this.currentGame = { ...state };
+
+        this.currentGame.game = state.game;
+        this.currentGame.players = state.players;
+        this.currentGame.next = state.next;
+        this.currentGame.state = state.state;
+        this.currentGame.moves = state.moves;
+        this.currentGame.users = state.users;
+
         this.removeHightlight();
 
         this.currentGame.next.possibleMoves = this.calculatePossibleMoves(state);
-        console.log('CURRENT GAME AFTER MOVE: ', this.currentGame);
+        // console.log('CURRENT GAME AFTER MOVE: ', this.currentGame);
+
       });
 
     this.chessTestService.chessPieceNotMoved.subscribe(
@@ -137,9 +235,69 @@ export class ChessComponent implements OnInit {
       }
     );
 
-    this.getSquares();
     this.setPieces();
     this.addEventListeners();
+  }
+
+  disableMouse(squares, pieces) {
+    this.squares.forEach(element => {
+      element.style.pointerEvents = 'none';
+    });
+    this.pieces.forEach(element => {
+      element.style.pointerEvents = 'none';
+    });
+  }
+
+  checkIfInitialState() {
+    let initialState = true;
+    // console.log(this.initialGame);
+    Object.entries(this.initialGame).forEach(p => {
+      const square = document.getElementById(p[0]);
+      if (square.children[0].getAttribute('data-piece') !== p[1]) {
+        initialState = false;
+      }
+    });
+    return initialState;
+  }
+
+  checkwin(game) {
+    const values = Object.values(game.state);
+    // console.log(values);
+    if (!values.includes('BlackKing')) {
+      game.game.hasEnded = true;
+      game.players.white.hasWon = true;
+    } else if (!values.includes('WhiteKing')) {
+      game.game.hasEnded = true;
+      game.players.black.hasWon = true;
+    }
+  }
+
+  makeOtherPlayerMoves(game, move) {
+    const from = move.from;
+    const to = move.to;
+    // console.log('FORM: ', from);
+    // console.log('TO: ', to);
+    const fromSquare = document.getElementById(from);
+    const toSquare = document.getElementById(to);
+    const piecefrom = fromSquare?.children[0];
+    const pieceto = toSquare?.children[0];
+
+    if (!!pieceto && pieceto.getAttribute('data-piece') === move.piece) {
+      return;
+    }
+
+    // console.log('PIECE', piecefrom);
+
+    fromSquare.innerHTML = '';
+    toSquare.innerHTML = '';
+    toSquare.appendChild(piecefrom);
+
+    // if (square.children[0]) {
+    //   hittedPiece = square.children[0].getAttribute('data-piece');
+    //   hit = 'HIT - PIECE: ' + square.children[0].getAttribute('data-piece') + ' ON: ' + square.id;
+    // }
+    // square.innerHTML = '';
+    // square.appendChild(draggedPiece);
   }
 
   getSquares() {
@@ -159,6 +317,10 @@ export class ChessComponent implements OnInit {
     this.pieces = Array.from(document.querySelectorAll('.piece'));
   }
 
+  updateFirestore(game, db, id) {
+    db.collection('games').doc(id).update(game);
+  }
+
   addEventListeners() {
     let draggedPiece: HTMLElement;
     let fromMessage: string;
@@ -172,7 +334,17 @@ export class ChessComponent implements OnInit {
     const chessTestService = this.chessTestService;
     const chessMoveStartService = this.chessMoveStartService;
 
+    const disableMouseFun = this.disableMouse;
+
     const chessBoard = document.getElementById('chess-board');
+
+    const updateFirestoreFun = this.updateFirestore;
+
+    const db = this.db2;
+    const id = this.gameId;
+    const userId = this.userId;
+
+    // Firestore consts
 
 
     this.pieces.forEach((piece: HTMLElement) => {
@@ -194,8 +366,13 @@ export class ChessComponent implements OnInit {
 
         //squares.forEach(s => s.style.pointerEvents = 'none');
         //squares.find(s => s.id === fromId).style.pointerEvents = 'all'
-        console.log('DRAGSTART SQUARE: ', squares.find(s => s.id === fromId).id);
-        const possibleMoves = currentGame.next.possibleMoves[fromId]?.moves;
+
+        let possibleMoves: any = null;
+
+        // console.log('DRAGSTART SQUARE: ', squares.find(s => s.id === fromId).id);
+        if (currentGame.players[currentGame.next.color].id === userId) {
+          possibleMoves = currentGame.next.possibleMoves[fromId]?.moves;
+        }
 
         if (possibleMoves) {
           squares.forEach(s => possibleMoves.indexOf(s.id) !== -1 ? s.style.pointerEvents = 'all' : s.style.pointerEvents = 'none');
@@ -206,7 +383,8 @@ export class ChessComponent implements OnInit {
         }
 
 
-        console.log('DRAGSTART POSSIBLE MOVES FORM HERE: ', possibleMoves ? possibleMoves : null);
+        // console.log('DRAGSTART POSSIBLE MOVES FORM HERE: ', possibleMoves ? possibleMoves : null);
+
       });
 
       piece.addEventListener('dragend', function () {
@@ -257,7 +435,7 @@ export class ChessComponent implements OnInit {
         square.appendChild(draggedPiece);
 
 
-        if (hit) { console.log(hit); };
+        // if (hit) { console.log(hit); };
 
         delete currentGame.state[fromId];
         currentGame.state[square.id] = draggedPiece.getAttribute('data-piece');
@@ -272,7 +450,18 @@ export class ChessComponent implements OnInit {
           }
         })
 
+        const message = document.getElementById('message');
+
+        if (currentGame.players.white.hasWon) {
+          message.innerText = 'O Nyert';
+          disableMouseFun(squares, pieces);
+        } else if (currentGame.players.black.hasWon) {
+          message.innerText = 'X Nyert';
+          disableMouseFun(squares, pieces);
+        }
+
         chessTestService.chessBoardStateChanged.next(currentGame);
+        updateFirestoreFun(currentGame, db, id);
       }
 
       );
@@ -567,7 +756,7 @@ export class ChessComponent implements OnInit {
     let movesToFilter = [];
 
     possibleMoves = possibleMoves.filter(m => m.moves.length > 0);
-    console.log('RESULT: ', possibleMoves);
+    // console.log('RESULT: ', possibleMoves);
     possibleMoves.forEach(m => {
       const pos = m.pos;
       const moves = m.moves;
@@ -600,26 +789,26 @@ export class ChessComponent implements OnInit {
 
     });
 
-    const king = game.next.color === 'white' ? 'WhiteKing' : 'BlackKing';
-    const kingPosition = Object.entries(game.state).find(e => e[1] === king)[0];
+    // const king = game.next.color === 'white' ? 'WhiteKing' : 'BlackKing';
+    // const kingPosition = Object.entries(game.state).find(e => e[1] === king)[0];
 
-    movesToFilter = Array.from(new Set(movesToFilter.filter(m => m.length > 0).reduce((a, c) => [...a, ...c], []).flat())).sort();
+    // movesToFilter = Array.from(new Set(movesToFilter.filter(m => m.length > 0).reduce((a, c) => [...a, ...c], []).flat())).sort();
 
-    console.log('KING POSITION: ', kingPosition);
-    console.log('MOVES TO FILTER: ', movesToFilter);
+    // // console.log('KING POSITION: ', kingPosition);
+    // // console.log('MOVES TO FILTER: ', movesToFilter);
 
-    if (movesToFilter.includes(kingPosition)) {
-      game.players[game.next.color].inCheck = true;
-    } else {
-      game.players[game.next.color].inCheck = false;
-    }
+    // if (movesToFilter.includes(kingPosition)) {
+    //   game.players[game.next.color].inCheck = true;
+    // } else {
+    //   game.players[game.next.color].inCheck = false;
+    // }
 
-    if (kingPosition && result[kingPosition]) {
-      console.log('RESULT KINGPOSITION: ', result[kingPosition]);
-      const positions = (result[kingPosition].moves || []).reduce((a, c) => movesToFilter.includes(c) ? a : [...a, c], []);
-      console.log('POSSIBLE KING MOVES', positions);
-      result[kingPosition].moves = positions;
-    }
+    // if (kingPosition && result[kingPosition]) {
+    //   // console.log('RESULT KINGPOSITION: ', result[kingPosition]);
+    //   const positions = (result[kingPosition].moves || []).reduce((a, c) => movesToFilter.includes(c) ? a : [...a, c], []);
+    //   // console.log('POSSIBLE KING MOVES', positions);
+    //   result[kingPosition].moves = positions;
+    // }
 
     return result;
   }
