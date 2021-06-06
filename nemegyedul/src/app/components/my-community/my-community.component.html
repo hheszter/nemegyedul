@@ -1,6 +1,6 @@
 <div class="my-community">
   <section class="container-md mt-5" *ngIf="friendRequestsToMe && friendRequestsToMe.length">
-    <p>Ismerősnek jelölt engem:</p>
+    <p class="text-light fw-bold">Ismerősnek jelölt engem:</p>
     <div class="row mx-auto">
       <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of friendRequestsToMe">
         <div class="img-holder">
@@ -13,17 +13,17 @@
           <p class="card-text">
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
-        </div>
-        <div class="btn-div">
-          <button class="btn" (click)="confirmRequest(user)">Visszaigazolás</button>
-          <button class="btn" (click)="rejectRequest(user)">Elutasít</button>
+          <div class="btn-div">
+            <button class="btn" (click)="confirmRequest(user)">Elfogad</button>
+            <button class="btn" (click)="rejectRequest(user)">Elutasít</button>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <section class="container-md mt-5" *ngIf="friendRequests && friendRequests.length">
-    <p>Ismerősnek jelöltem:</p>
+    <p class="text-light fw-bold">Ismerősnek jelöltem:</p>
     <div class="row mx-auto">
       <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of friendRequests">
         <div class="img-holder">
@@ -36,14 +36,14 @@
           <p class="card-text">
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
+          <button class="btn mt-auto" (click)="resetRequest(user)">Visszavonás</button>
         </div>
-        <button class="btn" (click)="resetRequest(user)">Visszavonás</button>
       </div>
     </div>
   </section>
 
   <section class="container-md mt-5" *ngIf="confirmedFriends && confirmedFriends.length">
-    <p>Ismerőseim:</p>
+    <p class="text-light fw-bold">Ismerőseim:</p>
     <div class="row mx-auto">
       <div class="card col-md-6 col-lg-4 m-2 shadow " style="width: 18rem;" *ngFor="let user of confirmedFriends">
         <div class="img-holder">
@@ -56,8 +56,8 @@
           <p class="card-text">
             <small *ngFor="let cat of user.category" class="theme">{{cat.displayName}}</small>
           </p>
+          <button class="btn" (click)="deleteFriend(user)">Ismeretség törlése</button>
         </div>
-        <button class="btn" (click)="deleteFriend(user)">Ismeretség törlése</button>
       </div>
     </div>
   </section>
