@@ -6,13 +6,13 @@
          <label class="form-label me-3 mt-1" for="category"> Új játék indítása</label>
          <select class="form-select p-1" id="game" formControlName="game" aria-label="Floating label select" placeholder="Játékok">
             <option value="">Játékok</option>
-            <option *ngFor="let game of this.games" [value]="game" (click)="clicked()">
-               {{game}}
+            <option *ngFor="let game of this.games" [value]="game.game" (click)="clicked()">
+               {{game.name}}
             </option>
          </select>
-         <select class="form-select p-1" id="friends" formControlName="friends" aria-label="Floating label select" placeholder="Ismerősök" >
+         <select class="form-select p-1" id="friend" formControlName="friend" aria-label="Floating label select" placeholder="Ismerősök" >
             <option value="">Ismerősök</option>
-            <option *ngFor="let friend of this.friends" [value]="friend.name" (click)="clicked()">
+            <option *ngFor="let friend of this.friends" [value]="friend.id" (click)="clicked()">
                {{friend.name}}
             </option>
          </select>
@@ -21,24 +21,31 @@
       </div>
    </div>
 
-   <div class="ongoing-matches" *ngIf="matches.length !== 0">
+   <div class="ongoing-matches" *ngIf="gamesArray.length !== 0">
       <div class="card__container row mx-auto my-5 text-light">
          <h3 class="text-center col-12 mb-3">Futó Játékaink</h3>
-         <div class="card__frame col-md-6 col-lg-4 m-2  " *ngFor="let match of matches">
+         <div class="card__frame col-md-6 col-lg-4 m-2  " *ngFor="let match of gamesArray">
             <div class="card__content">
-            <div class="card__front" [ngStyle]="{'background': 'url('+ match.imageUrl +')  center center no-repeat', 'background-size': 'cover', 'background-color': '#555555'}" >
-               <h4 class="card__front-title">{{match.name}}</h4>
-               <h4 class="card__front-title">{{match.opponent}}</h4>
-               <p class="card__front-subtitle">{{match.datetime | date:'medium' }}</p>
+            <div class="card__front" [ngStyle]="{'background': 'url('+ match.game.imageUrl +')  center center no-repeat', 'background-size': 'cover', 'background-color': '#555555'}" >
+               <h4 class="card__front-title">{{match.game.name}}</h4>
+               <h4 class="card__front-title">x - {{match.players.x.name}}</h4>
+               <h4 class="card__front-title">o - {{match.players.o.name}}</h4>
+               <h4 class="card__front-title">{{match?.game?.created.toDate() | date:'medium' }}</h4>
+               <!-- <p class="card__front-subtitle">{{match?.created | date:'medium' }}</p> -->
             </div>
             <div class="card__back">
                <div class="img-frame">
-                  <img src="https://images.unsplash.com/photo-1546458904-143d1674858d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=758&q=80" class="card-img-top " alt="...">
+                  <img [src]="match.players.o.photo" class="card-img-top " alt="...">
                </div>
-               <div class="card__back-content">
-                  <h5 class="card__back-title">{{match.name}}</h5>
-                  <p class="card__back--text">{{match.opponent}}</p>
-                  <a [routerLink]="'/' + match.game + '/' + match.id" class="btn btn-primary mt-auto">Folytatás</a>
+               <h4 class="text-center">x - {{match.players.x.name}}</h4>
+               <div class="img-frame">
+                  <img [src]="match.players.x.photo" class="card-img-top " alt="...">
+               </div>
+               <h4 class="text-center">o - {{match.players.o.name}}</h4>
+                  <div class="card__back-content">
+                  <h5 class="card__back-title">{{match.game.name}}</h5>
+                  <!-- <p class="card__back--text">{{match.opponent}}</p> -->
+                  <a [routerLink]="'/' + match.game.game + '/' + match.id" class="btn btn-primary mt-auto">Folytatás</a>
                </div>
          </div>
    </div>

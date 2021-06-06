@@ -63,9 +63,8 @@
     position: relative;
   }
   &-avatar-image {
-    border-radius: 50%;
-    width: 100px;
     height: 100px;
+    border: 1px black solid;
   }
 
   .black-piece,
@@ -76,6 +75,10 @@
 
   &-active {
     border: 4px red dotted;
+  }
+
+  &-active &-avatar-image {
+    border: 1px red solid;
   }
 }
 

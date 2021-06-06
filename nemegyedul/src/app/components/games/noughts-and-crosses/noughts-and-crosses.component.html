@@ -1,29 +1,29 @@
 <div class="container noughts mt-4">
     <div class="players">
-        <div class="player player-A" [className]="currentGame.next.player === 'o' ? 'player player-A player-active': 'player player-A'">
+        <div class="player player-A" [className]="currentGame?.next?.player === 'o' ? 'player player-A player-active': 'player player-A'">
           <div class="player-image-wrapper">
               <img src="../../../../assets/images/noughts-and-crosses/o.png" alt="" class="white-piece">
-              <img class="player-avatar-image"  src="https://images.unsplash.com/photo-1546458904-143d1674858d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=758&q=80" alt="player">
+              <img class="player-avatar-image"  [src]="currentGame?.players?.o?.photo" alt="player">
           </div>
           <div class="text-wrapper">
-              <h3 class="player-name">{{currentGame.players.o.name}}</h3>
+              <h3 class="player-name">{{currentGame?.players?.o?.name}}</h3>
           </div>
     </div>
     <div class="game">
         <div class="game-image-wrapper">
-          <img class="game-avatar-image" src="https://images.unsplash.com/photo-1616996721984-ae86ad6c3b60?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="chess">
+          <img class="game-avatar-image" src="../../../../assets/images/nought.jpeg" alt="chess">
         </div>
         <div class="text-wrapper">
           <h3 class="game-name">Amőba</h3>
         </div>
     </div>
-    <div class="player player-B"[className]="currentGame.next.player === 'x' ? 'player player-B player-active': 'player player-B'">
+    <div class="player player-B"[className]="currentGame?.next?.player === 'x' ? 'player player-B player-active': 'player player-B'">
         <div class="player-image-wrapper">
           <img src="../../../../assets/images/noughts-and-crosses/x.png" alt="" class="black-piece">
-          <img class="player-avatar-image" src="https://images.unsplash.com/photo-1584997159889-8bb96d0a2217?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="player">
+          <img class="player-avatar-image" [src]="currentGame?.players?.x?.photo" alt="player">
         </div>
         <div class="text-wrapper">
-          <h3 class="player-name">{{currentGame.players.x.name}}</h3>
+          <h3 class="player-name">{{currentGame?.players?.x?.name}}</h3>
         </div>
     </div>
   </div>
