@@ -94,13 +94,13 @@ export class NoughtsAndCrossesComponent implements OnInit {
 
     const gameRef: AngularFirestoreDocument = this.db2.doc(`games/${this.gameId}`);
     gameRef.valueChanges().subscribe(game => {
-      console.log(game);
+      // console.log(game);
       const newGame = game
       const newBoard = [];
       for (let i = 0; i < 9; i++) {
         newBoard.push(newGame.board.slice(i * 9, i * 9 + 9))
       }
-      console.log('NEW BOARD: ', newBoard);
+      // console.log('NEW BOARD: ', newBoard);
       newGame.board = newBoard;
 
       this.currentGame.game = newGame.game;
@@ -111,11 +111,11 @@ export class NoughtsAndCrossesComponent implements OnInit {
       this.currentGame.moves = newGame.moves;
       this.currentGame.users = newGame.users;
 
-      console.log('GAME CHANGE DEETECTED: ', this.currentGame);
+      // console.log('GAME CHANGE DEETECTED: ', this.currentGame);
 
       if (!!this.currentGame.moves.length) {
         const lastMove = this.currentGame.moves[this.currentGame.moves.length - 1]
-        console.log(lastMove);
+        // console.log(lastMove);
         const mark = lastMove[0];
         const x = +lastMove[2];
         const y = +lastMove[4];
@@ -308,10 +308,10 @@ export class NoughtsAndCrossesComponent implements OnInit {
       // console.log('STATE BEFORE MAKING A MOVE USERID: ', userId);
 
 
-      console.log('STATE BEFORE MAKING A MOVE: ', state);
+      // console.log('STATE BEFORE MAKING A MOVE: ', state);
 
       if (state.players[state.next.player].id === userId) {
-        console.log('MAKING THE MOVE');
+        // console.log('MAKING THE MOVE');
         makeMoveFun(state, { x, y, mark }, checkWinFun, updateFirestoreFun, db, id);
         addMarkFun(square, mark, markImages);
       }
