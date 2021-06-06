@@ -30,10 +30,10 @@ export class GamesComponent implements OnInit {
       name: 'Amőba',
       game: 'nought'
     },
-    {
-      name: 'Sakk',
-      game: 'chess'
-    }
+    // {
+    //   name: 'Sakk',
+    //   game: 'chess'
+    // }
   ];
 
   selectedGame = 'nought';
