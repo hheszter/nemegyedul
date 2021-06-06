@@ -13,6 +13,9 @@ export class NoughtsAndCrossesComponent implements OnInit {
   };
 
   currentGame = {
+    game: {
+      isDraw: false
+    },
     players: {
       o: {
         name: 'Ferenc',
@@ -58,11 +61,11 @@ export class NoughtsAndCrossesComponent implements OnInit {
   initGame() {
     const grid = new Array(this.currentGame.rules.size)
       .fill(' ')
-      .map(row => new Array(this.currentGame.rules.size).fill(' '));
+      .map(() => new Array(this.currentGame.rules.size).fill(' '));
     this.currentGame.state = grid;
   }
 
-  makeMove(game, move, checkWinFun) {
+  makeMove(game: { state: any[][]; next: { player: string; }; }, move: { x: number; y: number; mark: any; }, checkWinFun: (arg0: any) => void) {
     game.state[--move.x][--move.y] = move.mark;
     game.next.player = game.next.player === 'x' ? 'o' : 'x';
     checkWinFun(game);
@@ -72,9 +75,6 @@ export class NoughtsAndCrossesComponent implements OnInit {
 
     const xWinPattern = 'x'.repeat(game.rules.length);
     const oWinPattern = 'o'.repeat(game.rules.length);
-
-    console.log(xWinPattern);
-    console.log(oWinPattern);
 
     function calculateDiagonalArray(inputArray, outputArray) {
       for (let i = 0; i < outputArray.length; ++i) {
@@ -92,22 +92,16 @@ export class NoughtsAndCrossesComponent implements OnInit {
       }
     }
 
-    const rows = game.state.map(e => e.reduce((a, c) => a + c, ''));
-    // console.log('ROWS: ', rows);
-
-    const columns = game.state.map((r, i) => r.reduce((a, c, j) => a + game.state[j][i], ''));
-    // console.log('COLUMNS: ', columns);
+    const rows = game.state.map((e: any[]) => e.reduce((a, c) => a + c, ''));
+    const columns = game.state.map((r: any[], i: string | number) => r.reduce((a, _, j) => a + game.state[j][i], ''));
 
     const primaryDiagonalArray = new Array(2 * game.state.length - 1);
     calculateDiagonalArray(game.state, primaryDiagonalArray);
-    const primaryDiagonal = primaryDiagonalArray.map(r => r.reduce((a, c) => a + c, ''));
-
-    // console.log('PRIMARY DIAGONAL: ', primaryDiagonal);
-
+    const primaryDiagonal = primaryDiagonalArray.map(r => r.reduce((a: any, c: any) => a + c, ''));
 
     const grid = JSON.parse(JSON.stringify(game.state));
 
-    function rotateGrid(grid) {
+    function rotateGrid(grid: string | any[]) {
       for (let x = 0; x < grid.length / 2; x++) {
         for (let y = x; y < grid.length - x - 1; y++) {
           let temp = grid[x][y];
@@ -120,12 +114,10 @@ export class NoughtsAndCrossesComponent implements OnInit {
     }
 
     rotateGrid(grid);
-    // console.log('GRID: ', grid);
     const secondaryDiagonalArray = new Array(2 * game.state.length - 1);
     calculateDiagonalArray(grid, secondaryDiagonalArray);
     const secondaryDiagonal = secondaryDiagonalArray.map(r => r.reduce((a, c) => a + c, ''));
 
-    // console.log('SECONDARY DIAGONAL: ', secondaryDiagonal);
 
     [rows, columns, primaryDiagonal, secondaryDiagonal].forEach(arr => arr.forEach(line => {
       if (line.includes(xWinPattern)) {
@@ -137,12 +129,20 @@ export class NoughtsAndCrossesComponent implements OnInit {
       }
     }));
 
+    for (let i = 0; i < game.state.length; i++) {
+      for (let j = 0; j < game.state[0].length; j++) {
+        if (game.state[i][j] === ' ') {
+          return;
+        }
+      }
+    }
+    // No more square left to be played
+    game.game.isDraw = true;
   }
 
   getSquares() {
     this.squares = Array.from(document.querySelectorAll('.square'));
   }
-
 
   createPiece(squareElement: HTMLEmbedElement, mark: string, markImage) {
     squareElement.innerHTML = '';
@@ -167,26 +167,24 @@ export class NoughtsAndCrossesComponent implements OnInit {
       if (!event.target?.id || !event.target.parentElement?.id || event.target.parentElement.id !== 'noughts-board') {
         return;
       }
-      console.log(event.target);
-      console.log(state);
 
       const square = event.target;
       const [x, y] = event.target.id.split('-').map(n => +n);
       const mark = state.next.player;
-
-      console.log('COORDINATES: ', x, y);
 
       makeMoveFun(state, { x, y, mark }, checkWinFun);
       addMarkFun(square, mark, markImages);
 
       if (state.players.o.hasWon) {
         board.style.pointerEvents = 'none'
-        message.innerText = 'O WON';
+        message.innerText = 'O Nyert';
       } else if (state.players.x.hasWon) {
         board.style.pointerEvents = 'none'
-        message.innerText = 'X WON';
+        message.innerText = 'X Nyert';
+      } else if (state.game.isDraw) {
+        board.style.pointerEvents = 'none'
+        message.innerText = 'Döntetlen';
       }
-
     });
   }
 }
