@@ -307,7 +307,7 @@ export class ChessComponent implements OnInit {
 
     // console.log('PIECE', piecefrom);
     if (piecefrom) {
-      console.log('TOSQUARE:', toSquare);
+      // console.log('TOSQUARE:', toSquare);
       fromSquare.innerHTML = '';
       toSquare.innerHTML = '';
       toSquare.appendChild(piecefrom);
@@ -408,7 +408,7 @@ export class ChessComponent implements OnInit {
           tempPossibleMoves.hits = currentGame.next.possibleMoves[fromId]?.hits;
           tempPossibleMoves.current = fromId;
 
-          console.log('POSSIBLE MOVES FROM CURRENT GAME:', tempPossibleMoves);
+          // console.log('POSSIBLE MOVES FROM CURRENT GAME:', tempPossibleMoves);
 
           document.getElementById(tempPossibleMoves.current).classList.add('square-current');
 
