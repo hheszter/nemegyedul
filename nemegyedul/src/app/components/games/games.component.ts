@@ -59,6 +59,15 @@ export class GamesComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.push(
+      // this.db2.collection("users", ref => ref
+      //   .where("id", "==", this.user.id))
+      //   .get()
+      //   .subscribe(user => user.forEach(userData =>
+      //     this.friendsIds = Object(userData.data()).friends.friendLists
+      //     // console.log(Object(userData.data()).friends.friendLists)
+      //   ))
+      // // Getting the ids of our friends
+
       this.db2.collection("users", ref => ref
         .where("id", "==", this.user.id))
         .get()
