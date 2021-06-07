@@ -59,11 +59,11 @@
                <div class="img-frame">
                   <img [src]="match.players.white.photo" class="card-img-top " alt="...">
                </div>
-               <h4 class="text-center">x - {{match.players.white.name}}</h4>
+               <h4 class="text-center">Fehér - {{match.players.white.name}}</h4>
                <div class="img-frame">
                   <img [src]="match.players.black.photo" class="card-img-top " alt="...">
                </div>
-               <h4 class="text-center">o - {{match.players.black.name}}</h4>
+               <h4 class="text-center">Fekete - {{match.players.black.name}}</h4>
                <div class="card__back-content">
                   <h5 class="card__back-title">{{match.game.name}}</h5>
                   <a [routerLink]="'/' + match.game.game + '/' + match.id" class="btn btn-primary mt-auto">Folytatás</a>
