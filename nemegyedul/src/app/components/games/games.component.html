@@ -5,13 +5,13 @@
       <div class="form-group col-md-8 mb-3 d-flex mx-auto text-light" [formGroup]="newGameForm">
          <label class="form-label me-3 mt-1" for="category"> Új játék indítása</label>
          <select class="form-select p-1" id="game" formControlName="game" aria-label="Floating label select" placeholder="Játékok">
-            <option value="">Játékok</option>
+            <option value="">Játék</option>
             <option *ngFor="let game of this.games" [value]="game.game" (click)="clicked()">
                {{game.name}}
             </option>
          </select>
          <select class="form-select p-1" id="friend" formControlName="friend" aria-label="Floating label select" placeholder="Ismerősök" >
-            <option value="">Ismerősök</option>
+            <option value="">Ismerős</option>
             <option *ngFor="let friend of this.friends" [value]="friend.id" (click)="clicked()">
                {{friend.name}}
             </option>
@@ -31,7 +31,7 @@
                   <h4 class="card__front-title">{{match.game.name}}</h4>
                   <h4 class="card__front-title">x - {{match.players.x.name}}</h4>
                   <h4 class="card__front-title">o - {{match.players.o.name}}</h4>
-                  <h4 class="card__front-title">{{match?.game?.created.toDate() | date:'medium' }}</h4>
+                  <h4 class="card__front-title">{{match?.game?.created.toDate() | date:'yyyy. MMM. dd. - HH:mm' }}</h4>
                </div>
                <div class="card__back">
                   <div class="img-frame">
@@ -53,7 +53,7 @@
                <h4 class="card__front-title">{{match.game.name}}</h4>
                <h4 class="card__front-title">Fehér - {{match.players.white.name}}</h4>
                <h4 class="card__front-title">Fekete - {{match.players.black.name}}</h4>
-               <h4 class="card__front-title">{{match?.game?.created.toDate() | date:'medium' }}</h4>
+               <h4 class="card__front-title">{{match?.game?.created.toDate() | date:'yyyy. MMM. dd. - HH:mm'  }}</h4>
             </div>
             <div class="card__back">
                <div class="img-frame">

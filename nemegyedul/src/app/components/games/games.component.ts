@@ -51,13 +51,11 @@ export class GamesComponent implements OnInit {
     this.dbSubscription = this.db.loggedInUser.subscribe(
       (user: any) => {
         this.user = user;
-        // console.log(this.user);
       },
       (err: any) => console.error(err),
       () => this.dbSubscription.unsubscribe()
     );
 
-    // Getting the ids of our friends
     this.db2.collection("users", ref => ref
       .where("id", "==", this.user.id))
       .get()
@@ -65,6 +63,7 @@ export class GamesComponent implements OnInit {
         this.friendsIds = Object(userData.data()).friends.friendLists
         // console.log(Object(userData.data()).friends.friendLists)
       ));
+    // Getting the ids of our friends
 
     this.db2.collection("users", ref => ref
       .where("friends.friendLists", "array-contains", this.user.id))
