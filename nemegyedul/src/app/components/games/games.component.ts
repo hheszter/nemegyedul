@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,9 @@ import { AngularFirestore } from '@angular/fire/firestore'
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.scss']
 })
-export class GamesComponent implements OnInit {
+export class GamesComponent implements OnInit, OnDestroy {
+
+  private subscriptions: Subscription[] = [];
 
   user: User;
   dbSubscription: Subscription;
@@ -46,30 +48,36 @@ export class GamesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dbSubscription = this.db.loggedInUser.subscribe(
-      (user: any) => {
-        this.user = user;
-      },
-      (err: any) => console.error(err),
-      () => this.dbSubscription.unsubscribe()
+    this.subscriptions.push(
+      this.db.loggedInUser.subscribe(
+        (user: any) => {
+          this.user = user;
+        },
+        (err: any) => console.error(err),
+        () => { }
+      )
     );
 
-    this.db2.collection("users", ref => ref
-      .where("id", "==", this.user.id))
-      .get()
-      .subscribe(user => user.forEach(userData =>
-        this.friendsIds = Object(userData.data()).friends.friendLists
-        // console.log(Object(userData.data()).friends.friendLists)
-      ));
-    // Getting the ids of our friends
+    this.subscriptions.push(
+      this.db2.collection("users", ref => ref
+        .where("id", "==", this.user.id))
+        .get()
+        .subscribe(user => user.forEach(userData =>
+          this.friendsIds = Object(userData.data()).friends.friendLists
+          // console.log(Object(userData.data()).friends.friendLists)
+        ))
+      // Getting the ids of our friends
+    );
 
-    this.db2.collection("users", ref => ref
-      .where("friends.friendLists", "array-contains", this.user.id))
-      .get()
-      .subscribe(user => user.forEach(userData =>
-        // this.friendsIds = Object(userData.data()).friends.friendLists
-        this.friends.push(Object(userData.data()))
-      ));
+    this.subscriptions.push(
+      this.db2.collection("users", ref => ref
+        .where("friends.friendLists", "array-contains", this.user.id))
+        .get()
+        .subscribe(user => user.forEach(userData =>
+          // this.friendsIds = Object(userData.data()).friends.friendLists
+          this.friends.push(Object(userData.data()))
+        ))
+    );
 
     // // Getting our friends, max the first ten
     // this.db2.collection("users", ref => ref
@@ -80,20 +88,22 @@ export class GamesComponent implements OnInit {
     //   ));
 
     // Getting our ongoing games
-    this.db2.collection("games", ref => ref
-      .orderBy("game.created", "desc")
-      // .where("game.game", "==", "nought")
-      .where("users", "array-contains", this.user.id)
-      .where("game.hasEnded", "==", false))
-      .get()
-      .subscribe((games) => {
-        games.forEach((doc) => {
-          this.gamesArray.push({ id: doc.id, ...Object(doc.data()) });
-          // console.log(doc.id, " => ", doc.data());
+    this.subscriptions.push(
+      this.db2.collection("games", ref => ref
+        .orderBy("game.created", "desc")
+        // .where("game.game", "==", "nought")
+        .where("users", "array-contains", this.user.id)
+        .where("game.hasEnded", "==", false))
+        .get()
+        .subscribe((games) => {
+          games.forEach((doc) => {
+            this.gamesArray.push({ id: doc.id, ...Object(doc.data()) });
+            // console.log(doc.id, " => ", doc.data());
 
-          // console.log('/' + Object(doc.data()).game.game + '/' + doc.id);
-        });
-      });
+            // console.log('/' + Object(doc.data()).game.game + '/' + doc.id);
+          });
+        })
+    );
 
     //Getting all games, to find our friends' games
     // This is bad-bad-bad practice, never-ever do this
@@ -110,6 +120,10 @@ export class GamesComponent implements OnInit {
     //   });
 
     // console.log(this.gamesArray);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   startNewGame() {
