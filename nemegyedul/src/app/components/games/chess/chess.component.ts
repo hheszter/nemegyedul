@@ -161,7 +161,6 @@ export class ChessComponent implements OnInit {
 
     const gameRef: AngularFirestoreDocument = this.db2.doc(`games/${this.gameId}`);
     gameRef.valueChanges().subscribe(game => {
-      // console.log(game);
 
       this.currentGame.game = game.game;
       this.currentGame.game.hasEnded = true;
@@ -172,21 +171,10 @@ export class ChessComponent implements OnInit {
       this.currentGame.users = game.users;
 
       this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.currentGame);
-      // console.log('CURRENT GAME INIT: ', this.currentGame);
 
       if (!!this.currentGame.moves.length) {
         const lastMove = this.currentGame.moves[this.currentGame.moves.length - 1]
-        // console.log('LAST MOVE:', lastMove);
 
-        // if (this.checkIfInitialState) {
-        //   this.squares.forEach(element => {
-        //     console.log('CLEARING THE ARRAY')
-        //     element.innerHTML = '';
-        //   });
-        //   this.setPieces();
-        //   this.addEventListeners();
-        //   this.currentGame.moves.forEach(m => this.makeOtherPlayerMoves(this.currentGame, m));
-        // } else {
         this.checkwin(this.currentGame);
         this.makeOtherPlayerMoves(this.currentGame, lastMove);
 
@@ -199,22 +187,11 @@ export class ChessComponent implements OnInit {
           message.innerText = 'Fekete Nyert';
           this.disableMouse(this.squares, this.pieces);
         }
-
-        // this.updateFirestore(this.currentGame, this.db2, this.gameId);
-        //}
-        //this.chessTestService.chessBoardStateChanged.next(this.currentGame);
       }
-
-      // this.squares.forEach(element => {
-      //   console.log('CLEARING THE ARRAY')
-      //   element.innerHTML = '';
-      // });
-      // this.setPieces();
     });
 
     this.chessTestService.chessBoardStateChanged.subscribe(
       state => {
-        //this.currentGame = { ...state };
 
         this.currentGame.game = state.game;
         this.currentGame.players = state.players;
@@ -223,34 +200,19 @@ export class ChessComponent implements OnInit {
         this.currentGame.moves = state.moves;
         this.currentGame.users = state.users;
 
-        //this.removeHightlight();
-        // this.tempPossibleMoves.moves = [];
-        // this.tempPossibleMoves.hits = [];
-        // this.tempPossibleMoves.current = '';
-
         this.currentGame.next.possibleMoves = this.calculatePossibleMoves(state);
-        // console.log('CURRENT GAME AFTER MOVE: ', this.currentGame);
 
       });
 
     this.chessTestService.chessPieceNotMoved.subscribe(
       state => {
-        //this.removeHightlight();
-        // this.tempPossibleMoves.moves = [];
-        // this.tempPossibleMoves.hits = [];
-        // this.tempPossibleMoves.current = '';
+        // Became obsolete
       });
 
 
     this.chessMoveStartService.chessPiecePicked.subscribe(
       state => {
-        //this.removeHightlight();
-        // this.tempPossibleMoves.moves = [];
-        // this.tempPossibleMoves.hits = [];
-        // this.tempPossibleMoves.current = '';
-
-        // TODO Past highlight solution
-        //this.chessPiecePicked(state);
+        // Became obsolete
       }
     );
 
@@ -281,7 +243,6 @@ export class ChessComponent implements OnInit {
 
   checkwin(game) {
     const values = Object.values(game.state);
-    // console.log(values);
     if (!values.includes('BlackKing')) {
       game.game.hasEnded = true;
       game.players.white.hasWon = true;
@@ -294,8 +255,6 @@ export class ChessComponent implements OnInit {
   makeOtherPlayerMoves(game, move) {
     const from = move.from;
     const to = move.to;
-    // console.log('FORM: ', from);
-    // console.log('TO: ', to);
     const fromSquare = document.getElementById(from);
     const toSquare = document.getElementById(to);
     const piecefrom = fromSquare?.children[0];
@@ -305,20 +264,11 @@ export class ChessComponent implements OnInit {
       return;
     }
 
-    // console.log('PIECE', piecefrom);
     if (piecefrom) {
-      // console.log('TOSQUARE:', toSquare);
       fromSquare.innerHTML = '';
       toSquare.innerHTML = '';
       toSquare.appendChild(piecefrom);
     }
-
-    // if (square.children[0]) {
-    //   hittedPiece = square.children[0].getAttribute('data-piece');
-    //   hit = 'HIT - PIECE: ' + square.children[0].getAttribute('data-piece') + ' ON: ' + square.id;
-    // }
-    // square.innerHTML = '';
-    // square.appendChild(draggedPiece);
   }
 
   getSquares() {
@@ -367,9 +317,6 @@ export class ChessComponent implements OnInit {
 
     const tempPossibleMoves = this.tempPossibleMoves;
 
-    // Firestore consts
-
-
     this.pieces.forEach((piece: HTMLElement) => {
       piece.addEventListener('dragstart', function () {
 
@@ -387,17 +334,10 @@ export class ChessComponent implements OnInit {
           piece.style.display = 'none';
         }, 0);
 
-        //squares.forEach(s => s.style.pointerEvents = 'none');
-        //squares.find(s => s.id === fromId).style.pointerEvents = 'all'
-
         let possibleMoves: any = null;
 
-        // console.log('DRAGSTART SQUARE: ', squares.find(s => s.id === fromId).id);
         if (currentGame.players[currentGame.next.color].id === userId) {
           possibleMoves = currentGame.next.possibleMoves[fromId]?.moves;
-
-          //console.log('POSSIBLE MOVES FROM CURRENT GAME:', possibleMoves);
-
         }
 
         if (possibleMoves) {
@@ -408,8 +348,6 @@ export class ChessComponent implements OnInit {
           tempPossibleMoves.hits = currentGame.next.possibleMoves[fromId]?.hits;
           tempPossibleMoves.current = fromId;
 
-          // console.log('POSSIBLE MOVES FROM CURRENT GAME:', tempPossibleMoves);
-
           document.getElementById(tempPossibleMoves.current).classList.add('square-current');
 
           tempPossibleMoves.moves.forEach(m => document.getElementById(m).classList.add('square-possible'));
@@ -419,10 +357,6 @@ export class ChessComponent implements OnInit {
         if (!possibleMoves) {
           squares.forEach(s => s.style.pointerEvents = 'none');
         }
-
-
-        // console.log('DRAGSTART POSSIBLE MOVES FORM HERE: ', possibleMoves ? possibleMoves : null);
-
       });
 
       piece.addEventListener('dragend', function () {
@@ -470,10 +404,6 @@ export class ChessComponent implements OnInit {
 
       square.addEventListener('drop', function () {
 
-        //squares.forEach(s => s.style.pointerEvents = 'all');
-
-        //console.log('Current Game In Drop: ', currentGame);
-
         if (fromId === square.id) {
           chessTestService.chessPieceNotMoved.next(true);
           return;
@@ -487,9 +417,6 @@ export class ChessComponent implements OnInit {
         }
         square.innerHTML = '';
         square.appendChild(draggedPiece);
-
-
-        // if (hit) { console.log(hit); };
 
         delete currentGame.state[fromId];
         currentGame.state[square.id] = draggedPiece.getAttribute('data-piece');
@@ -522,281 +449,9 @@ export class ChessComponent implements OnInit {
     });
   }
 
-  chessPiecePicked(state) {
-    // console.log(state);
-    // if (this.currentGame.color === state.color) {
-    //   this.highlightSquares(state);
-    // }
-    this.highlightSquares(state);
-  }
-
-  highlightSquares(state) {
-
-    switch (state.piece) {
-      case 'WhitePawn':
-        this.moveWhitePawn(state); break;
-      case 'BlackPawn':
-        this.moveBlackPawn(state); break;
-      case 'WhiteKnight':
-        this.moveKnight(state, 'White'); break;
-      case 'BlackKnight':
-        this.moveKnight(state, 'Black'); break;
-      case 'WhiteKing':
-        this.moveKing(state, 'White'); break;
-      case 'BlackKing':
-        this.moveKing(state, 'Black'); break;
-      case 'WhiteRook':
-        this.moveRook(state, 'White'); break;
-      case 'BlackRook':
-        this.moveRook(state, 'Black'); break;
-      case 'WhiteBishop':
-        this.moveBishop(state, 'White'); break;
-      case 'BlackBishop':
-        this.moveBishop(state, 'Black'); break;
-      case 'WhiteQueen':
-        this.moveQueen(state, 'White'); break;
-      case 'BlackQueen':
-        this.moveQueen(state, 'Black'); break;
-    }
-
-    this.highlightNext.current.push(state.from);
-    this.highlightNext.current.forEach(e => document.getElementById(e).classList.add('square-current'));
-
-    this.highlightNext.moves.forEach(e => document.getElementById(e).classList.add('square-possible'));
-    this.highlightNext.hits.forEach(e => document.getElementById(e).classList.add('square-hit'));
-  }
-
-  removeHightlight() {
-    this.highlightNext.moves.forEach(e => document.getElementById(e).classList.remove('square-possible'));
-    this.highlightNext.hits.forEach(e => document.getElementById(e).classList.remove('square-hit'));
-    this.highlightNext.current.forEach(e => document.getElementById(e).classList.remove('square-current'));
-    this.highlightNext.moves = [];
-    this.highlightNext.hits = [];
-    this.highlightNext.current = [];
-  }
-
-  left(val: string) {
-    const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    if (!val || val === 'a') { return null; }
-    return x[x.indexOf(val) - 1];
-  }
-
-  right(val: string) {
-    const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    if (!val || val === 'h') { return null; }
-    return x[x.indexOf(val) + 1];
-  }
-
-  up(val: any) {
-    if (!val) { return null; }
-    return +val < 8 ? (++val).toString() : null;
-  }
-
-  down(val: any) {
-    if (!val) { return null; }
-    return +val > 1 ? (--val).toString() : null;
-  }
-
-  whatIsOnPosition(pos) {
-    return this.currentGame.state[pos] ? this.currentGame.state[pos].slice(0, 5) : null;
-  }
-
-  moveWhitePawn(state: any) {
-    if (state.from[1] === '2') {
-      if (!(state.from[0] + (+state.from[1] + 1).toString() in this.currentGame.state)) {
-        this.highlightNext.moves.push(state.from[0] + '3');
-        if (!(state.from[0] + (+state.from[1] + 2).toString() in this.currentGame.state)) {
-          this.highlightNext.moves.push(state.from[0] + '4');
-        }
-      }
-    }
-    if (state.from[1] < '8') {
-      if (!(state.from[0] + (+state.from[1] + 1).toString() in this.currentGame.state)) {
-        this.highlightNext.moves.push(state.from[0] + (+state.from[1] + 1).toString());
-      }
-      if (this.left(state.from[0])) {
-        if (this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] + 1).toString()) === 'Black') {
-          this.highlightNext.hits.push(this.left(state.from[0]) + (+state.from[1] + 1).toString());
-        }
-        // console.log(this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] + 1).toString()));
-      }
-      if (this.right(state.from[0])) {
-        if (this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] + 1).toString()) === 'Black') {
-          this.highlightNext.hits.push(this.right(state.from[0]) + (+state.from[1] + 1).toString());
-        }
-        // console.log(this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] + 1).toString()));
-      }
-    }
-  }
-
-  moveBlackPawn(state: any) {
-    if (state.from[1] === '7') {
-      if (!(state.from[0] + (+state.from[1] - 1).toString() in this.currentGame.state)) {
-        this.highlightNext.moves.push(state.from[0] + '6');
-        if (!(state.from[0] + (+state.from[1] - 2).toString() in this.currentGame.state)) {
-          this.highlightNext.moves.push(state.from[0] + '5');
-        }
-      }
-    }
-    if (state.from[1] > '1') {
-      if (!(state.from[0] + (+state.from[1] - 1).toString() in this.currentGame.state)) {
-        this.highlightNext.moves.push(state.from[0] + (+state.from[1] - 1).toString());
-      }
-      if (this.left(state.from[0])) {
-        if (this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] - 1).toString()) === 'White') {
-          this.highlightNext.hits.push(this.left(state.from[0]) + (+state.from[1] - 1).toString());
-        }
-        // console.log(this.whatIsOnPosition(this.left(state.from[0]) + (+state.from[1] - 1).toString()));
-      }
-      if (this.right(state.from[0])) {
-        if (this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] - 1).toString()) === 'White') {
-          this.highlightNext.hits.push(this.right(state.from[0]) + (+state.from[1] - 1).toString());
-        }
-        // console.log(this.whatIsOnPosition(this.right(state.from[0]) + (+state.from[1] - 1).toString()));
-      }
-    }
-  }
-
-  moveKnight(state, color) {
-    const alpha = state.from[0];
-    const number = state.from[1];
-    const moves = [
-      [this.left(this.left(alpha)), this.up(number)],
-      [this.left(this.left(alpha)), this.down(number)],
-      [this.right(this.right(alpha)), this.up(number)],
-      [this.right(this.right(alpha)), this.down(number)],
-      [this.left(alpha), this.up(this.up(number))],
-      [this.left(alpha), this.down(this.down(number))],
-      [this.right(alpha), this.up(this.up(number))],
-      [this.right(alpha), this.down(this.down(number))]
-    ];
-
-    moves.forEach(m => {
-      if (m[0] && m[1]) {
-        if (!((m[0] + m[1]) in this.currentGame.state)) {
-          this.highlightNext.moves.push(m[0] + m[1]);
-        } else if (this.currentGame.state[m[0] + m[1]].slice(0, 5) !== color) {
-          this.highlightNext.hits.push(m[0] + m[1]);
-        }
-      }
-    });
-  }
-
-  moveKing(state, color) {
-    const alpha = state.from[0];
-    const number = state.from[1];
-    const moves = [
-      [alpha, this.up(number)],
-      [alpha, this.down(number)],
-      [this.left(alpha), number],
-      [this.right(alpha), number],
-      [this.left(alpha), this.up(number)],
-      [this.right(alpha), this.up(number)],
-      [this.left(alpha), this.down(number)],
-      [this.right(alpha), this.down(number)]
-    ];
-
-    moves.forEach(m => {
-      if (m[0] && m[1]) {
-        if (!((m[0] + m[1]) in this.currentGame.state)) {
-          this.highlightNext.moves.push(m[0] + m[1]);
-        } else if (this.currentGame.state[m[0] + m[1]].slice(0, 5) !== color) {
-          this.highlightNext.hits.push(m[0] + m[1]);
-        }
-      }
-    });
-  }
-
-  moveRook(state, color) {
-    let alpha = state.from[0];
-    let number = state.from[1];
-    const movesLeft = [];
-    const movesRight = [];
-    const movesUp = [];
-    const movesDown = [];
-
-    number = this.up(number);
-    while (number) { movesUp.push([alpha, number]); number = this.up(number); }
-    number = state.from[1];
-    number = this.down(number)
-    while (number) { movesDown.push([alpha, number]); number = this.down(number); }
-    number = state.from[1];
-    alpha = this.left(alpha);
-    while (alpha) { movesLeft.push([alpha, number]); alpha = this.left(alpha); }
-    alpha = state.from[0];
-    alpha = this.right(alpha);
-    while (alpha) { movesRight.push([alpha, number]); alpha = this.right(alpha); }
-
-    [movesLeft, movesRight, movesUp, movesDown].filter(e => e.length).forEach(moves => {
-      for (let i = 0; i < moves.length; i++) {
-        if (moves[i][0] && moves[i][1]) {
-          if (!((moves[i][0] + moves[i][1]) in this.currentGame.state)) {
-            this.highlightNext.moves.push(moves[i][0] + moves[i][1]);
-          } else if (this.currentGame.state[moves[i][0] + moves[i][1]]) {
-            if (this.currentGame.state[moves[i][0] + moves[i][1]].slice(0, 5) !== color) {
-              this.highlightNext.hits.push(moves[i][0] + moves[i][1]);
-            }
-            break;
-          }
-        }
-      }
-    });
-  }
-
-  moveBishop(state, color) {
-    let alpha = state.from[0];
-    let number = state.from[1];
-    const movesUpLeft = [];
-    const movesUpRight = [];
-    const movesDownLeft = [];
-    const movesDownRight = [];
-
-    number = this.up(number);
-    alpha = this.left(alpha);
-    while (number && alpha) { movesUpLeft.push([alpha, number]); number = this.up(number); alpha = this.left(alpha); }
-    alpha = state.from[0];
-    number = state.from[1];
-    number = this.up(number);
-    alpha = this.right(alpha);
-    while (number && alpha) { movesUpRight.push([alpha, number]); number = this.up(number); alpha = this.right(alpha); }
-    alpha = state.from[0];
-    number = state.from[1];
-    number = this.down(number);
-    alpha = this.left(alpha);
-    while (number && alpha) { movesDownLeft.push([alpha, number]); number = this.down(number); alpha = this.left(alpha); }
-    alpha = state.from[0];
-    number = state.from[1];
-    number = this.down(number);
-    alpha = this.right(alpha);
-    while (number && alpha) { movesDownRight.push([alpha, number]); number = this.down(number); alpha = this.right(alpha); }
-
-    [movesUpLeft, movesUpRight, movesDownLeft, movesDownRight].filter(e => e.length).forEach(moves => {
-      for (let i = 0; i < moves.length; i++) {
-        if (moves[i][0] && moves[i][1]) {
-          if (!((moves[i][0] + moves[i][1]) in this.currentGame.state)) {
-            this.highlightNext.moves.push(moves[i][0] + moves[i][1]);
-          } else if (this.currentGame.state[moves[i][0] + moves[i][1]]) {
-            if (this.currentGame.state[moves[i][0] + moves[i][1]].slice(0, 5) !== color) {
-              this.highlightNext.hits.push(moves[i][0] + moves[i][1]);
-            }
-            break;
-          }
-        }
-      }
-    });
-  }
-
-  moveQueen(state, color) {
-    this.moveRook(state, color);
-    this.moveBishop(state, color);
-  }
-
   calculatePossibleMoves(game) {
     const color = game.next.color;
-    //console.log('POSSIBLE MOVES COLOR: ', color);
-
-    //const squares = Object.entries(game.state);
-    //TODO Amikor már játszunk mindig csak a következő szín lépéseit számoljuk ki
+    //Amikor már játszunk mindig csak a következő szín lépéseit számoljuk ki
     let squares = Object.entries(game.state).filter(e => this.colorPieces[color].includes(e[1].toString()));
 
     let possibleMoves = squares.map(s => this.calcMove(game, s[0]));
@@ -810,11 +465,9 @@ export class ChessComponent implements OnInit {
     let movesToFilter = [];
 
     possibleMoves = possibleMoves.filter(m => m.moves.length > 0);
-    // console.log('RESULT: ', possibleMoves);
     possibleMoves.forEach(m => {
       const pos = m.pos;
       const moves = m.moves;
-      //console.log('MOVES: ', moves);
       moves.forEach(single => {
 
         const testState = JSON.parse(JSON.stringify(game));
@@ -822,22 +475,11 @@ export class ChessComponent implements OnInit {
         delete testState.state[pos];
         testState.state[single] = piece;
 
-        //const king = testState.next.color === 'white' ? 'BlackKing' : 'WhiteKing';
-        //const kingPosition = Object.entries(testState.state).find(e => e[1] === king)[0];
-
         testState.next.color = testState.next.color === 'white' ? 'black' : 'white';
 
-        //console.log('NEXT COLOR: ', testState.next.color);
-
-        //console.log('KING POSITION: ', kingPosition);
-        //console.log('SINGLE: ', pos, single, testState.next.color, testState.state);
-
-
         const clearMoves = Object.entries(testState.state).filter(e => this.colorPieces[testState.next.color].includes(e[1].toString()));
-        //console.log('NOT SO POSSIBLE MOVES: ', clearMoves);
         let notPossibleMoves = clearMoves.map(s => this.calcMove(testState, s[0])).filter(e => e.hits.length > 0).map(e => e.hits);
 
-        //console.log('NOT SO POSSIBLE MOVES: ', notPossibleMoves);
         movesToFilter.push(notPossibleMoves);
       });
 
@@ -849,9 +491,6 @@ export class ChessComponent implements OnInit {
 
       movesToFilter = Array.from(new Set(movesToFilter.filter(m => m.length > 0).reduce((a, c) => [...a, ...c], []).flat())).sort();
 
-      // console.log('KING POSITION: ', kingPosition);
-      // console.log('MOVES TO FILTER: ', movesToFilter);
-
       if (movesToFilter.includes(kingPosition)) {
         game.players[game.next.color].inCheck = true;
       } else {
@@ -859,9 +498,7 @@ export class ChessComponent implements OnInit {
       }
 
       if (kingPosition && result[kingPosition]) {
-        // console.log('RESULT KINGPOSITION: ', result[kingPosition]);
         const positions = (result[kingPosition].moves || []).reduce((a, c) => movesToFilter.includes(c) ? a : [...a, c], []);
-        // console.log('POSSIBLE KING MOVES', positions);
         result[kingPosition].moves = positions;
       }
     }
@@ -886,8 +523,6 @@ export class ChessComponent implements OnInit {
     };
 
     const value = moveCalcFuncs[game.state[pos]](game, pos);
-    // console.log('FROM CALC FUNCTION: ', pos, value);
-    //console.log('ACTUAL: ', ({ pos, moves: value.moves, hits: value.hits }));
     return { pos, moves: value.moves, hits: value.hits };
   }
 

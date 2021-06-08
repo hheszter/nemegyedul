@@ -19,9 +19,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   dbSubscription: Subscription;
   newGameForm: FormGroup;
   friendsIds: Array<string>;
-
   friends: any[] = [];
-
   gamesArray: any[] = [];
   friendsGamesArray: any[] = [];
 
@@ -48,6 +46,8 @@ export class GamesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    // Getting the actual user
     this.subscriptions.push(
       this.db.loggedInUser.subscribe(
         (user: any) => {
@@ -58,94 +58,54 @@ export class GamesComponent implements OnInit, OnDestroy {
       )
     );
 
+    // Getting the friends' ids
     this.subscriptions.push(
-      // this.db2.collection("users", ref => ref
-      //   .where("id", "==", this.user.id))
-      //   .get()
-      //   .subscribe(user => user.forEach(userData =>
-      //     this.friendsIds = Object(userData.data()).friends.friendLists
-      //     // console.log(Object(userData.data()).friends.friendLists)
-      //   ))
-      // // Getting the ids of our friends
-
       this.db2.collection("users", ref => ref
         .where("id", "==", this.user.id))
         .get()
         .subscribe(user => user.forEach(userData =>
           this.friendsIds = Object(userData.data()).friends.friendLists
-          // console.log(Object(userData.data()).friends.friendLists)
         ))
-      // Getting the ids of our friends
     );
 
+    // Getting the friends objects
     this.subscriptions.push(
       this.db2.collection("users", ref => ref
         .where("friends.friendLists", "array-contains", this.user.id))
         .get()
         .subscribe(user => user.forEach(userData =>
-          // this.friendsIds = Object(userData.data()).friends.friendLists
           this.friends.push(Object(userData.data()))
         ))
     );
 
-    // // Getting our friends, max the first ten
-    // this.db2.collection("users", ref => ref
-    //   .where("id", "in", this.friendsIds.slice(0, 10)))
-    //   .get()
-    //   .subscribe(user => user.forEach(userData =>
-    //     this.friends = Object(userData.data())
-    //   ));
-
-    // Getting our ongoing games
+    //Getting our ongoing game
+    // This query uses index in firestore
     this.subscriptions.push(
       this.db2.collection("games", ref => ref
         .orderBy("game.created", "desc")
-        // .where("game.game", "==", "nought")
         .where("users", "array-contains", this.user.id)
         .where("game.hasEnded", "==", false))
         .get()
         .subscribe((games) => {
           games.forEach((doc) => {
             this.gamesArray.push({ id: doc.id, ...Object(doc.data()) });
-            // console.log(doc.id, " => ", doc.data());
-
-            // console.log('/' + Object(doc.data()).game.game + '/' + doc.id);
           });
         })
     );
-
-    //Getting all games, to find our friends' games
-    // This is bad-bad-bad practice, never-ever do this
-    // But fror the time-being this is it
-    // this.db2.collection("games")
-    //   .get()
-    //   .subscribe((games) => {
-    //     games.forEach((doc) => {
-    //       this.friendsGamesArray.push({ id: doc.id, ...Object(doc.data()) });
-    //       console.log('My Games: ', doc.id, " => ", doc.data());
-
-    //       console.log('My Games: ', '/' + Object(doc.data()).game.game + '/' + doc.id);
-    //     });
-    //   });
-
-    // console.log(this.gamesArray);
   }
 
   ngOnDestroy() {
+    // Perventing memory leaks by unsubscribing from observers and such
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  // Creating a new game
   startNewGame() {
     const formValues = this.newGameForm.value;
     const { game, friend } = formValues;
-
     const otherPlayer = this.friends.find(f => f.id === friend);
-    // console.log("FORM VALUES: ", formValues);
 
-    // console.log("FORM VALUES FRIEND:", otherPlayer);
-
-    // console.log('FORM VALUES NEW GAMES: ', newGame);
-
+    // We create the new game objects here
     switch (game) {
       case 'nought':
         const player1 = {
@@ -191,6 +151,7 @@ export class GamesComponent implements OnInit, OnDestroy {
           ]
         };
 
+        // We save the new game, and after the saving is succesfull we navigate to the game page
         const p = this.db.saveData('games', newGame);
         p.then(data => this.router.navigateByUrl(`nought/${data.id}`));
         break;
@@ -280,5 +241,4 @@ export class GamesComponent implements OnInit, OnDestroy {
       default: break;
     }
   }
-
 }

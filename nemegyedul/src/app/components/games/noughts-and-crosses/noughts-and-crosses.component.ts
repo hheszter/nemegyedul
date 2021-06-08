@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/model/user';
-import { AuthService } from 'src/app/services/auth.service';
 import { DatabaseService } from 'src/app/services/database.service';
-import { UsersService } from 'src/app/services/users.service';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore'
 
 @Component({
@@ -50,18 +48,19 @@ export class NoughtsAndCrossesComponent implements OnInit {
       }
     },
     rules: {
-      // length and height
+      // width and height of the gameboard
       size: 9,
-      // how many marks to win
+      // number of identical marks in line to be able to win
       length: 5
     },
     next: {
       player: 'o'
     },
-    // ' ' -> empty, 'x' -> x, 'o' -> o
-    // 2 dimensional array
+    //states:
+    // ' ': empty, 'x': x, 'o': o
     board: new Array(81).fill(' '),
-    moves: []
+    moves: [],
+    users: []
   };
 
   squares: any;
@@ -70,15 +69,12 @@ export class NoughtsAndCrossesComponent implements OnInit {
   constructor(
     private db: DatabaseService,
     private db2: AngularFirestore,
-    private auth: AuthService,
-    private userService: UsersService,
-    private router: Router,
     private route: ActivatedRoute
   ) {
-    // this.initGame();
   }
 
   ngOnInit() {
+    // Getting the current user
     this.dbSubscription = this.db.loggedInUser.subscribe(
       (user: any) => {
         this.user = user;
@@ -88,21 +84,25 @@ export class NoughtsAndCrossesComponent implements OnInit {
       () => this.dbSubscription.unsubscribe()
     );
 
+    // Getting the current games id from params
     this.route.paramMap.subscribe(params => {
       this.gameId = params.get('matchId');
     });
 
+    // Special reference to our game object
+    // We subscribe to value changes
     const gameRef: AngularFirestoreDocument = this.db2.doc(`games/${this.gameId}`);
     gameRef.valueChanges().subscribe(game => {
-      // console.log(game);
       const newGame = game
       const newBoard = [];
       for (let i = 0; i < 9; i++) {
+        // Firestore can't store arrays in arrays, so we store it flat
+        // we need to make a mattrix from the array
         newBoard.push(newGame.board.slice(i * 9, i * 9 + 9))
       }
-      // console.log('NEW BOARD: ', newBoard);
       newGame.board = newBoard;
 
+      // We don't want to change the memory address of aur game(state) object
       this.currentGame.game = newGame.game;
       this.currentGame.players = newGame.players;
       this.currentGame.rules = newGame.rules;
@@ -111,23 +111,11 @@ export class NoughtsAndCrossesComponent implements OnInit {
       this.currentGame.moves = newGame.moves;
       this.currentGame.users = newGame.users;
 
-      // console.log('GAME CHANGE DEETECTED: ', this.currentGame);
-
+      // if we do have previous moves
       if (!!this.currentGame.moves.length) {
-        const lastMove = this.currentGame.moves[this.currentGame.moves.length - 1]
-        // console.log(lastMove);
-        const mark = lastMove[0];
-        const x = +lastMove[2];
-        const y = +lastMove[4];
-
         this.currentGame.moves.forEach(m => this.makeOtherPlayerMove(this.currentGame, m));
-        // this.makeOtherPlayerMove(this.currentGame, lastMove);
       }
     });
-
-    //this.userId = this.user.id;
-    //this.db2.collection('games').doc(matchId).update(this.currentGame);
-    // console.log('FIRESTOREGAME: ', this.fireStoreGame);
 
     this.board = document.getElementById('noughts-board');
     this.board.style.pointerEvents = 'all';
@@ -136,7 +124,9 @@ export class NoughtsAndCrossesComponent implements OnInit {
     this.addEventListeners();
   }
 
+  // Updateing the game state document
   updateFirestore(game, db, id) {
+    // Firestore can't handle matrixes, we store the values in a simple array
     game.board = game.board.flat();
     db.collection('games').doc(id).update(game);
   }
@@ -149,6 +139,8 @@ export class NoughtsAndCrossesComponent implements OnInit {
 
   }
 
+  // The other players move need to be "done"
+  // We use this function to rebuild the board, when we come back to our unfinished game
   makeOtherPlayerMove(game, move) {
 
     const x = (+move[2] + 1).toString();
@@ -158,7 +150,6 @@ export class NoughtsAndCrossesComponent implements OnInit {
 
     if (square.children.length === 0) {
       this.createPiece(square, move[0], this.markss);
-
       this.checkWin(game);
 
       const message = document.getElementById('message');
@@ -176,9 +167,10 @@ export class NoughtsAndCrossesComponent implements OnInit {
     }
   }
 
+  // Making our move on the board
   makeMove(game: any, move: any, checkWinFun: any, updateFirestoreFun: any, db: any, id: string) {
-    // console.log('BOARD WHEN MAKING A MOVE: ', game.board);
 
+    // cheking if our board is flat, if so we need to make a  matrix from it
     if (game.board.length == 81) {
       const newBoard = [];
       for (let i = 0; i < 9; i++) {
@@ -194,11 +186,15 @@ export class NoughtsAndCrossesComponent implements OnInit {
     updateFirestoreFun(game, db, id);
   }
 
+  // Checking whether one of the players have won
   checkWin(game) {
 
+    // on this level we support differrent rules
+    // currently not using this capability
     const xWinPattern = 'x'.repeat(game.rules.length);
     const oWinPattern = 'o'.repeat(game.rules.length);
 
+    // We need to create an array of array of the appropriate diagonal values
     function calculateDiagonalArray(inputArray, outputArray) {
       for (let i = 0; i < outputArray.length; ++i) {
         outputArray[i] = [];
@@ -218,10 +214,12 @@ export class NoughtsAndCrossesComponent implements OnInit {
     const rows = game.board.map((e: any[]) => e.reduce((a, c) => a + c, ''));
     const columns = game.board.map((r: any[], i: string | number) => r.reduce((a, _, j) => a + game.board[j][i], ''));
 
+    // For the primary diagonal we need to calculate the diagonal array
     const primaryDiagonalArray = new Array(2 * game.board.length - 1);
     calculateDiagonalArray(game.board, primaryDiagonalArray);
     const primaryDiagonal = primaryDiagonalArray.map(r => r.reduce((a: any, c: any) => a + c, ''));
 
+    // We create a hard copy of the game board
     const grid = JSON.parse(JSON.stringify(game.board));
 
     function rotateGrid(grid: string | any[]) {
@@ -236,12 +234,14 @@ export class NoughtsAndCrossesComponent implements OnInit {
       }
     }
 
+    // We need to rotate the grid in order to use the same diagonal array calculator function to calculate the secondary diagonal list
     rotateGrid(grid);
     const secondaryDiagonalArray = new Array(2 * game.board.length - 1);
     calculateDiagonalArray(grid, secondaryDiagonalArray);
     const secondaryDiagonal = secondaryDiagonalArray.map(r => r.reduce((a, c) => a + c, ''));
 
 
+    // We check the rows, columns, and diagonals whether one of the players have already won
     [rows, columns, primaryDiagonal, secondaryDiagonal].forEach(arr => arr.forEach(line => {
       if (line.includes(xWinPattern)) {
         game.players.x.hasWon = true;
@@ -254,6 +254,7 @@ export class NoughtsAndCrossesComponent implements OnInit {
       }
     }));
 
+    // We are checking whether free space is available for making movis
     for (let i = 0; i < game.board.length; i++) {
       for (let j = 0; j < game.board[0].length; j++) {
         if (game.board[i][j] === ' ') {
@@ -261,7 +262,7 @@ export class NoughtsAndCrossesComponent implements OnInit {
         }
       }
     }
-    // No more square left to be played
+    // If there's no more square left to make a move, the game has ended, and it is a draw
     game.game.hasEnded = true;
     game.game.isDraw = true;
   }
@@ -270,6 +271,7 @@ export class NoughtsAndCrossesComponent implements OnInit {
     this.squares = Array.from(document.querySelectorAll('.square'));
   }
 
+  // Creating pieces on the board
   createPiece(squareElement: HTMLElement, mark: string, markImage) {
     squareElement.innerHTML = '';
     squareElement.innerHTML = `
@@ -279,23 +281,30 @@ export class NoughtsAndCrossesComponent implements OnInit {
     `;
   }
 
+  // Event Listener for the board
   addEventListeners() {
+    // We need references to our main players in order to be able to use them in functions called from the handler function
     const board = this.board;
     const state = this.currentGame;
+
+    // Functions we use
     const addMarkFun = this.createPiece;
     const makeMoveFun = this.makeMove;
     const checkWinFun = this.checkWin;
     const updateFirestoreFun = this.updateFirestore;
 
+    // Firestore related references
     const db = this.db2;
     const id = this.gameId;
     const userId = this.userId;
 
+    // the images' paths
     const markImages = this.markss;
-
     const message = document.getElementById('message');
 
+    // We listen to click event on the whole board
     this.board.addEventListener('click', function (event) {
+      // if the click event's target is not appropriate, we do nothing
       if (!event.target?.id || !event.target.parentElement?.id || event.target.parentElement.id !== 'noughts-board') {
         return;
       }
@@ -304,19 +313,15 @@ export class NoughtsAndCrossesComponent implements OnInit {
       const [x, y] = event.target.id.split('-').map(n => +n);
       const mark = state.next.player;
 
-      // console.log('STATE BEFORE MAKING A MOVE: ', state.players[state.next.player].id);
-      // console.log('STATE BEFORE MAKING A MOVE USERID: ', userId);
-
-
-      // console.log('STATE BEFORE MAKING A MOVE: ', state);
-
+      // If we have the right to make a move
       if (state.players[state.next.player].id === userId) {
-        // console.log('MAKING THE MOVE');
+        // Update the game board state
         makeMoveFun(state, { x, y, mark }, checkWinFun, updateFirestoreFun, db, id);
+        // setting the mark on the board too
         addMarkFun(square, mark, markImages);
       }
 
-
+      // Checking whether after our move the game has ended in one way or another
       if (state.players.o.hasWon) {
         board.style.pointerEvents = 'none'
         message.innerText = 'O Nyert';
