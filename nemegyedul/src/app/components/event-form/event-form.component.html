@@ -1,8 +1,8 @@
 <div class="container-fluid">
   <section
-    class="container-sm col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 reg-container"
+    class="container-md  reg-container mt-0"
   >
-    <form [formGroup]="newEventForm" (ngSubmit)="saveEvent()">
+    <form class="form-group col-md-8 offset-md-2 py-2" [formGroup]="newEventForm" (ngSubmit)="saveEvent()">
       <legend>Új Esemény Felvitele:</legend>
       <div class="form-row">
         <div class="form-group mb-3">
@@ -185,7 +185,7 @@
           >
         </div>
       </div>
-  
+
       <input
         type="text"
         class="form-control"
@@ -194,7 +194,7 @@
         formControlName="userUID"
         hidden = "hidden"
       />
-      
+
       <button
         class="btn btn-danger"
         (click)="cancelEventSave()"

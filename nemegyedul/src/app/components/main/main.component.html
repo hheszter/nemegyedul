@@ -28,15 +28,17 @@
 
 <div class="container-md py-5">
   <div class="row">
-    <div class="form-group col-md-8 mb-3 d-flex mx-auto text-light" [formGroup]="formCategory">
-      <label class="form-label me-3 mt-1" for="category"> Érdeklődési kör:</label>
+    <div class="form-group col-md-8 mb-3 d-flex flex-column flex-sm-row mx-auto text-light" [formGroup]="formCategory">
+      <label class="form-label me-3 mt-1 text-center" for="category"> Érdeklődési kör:</label>
       <select class="form-select p-1" id="category" formControlName="category" aria-label="Floating label select">
         <option value="">Összes kategória</option>
         <option *ngFor="let elem of this.categoriesList" [value]="elem[0]" (click)="clicked()">
           {{elem[1]}}
         </option>
       </select>
-      <button class="btn btn-primary ms-2 filter-button" (click)="selectCategory()" type="submit">Szűrés</button>
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-primary ms-2 my-2 my-sm-0 filter-button" (click)="selectCategory()" type="submit">Szűrés</button>
+      </div>
     </div>
   </div>
 
