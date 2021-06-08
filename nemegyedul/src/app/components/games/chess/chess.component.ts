@@ -22,6 +22,11 @@ export class ChessComponent implements OnInit {
     1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h',
   };
 
+  posMap = {
+    'a': '1', 'b': '2', 'c': '3', 'd': '4', 'e': '5', 'f': '6', 'g': '7', 'h': '8',
+    1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h',
+  }
+
   colorPieces = {
     black: ['BlackBishop', 'BlackKing', 'BlackKnight', 'BlackPawn', 'BlackQueen', 'BlackRook'],
     white: ['WhiteBishop', 'WhiteKing', 'WhiteKnight', 'WhitePawn', 'WhiteQueen', 'WhiteRook']
@@ -135,6 +140,22 @@ export class ChessComponent implements OnInit {
     current: ''
   };
 
+  chessFuncs = {
+    calculatePossibleMoves: this.calculatePossibleMoves,
+    calcMOve: this.calcMove,
+    left: this.left,
+    right: this.right,
+    up: this.up,
+    down: this.down,
+    whatIsOnPosition: this.whatIsOnPosition,
+    getPawnMoves: this.getPawnMoves,
+    getKnightMoves: this.getKnightMoves,
+    getKingMoves: this.getKingMoves,
+    getRookMoves: this.getRookMoves,
+    getBishopMoves: this.getBishopMoves,
+    getQueenMoves: this.getQueenMoves
+  }
+
   constructor(
     private db: DatabaseService,
     private db2: AngularFirestore,
@@ -170,7 +191,7 @@ export class ChessComponent implements OnInit {
       this.currentGame.moves = game.moves;
       this.currentGame.users = game.users;
 
-      this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.currentGame);
+      this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.chessFuncs, this.currentGame);
 
       if (!!this.currentGame.moves.length) {
         const lastMove = this.currentGame.moves[this.currentGame.moves.length - 1]
@@ -200,7 +221,7 @@ export class ChessComponent implements OnInit {
         this.currentGame.moves = state.moves;
         this.currentGame.users = state.users;
 
-        this.currentGame.next.possibleMoves = this.calculatePossibleMoves(state);
+        this.currentGame.next.possibleMoves = this.calculatePossibleMoves(this.chessFuncs, state);
 
       });
 
@@ -293,6 +314,7 @@ export class ChessComponent implements OnInit {
   }
 
   addEventListeners() {
+
     let draggedPiece: HTMLElement;
     let fromMessage: string;
     let fromId: string;
@@ -449,7 +471,7 @@ export class ChessComponent implements OnInit {
     });
   }
 
-  calculatePossibleMoves(game) {
+  calculatePossibleMoves(chessFuncs, game) {
     const color = game.next.color;
     //Amikor már játszunk mindig csak a következő szín lépéseit számoljuk ki
     let squares = Object.entries(game.state).filter(e => this.colorPieces[color].includes(e[1].toString()));
@@ -526,6 +548,32 @@ export class ChessComponent implements OnInit {
     return { pos, moves: value.moves, hits: value.hits };
   }
 
+  left(val: string) {
+    const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    if (!val || val === 'a') { return null; }
+    return x[x.indexOf(val) - 1];
+  }
+
+  right(val: string) {
+    const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    if (!val || val === 'h') { return null; }
+    return x[x.indexOf(val) + 1];
+  }
+
+  up(val: any) {
+    if (!val) { return null; }
+    return +val < 8 ? (++val).toString() : null;
+  }
+
+  down(val: any) {
+    if (!val) { return null; }
+    return +val > 1 ? (--val).toString() : null;
+  }
+
+  whatIsOnPosition(game, pos) {
+    return game.state[pos] ? game.state[pos].slice(0, 5) : null;
+  }
+
   getPawnMoves(game, pos) {
     function left(val: string) {
       const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -549,7 +597,7 @@ export class ChessComponent implements OnInit {
       return +val > 1 ? (--val).toString() : null;
     }
 
-    function whatIsOnPosition(pos) {
+    function whatIsOnPosition(game, pos) {
       return game.state[pos] ? game.state[pos].slice(0, 5) : null;
     }
 
@@ -575,13 +623,13 @@ export class ChessComponent implements OnInit {
           moves.push(pos[0] + (+pos[1] + 1).toString());
         }
         if (left(pos[0])) {
-          if (whatIsOnPosition(left(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
+          if (whatIsOnPosition(game, left(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
             moves.push(left(pos[0]) + (+pos[1] + 1).toString());
             hits.push(left(pos[0]) + (+pos[1] + 1).toString());
           }
         }
         if (right(pos[0])) {
-          if (whatIsOnPosition(right(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
+          if (whatIsOnPosition(game, right(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
             moves.push(right(pos[0]) + (+pos[1] + 1).toString());
             hits.push(right(pos[0]) + (+pos[1] + 1).toString());
           }
@@ -602,13 +650,13 @@ export class ChessComponent implements OnInit {
           moves.push(pos[0] + (+pos[1] - 1).toString());
         }
         if (left(pos[0])) {
-          if (whatIsOnPosition(left(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
+          if (whatIsOnPosition(game, left(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
             moves.push(left(pos[0]) + (+pos[1] - 1).toString());
             hits.push(left(pos[0]) + (+pos[1] - 1).toString());
           }
         }
         if (right(pos[0])) {
-          if (whatIsOnPosition(right(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
+          if (whatIsOnPosition(game, right(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
             moves.push(right(pos[0]) + (+pos[1] - 1).toString());
             hits.push(right(pos[0]) + (+pos[1] - 1).toString());
           }
