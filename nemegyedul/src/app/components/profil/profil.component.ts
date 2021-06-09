@@ -42,6 +42,7 @@ export class ProfilComponent implements OnInit {
     this.db.getData('events').subscribe(
       data => {
         this.eventArray = data;
+        this.myEventArray = [];
         this.filterData(this.eventArray, this.user, this.myEventArray)
       },
       error => console.error(error)
@@ -49,6 +50,7 @@ export class ProfilComponent implements OnInit {
   }
 
   filterData(eventArray, currentUser, myEventArray) {
+
     for (let j = 0; j < eventArray.length; j++) {
       let i = 0
       for (i = 0; i < currentUser.myEvents.length; i++) {

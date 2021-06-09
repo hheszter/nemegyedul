@@ -6,7 +6,8 @@
 
   section {
     padding: 2rem;
-    background: rgba(250, 250, 250, 0.8);
+    background-color: #0006;
+    color: whitesmoke;
 
     .form-check-input:checked {
       background-color: c.$c-orange !important;
@@ -23,7 +24,7 @@
   }
 
   small {
-    color: c.$c-deeporange;
+    color: rgb(100, 6, 6);
     display: block;
     font-size: large;
 
