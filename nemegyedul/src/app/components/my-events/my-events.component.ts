@@ -84,5 +84,7 @@ export class MyEventsComponent implements OnInit {
     this.currentUser.myEvents = this.currentUser.myEvents.filter(data => data != selectedEvent.id)
     this.dataService.updateData('users', this.currentUser.id, this.currentUser);
     this.myEventArray = this.myEventArray.filter(data => data.id !== selectedEvent.id)
+
+    this.dataService.deleteData('events', selectedEvent.id)
   }
 }
