@@ -22,11 +22,6 @@ export class ChessComponent implements OnInit {
     1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h',
   };
 
-  posMap = {
-    'a': '1', 'b': '2', 'c': '3', 'd': '4', 'e': '5', 'f': '6', 'g': '7', 'h': '8',
-    1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h',
-  }
-
   colorPieces = {
     black: ['BlackBishop', 'BlackKing', 'BlackKnight', 'BlackPawn', 'BlackQueen', 'BlackRook'],
     white: ['WhiteBishop', 'WhiteKing', 'WhiteKnight', 'WhitePawn', 'WhiteQueen', 'WhiteRook']
@@ -252,7 +247,6 @@ export class ChessComponent implements OnInit {
 
   checkIfInitialState() {
     let initialState = true;
-    // console.log(this.initialGame);
     Object.entries(this.initialGame).forEach(p => {
       const square = document.getElementById(p[0]);
       if (square.children[0].getAttribute('data-piece') !== p[1]) {
@@ -476,7 +470,7 @@ export class ChessComponent implements OnInit {
     //Amikor már játszunk mindig csak a következő szín lépéseit számoljuk ki
     let squares = Object.entries(game.state).filter(e => this.colorPieces[color].includes(e[1].toString()));
 
-    let possibleMoves = squares.map(s => this.calcMove(game, s[0]));
+    let possibleMoves = squares.map(s => this.calcMove(chessFuncs, game, s[0]));
     const result = possibleMoves.reduce((a, c) => {
       if (c.moves.length > 0 || c.hits.length > 0) {
         a[c.pos] = { moves: c.moves, hits: c.hits };
@@ -500,7 +494,7 @@ export class ChessComponent implements OnInit {
         testState.next.color = testState.next.color === 'white' ? 'black' : 'white';
 
         const clearMoves = Object.entries(testState.state).filter(e => this.colorPieces[testState.next.color].includes(e[1].toString()));
-        let notPossibleMoves = clearMoves.map(s => this.calcMove(testState, s[0])).filter(e => e.hits.length > 0).map(e => e.hits);
+        let notPossibleMoves = clearMoves.map(s => this.calcMove(chessFuncs, testState, s[0])).filter(e => e.hits.length > 0).map(e => e.hits);
 
         movesToFilter.push(notPossibleMoves);
       });
@@ -528,7 +522,7 @@ export class ChessComponent implements OnInit {
     return result;
   }
 
-  calcMove(game, pos) {
+  calcMove(chessFuncs, game, pos) {
     const moveCalcFuncs = {
       'BlackBishop': this.getBishopMoves,
       'BlackKing': this.getKingMoves,
@@ -544,7 +538,7 @@ export class ChessComponent implements OnInit {
       'WhiteRook': this.getRookMoves,
     };
 
-    const value = moveCalcFuncs[game.state[pos]](game, pos);
+    const value = moveCalcFuncs[game.state[pos]](chessFuncs, game, pos);
     return { pos, moves: value.moves, hits: value.hits };
   }
 
@@ -574,33 +568,7 @@ export class ChessComponent implements OnInit {
     return game.state[pos] ? game.state[pos].slice(0, 5) : null;
   }
 
-  getPawnMoves(game, pos) {
-    function left(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'a') { return null; }
-      return x[x.indexOf(val) - 1];
-    }
-
-    function right(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'h') { return null; }
-      return x[x.indexOf(val) + 1];
-    }
-
-    function up(val: any) {
-      if (!val) { return null; }
-      return +val < 8 ? (++val).toString() : null;
-    }
-
-    function down(val: any) {
-      if (!val) { return null; }
-      return +val > 1 ? (--val).toString() : null;
-    }
-
-    function whatIsOnPosition(game, pos) {
-      return game.state[pos] ? game.state[pos].slice(0, 5) : null;
-    }
-
+  getPawnMoves(chessFuncs, game, pos) {
 
     const piece = game.state[pos];
     const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
@@ -622,16 +590,16 @@ export class ChessComponent implements OnInit {
         if (!(pos[0] + (+pos[1] + 1).toString() in game.state)) {
           moves.push(pos[0] + (+pos[1] + 1).toString());
         }
-        if (left(pos[0])) {
-          if (whatIsOnPosition(game, left(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
-            moves.push(left(pos[0]) + (+pos[1] + 1).toString());
-            hits.push(left(pos[0]) + (+pos[1] + 1).toString());
+        if (chessFuncs.left(pos[0])) {
+          if (chessFuncs.whatIsOnPosition(game, chessFuncs.left(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
+            moves.push(chessFuncs.left(pos[0]) + (+pos[1] + 1).toString());
+            hits.push(chessFuncs.left(pos[0]) + (+pos[1] + 1).toString());
           }
         }
-        if (right(pos[0])) {
-          if (whatIsOnPosition(game, right(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
-            moves.push(right(pos[0]) + (+pos[1] + 1).toString());
-            hits.push(right(pos[0]) + (+pos[1] + 1).toString());
+        if (chessFuncs.right(pos[0])) {
+          if (chessFuncs.whatIsOnPosition(game, chessFuncs.right(pos[0]) + (+pos[1] + 1).toString()) === 'Black') {
+            moves.push(chessFuncs.right(pos[0]) + (+pos[1] + 1).toString());
+            hits.push(chessFuncs.right(pos[0]) + (+pos[1] + 1).toString());
           }
         }
       }
@@ -649,16 +617,16 @@ export class ChessComponent implements OnInit {
         if (!(pos[0] + (+pos[1] - 1).toString() in game.state)) {
           moves.push(pos[0] + (+pos[1] - 1).toString());
         }
-        if (left(pos[0])) {
-          if (whatIsOnPosition(game, left(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
-            moves.push(left(pos[0]) + (+pos[1] - 1).toString());
-            hits.push(left(pos[0]) + (+pos[1] - 1).toString());
+        if (chessFuncs.left(pos[0])) {
+          if (chessFuncs.whatIsOnPosition(game, chessFuncs.left(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
+            moves.push(chessFuncs.left(pos[0]) + (+pos[1] - 1).toString());
+            hits.push(chessFuncs.left(pos[0]) + (+pos[1] - 1).toString());
           }
         }
-        if (right(pos[0])) {
-          if (whatIsOnPosition(game, right(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
-            moves.push(right(pos[0]) + (+pos[1] - 1).toString());
-            hits.push(right(pos[0]) + (+pos[1] - 1).toString());
+        if (chessFuncs.right(pos[0])) {
+          if (chessFuncs.whatIsOnPosition(game, chessFuncs.right(pos[0]) + (+pos[1] - 1).toString()) === 'White') {
+            moves.push(chessFuncs.right(pos[0]) + (+pos[1] - 1).toString());
+            hits.push(chessFuncs.right(pos[0]) + (+pos[1] - 1).toString());
           }
         }
 
@@ -668,30 +636,7 @@ export class ChessComponent implements OnInit {
     return ({ moves: [...new Set(moves)], hits, piece });
   }
 
-  getKnightMoves(game, pos) {
-
-    function left(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'a') { return null; }
-      return x[x.indexOf(val) - 1];
-    }
-
-    function right(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'h') { return null; }
-      return x[x.indexOf(val) + 1];
-    }
-
-    function up(val: any) {
-      if (!val) { return null; }
-      return +val < 8 ? (++val).toString() : null;
-    }
-
-    function down(val: any) {
-      if (!val) { return null; }
-      return +val > 1 ? (--val).toString() : null;
-    }
-
+  getKnightMoves(chessFuncs, game, pos) {
     const piece = game.state[pos];
     const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
 
@@ -701,14 +646,14 @@ export class ChessComponent implements OnInit {
     const alpha = pos[0];
     const number = pos[1];
     const preMoves = [
-      [left(left(alpha)), up(number)],
-      [left(left(alpha)), down(number)],
-      [right(right(alpha)), up(number)],
-      [right(right(alpha)), down(number)],
-      [left(alpha), up(up(number))],
-      [left(alpha), down(down(number))],
-      [right(alpha), up(up(number))],
-      [right(alpha), down(down(number))]
+      [chessFuncs.left(chessFuncs.left(alpha)), chessFuncs.up(number)],
+      [chessFuncs.left(chessFuncs.left(alpha)), chessFuncs.down(number)],
+      [chessFuncs.right(chessFuncs.right(alpha)), chessFuncs.up(number)],
+      [chessFuncs.right(chessFuncs.right(alpha)), chessFuncs.down(number)],
+      [chessFuncs.left(alpha), chessFuncs.up(chessFuncs.up(number))],
+      [chessFuncs.left(alpha), chessFuncs.down(chessFuncs.down(number))],
+      [chessFuncs.right(alpha), chessFuncs.up(chessFuncs.up(number))],
+      [chessFuncs.right(alpha), chessFuncs.down(chessFuncs.down(number))]
     ];
 
     preMoves.forEach(m => {
@@ -725,30 +670,7 @@ export class ChessComponent implements OnInit {
     return ({ moves: [...new Set(moves)], hits, piece });
   }
 
-  getKingMoves(game, pos) {
-
-    function left(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'a') { return null; }
-      return x[x.indexOf(val) - 1];
-    }
-
-    function right(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'h') { return null; }
-      return x[x.indexOf(val) + 1];
-    }
-
-    function up(val: any) {
-      if (!val) { return null; }
-      return +val < 8 ? (++val).toString() : null;
-    }
-
-    function down(val: any) {
-      if (!val) { return null; }
-      return +val > 1 ? (--val).toString() : null;
-    }
-
+  getKingMoves(chessFuncs, game, pos) {
     const piece = game.state[pos];
     const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
 
@@ -759,14 +681,14 @@ export class ChessComponent implements OnInit {
     const number = pos[1];
 
     const preMoves = [
-      [alpha, up(number)],
-      [alpha, down(number)],
-      [left(alpha), number],
-      [right(alpha), number],
-      [left(alpha), up(number)],
-      [right(alpha), up(number)],
-      [left(alpha), down(number)],
-      [right(alpha), down(number)]
+      [alpha, chessFuncs.up(number)],
+      [alpha, chessFuncs.down(number)],
+      [chessFuncs.left(alpha), number],
+      [chessFuncs.right(alpha), number],
+      [chessFuncs.left(alpha), chessFuncs.up(number)],
+      [chessFuncs.right(alpha), chessFuncs.up(number)],
+      [chessFuncs.left(alpha), chessFuncs.down(number)],
+      [chessFuncs.right(alpha), chessFuncs.down(number)]
     ];
 
     preMoves.forEach(m => {
@@ -783,30 +705,7 @@ export class ChessComponent implements OnInit {
     return ({ moves: [...new Set(moves)], hits, piece });
   }
 
-  getRookMoves(game, pos) {
-
-    function left(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'a') { return null; }
-      return x[x.indexOf(val) - 1];
-    }
-
-    function right(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'h') { return null; }
-      return x[x.indexOf(val) + 1];
-    }
-
-    function up(val: any) {
-      if (!val) { return null; }
-      return +val < 8 ? (++val).toString() : null;
-    }
-
-    function down(val: any) {
-      if (!val) { return null; }
-      return +val > 1 ? (--val).toString() : null;
-    }
-
+  getRookMoves(chessFuncs, game, pos) {
     const piece = game.state[pos];
     const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
 
@@ -821,17 +720,17 @@ export class ChessComponent implements OnInit {
     const movesUp = [];
     const movesDown = [];
 
-    number = up(number);
-    while (number) { movesUp.push([alpha, number]); number = up(number); }
+    number = chessFuncs.up(number);
+    while (number) { movesUp.push([alpha, number]); number = chessFuncs.up(number); }
     number = pos[1];
-    number = down(number)
-    while (number) { movesDown.push([alpha, number]); number = down(number); }
+    number = chessFuncs.down(number)
+    while (number) { movesDown.push([alpha, number]); number = chessFuncs.down(number); }
     number = pos[1];
-    alpha = left(alpha);
-    while (alpha) { movesLeft.push([alpha, number]); alpha = left(alpha); }
+    alpha = chessFuncs.left(alpha);
+    while (alpha) { movesLeft.push([alpha, number]); alpha = chessFuncs.left(alpha); }
     alpha = pos[0];
-    alpha = right(alpha);
-    while (alpha) { movesRight.push([alpha, number]); alpha = right(alpha); }
+    alpha = chessFuncs.right(alpha);
+    while (alpha) { movesRight.push([alpha, number]); alpha = chessFuncs.right(alpha); }
 
     [movesLeft, movesRight, movesUp, movesDown].filter(e => e.length).forEach(m => {
       for (let i = 0; i < m.length; i++) {
@@ -853,30 +752,7 @@ export class ChessComponent implements OnInit {
   }
 
 
-  getBishopMoves(game, pos) {
-
-    function left(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'a') { return null; }
-      return x[x.indexOf(val) - 1];
-    }
-
-    function right(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'h') { return null; }
-      return x[x.indexOf(val) + 1];
-    }
-
-    function up(val: any) {
-      if (!val) { return null; }
-      return +val < 8 ? (++val).toString() : null;
-    }
-
-    function down(val: any) {
-      if (!val) { return null; }
-      return +val > 1 ? (--val).toString() : null;
-    }
-
+  getBishopMoves(chessFuncs, game, pos) {
     const piece = game.state[pos];
     const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
 
@@ -891,24 +767,24 @@ export class ChessComponent implements OnInit {
     const movesDownLeft = [];
     const movesDownRight = [];
 
-    number = up(number);
-    alpha = left(alpha);
-    while (number && alpha) { movesUpLeft.push([alpha, number]); number = up(number); alpha = left(alpha); }
+    number = chessFuncs.up(number);
+    alpha = chessFuncs.left(alpha);
+    while (number && alpha) { movesUpLeft.push([alpha, number]); number = chessFuncs.up(number); alpha = chessFuncs.left(alpha); }
     alpha = pos[0];
     number = pos[1];
-    number = up(number);
-    alpha = right(alpha);
-    while (number && alpha) { movesUpRight.push([alpha, number]); number = up(number); alpha = right(alpha); }
+    number = chessFuncs.up(number);
+    alpha = chessFuncs.right(alpha);
+    while (number && alpha) { movesUpRight.push([alpha, number]); number = chessFuncs.up(number); alpha = chessFuncs.right(alpha); }
     alpha = pos[0];
     number = pos[1];
-    number = down(number);
-    alpha = left(alpha);
-    while (number && alpha) { movesDownLeft.push([alpha, number]); number = down(number); alpha = left(alpha); }
+    number = chessFuncs.down(number);
+    alpha = chessFuncs.left(alpha);
+    while (number && alpha) { movesDownLeft.push([alpha, number]); number = chessFuncs.down(number); alpha = chessFuncs.left(alpha); }
     alpha = pos[0];
     number = pos[1];
-    number = down(number);
-    alpha = right(alpha);
-    while (number && alpha) { movesDownRight.push([alpha, number]); number = down(number); alpha = right(alpha); }
+    number = chessFuncs.down(number);
+    alpha = chessFuncs.right(alpha);
+    while (number && alpha) { movesDownRight.push([alpha, number]); number = chessFuncs.down(number); alpha = chessFuncs.right(alpha); }
 
     [movesUpLeft, movesUpRight, movesDownLeft, movesDownRight].filter(e => e.length).forEach(m => {
       for (let i = 0; i < m.length; i++) {
@@ -929,117 +805,15 @@ export class ChessComponent implements OnInit {
     return ({ moves: [...new Set(moves)], hits, piece });
   }
 
-  getQueenMoves(game, pos) {
-
-    function left(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'a') { return null; }
-      return x[x.indexOf(val) - 1];
-    }
-
-    function right(val: string) {
-      const x = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      if (!val || val === 'h') { return null; }
-      return x[x.indexOf(val) + 1];
-    }
-
-    function up(val: any) {
-      if (!val) { return null; }
-      return +val < 8 ? (++val).toString() : null;
-    }
-
-    function down(val: any) {
-      if (!val) { return null; }
-      return +val > 1 ? (--val).toString() : null;
-    }
-
+  getQueenMoves(chessFuncs, game, pos) {
     const piece = game.state[pos];
-    const color = piece.slice(0, 5) === 'Black' ? 'Black' : 'White';
+    const { moves: bishopMoves, hits: bishopHits, piece: bishopPiece } = chessFuncs.getBishopMoves(chessFuncs, game, pos);
+    const { moves: rookMoves, hits: rookHits, piece: rookPiece } = chessFuncs.getRookMoves(chessFuncs, game, pos);
 
-    const moves = [];
-    const hits = [];
-
-    let alpha = pos[0];
-    let number = pos[1];
-
-    const movesLeft = [];
-    const movesRight = [];
-    const movesUp = [];
-    const movesDown = [];
-
-    number = up(number);
-    while (number) { movesUp.push([alpha, number]); number = up(number); }
-    number = pos[1];
-    number = down(number)
-    while (number) { movesDown.push([alpha, number]); number = down(number); }
-    number = pos[1];
-    alpha = left(alpha);
-    while (alpha) { movesLeft.push([alpha, number]); alpha = left(alpha); }
-    alpha = pos[0];
-    alpha = right(alpha);
-    while (alpha) { movesRight.push([alpha, number]); alpha = right(alpha); }
-
-    [movesLeft, movesRight, movesUp, movesDown].filter(e => e.length).forEach(m => {
-      for (let i = 0; i < m.length; i++) {
-        if (m[i][0] && m[i][1]) {
-          if (!((m[i][0] + m[i][1]) in game.state)) {
-            moves.push(m[i][0] + m[i][1]);
-          } else if (game.state[m[i][0] + m[i][1]]) {
-            if (game.state[m[i][0] + m[i][1]].slice(0, 5) !== color) {
-              moves.push(m[i][0] + m[i][1]);
-              hits.push(m[i][0] + m[i][1]);
-            }
-            break;
-          }
-        }
-      }
+    return ({
+      moves: [...new Set([...bishopMoves, ...rookMoves])],
+      hits: [...new Set([...bishopHits, ...rookHits])],
+      piece
     });
-
-
-    const movesUpLeft = [];
-    const movesUpRight = [];
-    const movesDownLeft = [];
-    const movesDownRight = [];
-
-    alpha = pos[0];
-    number = pos[1];
-    number = up(number);
-    alpha = left(alpha);
-    while (number && alpha) { movesUpLeft.push([alpha, number]); number = up(number); alpha = left(alpha); }
-    alpha = pos[0];
-    number = pos[1];
-    number = up(number);
-    alpha = right(alpha);
-    while (number && alpha) { movesUpRight.push([alpha, number]); number = up(number); alpha = right(alpha); }
-    alpha = pos[0];
-    number = pos[1];
-    number = down(number);
-    alpha = left(alpha);
-    while (number && alpha) { movesDownLeft.push([alpha, number]); number = down(number); alpha = left(alpha); }
-    alpha = pos[0];
-    number = pos[1];
-    number = down(number);
-    alpha = right(alpha);
-    while (number && alpha) { movesDownRight.push([alpha, number]); number = down(number); alpha = right(alpha); }
-
-    [movesUpLeft, movesUpRight, movesDownLeft, movesDownRight].filter(e => e.length).forEach(m => {
-      for (let i = 0; i < m.length; i++) {
-        if (m[i][0] && m[i][1]) {
-          if (!((m[i][0] + m[i][1]) in game.state)) {
-            moves.push(m[i][0] + m[i][1]);
-          } else if (game.state[m[i][0] + m[i][1]]) {
-            if (game.state[m[i][0] + m[i][1]].slice(0, 5) !== color) {
-              moves.push(m[i][0] + m[i][1]);
-              hits.push(m[i][0] + m[i][1]);
-            }
-            break;
-          }
-        }
-      }
-    });
-
-    return ({ moves: [...new Set(moves)], hits, piece });
   }
-
 }
-
